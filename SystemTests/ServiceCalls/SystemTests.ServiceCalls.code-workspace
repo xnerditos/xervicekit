@@ -1,0 +1,35 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+    "settings": {
+        "editor.insertSpaces": true,
+        "csharp.format.enable": false,
+        "csharp.unitTestDebuggingOptions": {
+            "stopAtEntry": true,
+            "logging": {
+                "engineLogging": false,
+                "exceptions": true,
+                "programOutput": true,
+                "moduleLoad": false
+            },
+            "justMyCode": false,
+            "requireExactSource": false,
+            "suppressJITOptimizations": true,
+            "symbolOptions": {
+                "searchMicrosoftSymbolServer": true,
+                "moduleFilter": {
+                    "mode": "loadOnlyIncluded",
+                    "includeSymbolsNextToModules": true,
+                    "includedModules": [
+                        "XKit.Lib.*.dll"
+                    ]
+                },
+                "searchPaths": [
+                ]
+            }
+        }   
+    }
+}

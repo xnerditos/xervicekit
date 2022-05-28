@@ -1,0 +1,7 @@
+{
+    "editor.insertSpaces": true,
+    "csharp.format.enable": false,
+    "csharpfixformat.style.braces.onSameLine": true,
+    "csharpfixformat.style.spaces.beforeParenthesis": false,
+    "csharpfixformat.style.indent.preprocessorIgnored": false
+}

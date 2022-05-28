@@ -1,0 +1,25 @@
+{
+    "version": "2.0.0",
+	"tasks": [
+        {
+            "label": "build SystemTest/Daemons",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/SystemTests.Daemons.csproj"
+            ],
+            "problemMatcher": "$msCompile",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

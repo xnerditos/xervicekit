@@ -1,0 +1,50 @@
+using System;
+using XKit.Lib.Common.Fabric;
+using XKit.Lib.Common.Host;
+using XKit.Lib.Common.ObjectInstantiation;
+using XKit.Lib.Common.Registration;
+using XKit.Lib.Common.Services;
+
+namespace SystemTests._NAMESPACE.Svc1.Service {
+
+	public interface ISvc1ServiceFactory : ITestServiceFactory {}
+
+	public class Svc1ServiceFactory : ISvc1ServiceFactory {
+		private static ISvc1ServiceFactory factory = new Svc1ServiceFactory();
+
+		public static ISvc1ServiceFactory Factory => factory;
+
+        // =====================================================================
+        // IMockServiceFactory
+        // =====================================================================
+
+		IManagedService ITestServiceFactory.Create(
+            ILocalEnvironment localEnvironment,
+            IDependencyConnector dependencyConnector
+        ) {
+            localEnvironment ??= InProcessGlobalObjectRepositoryFactory.CreateSingleton().GetObject<ILocalEnvironment>(); 
+            dependencyConnector ??= InProcessGlobalObjectRepositoryFactory.CreateSingleton().GetObject<IDependencyConnector>();
+            if (localEnvironment == null) { throw new ArgumentNullException(nameof(localEnvironment)); }
+            if (dependencyConnector == null) { throw new ArgumentNullException(nameof(dependencyConnector)); }
+            return new Svc1Service(localEnvironment);
+        } 
+
+        // =====================================================================
+        // IServiceFactory
+        // =====================================================================
+
+        IReadOnlyDescriptor IServiceFactory.Descriptor => Constants.ServiceDescriptor;
+        
+        // =====================================================================
+        // Static methods
+        // =====================================================================
+
+        public static IManagedService Create(
+            ILocalEnvironment localEnvironment = null,
+            IDependencyConnector dependencyConnector = null
+        ) => Factory.Create(localEnvironment, dependencyConnector);
+
+        public static void InjectCustomFactory(ISvc1ServiceFactory factory) =>
+            Svc1ServiceFactory.factory = factory; 
+	}
+}

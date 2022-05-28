@@ -1,0 +1,21 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build all",
+            "command": "${workspaceFolder}/build-all.sh",
+            "type": "process",
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "publish all",
+            "command": "${workspaceFolder}/publish-all.sh",
+            "type": "process",
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}
