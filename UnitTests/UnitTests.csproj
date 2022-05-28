@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="FluentAssertions" Version="6.7.0"/>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0"/>
+		<PackageReference Include="Moq" Version="4.18.1"/>
+		<PackageReference Include="MSTest.TestAdapter" Version="2.2.10"/>
+		<PackageReference Include="MSTest.TestFramework" Version="2.2.10"/>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="../XKit.Lib.Testing/XKit.Lib.Testing.csproj"/>
+		<ProjectReference Include="../XKit.Lib.Common/XKit.Lib.Common.csproj"/>
+		<ProjectReference Include="../XKit.Lib.Connector/XKit.Lib.Connector.csproj"/>
+		<ProjectReference Include="../XKit.Lib.Host/XKit.Lib.Host.csproj"/>
+		<ProjectReference Include="../XKit.Lib.LocalLog/XKit.Lib.LocalLog.csproj"/>
+		<ProjectReference Include="../XKit.Lib.Storage/XKit.Lib.Storage.csproj"/>
+	</ItemGroup>
+	<PropertyGroup>
+		<NoWarn>$(NoWarn);NU1603</NoWarn>
+	</PropertyGroup>
+</Project>

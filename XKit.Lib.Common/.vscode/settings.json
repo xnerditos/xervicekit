@@ -1,0 +1,5 @@
+{
+    "csharpfixformat.style.braces.onSameLine": false,
+    "csharpfixformat.style.spaces.beforeParenthesis": false,
+    "csharpfixformat.style.indent.preprocessorIgnored": false,
+}

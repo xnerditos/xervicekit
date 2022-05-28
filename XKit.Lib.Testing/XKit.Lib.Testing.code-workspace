@@ -1,0 +1,42 @@
+{
+	"folders": [
+        {
+            "path": "."
+        },
+        {
+            "path": "../UnitTests"
+        }
+    ],
+	"settings": {
+		"csharpfixformat.style.braces.onSameLine": true,
+		"csharpfixformat.style.spaces.beforeParenthesis": false,
+		"csharpfixformat.style.indent.preprocessorIgnored": false,
+        "editor.insertSpaces": true,
+        "csharp.format.enable": false,
+        "dotnet-test-explorer.testProjectPath": "{../UnitTests/*.csproj}",
+        "csharp.unitTestDebuggingOptions": {
+            "stopAtEntry": true,
+            "logging": {
+                "engineLogging": false,
+                "exceptions": true,
+                "programOutput": true,
+                "moduleLoad": false
+            },
+            "justMyCode": false,
+            "requireExactSource": false,
+            "suppressJITOptimizations": true,
+            "enableStepFiltering": false,
+            "symbolOptions": {
+                "searchMicrosoftSymbolServer": true,
+                "moduleFilter": {
+                    "mode": "loadOnlyIncluded",
+                    "includeSymbolsNextToModules": true,
+                    "includedModules": [
+                    ]
+                },
+                "searchPaths": [
+                ]
+            }
+        }
+	}
+}

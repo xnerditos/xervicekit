@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build LocalLog",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/XKit.Lib.LocalLog.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}

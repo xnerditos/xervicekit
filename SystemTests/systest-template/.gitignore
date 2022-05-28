@@ -1,0 +1,13 @@
+# Add any directories, files, or patterns you don't want to be tracked by version control
+
+**/testdatatmp/
+.vs/
+**/obj
+**/bin
+**/Publish/
+**/obj/Debug/
+**/obj/Release/
+**/bin/Debug/
+**/bin/Release/
+**/PublishOutput/
+

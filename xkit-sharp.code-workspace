@@ -1,0 +1,43 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+    "settings": {
+        "omnisharp.enableEditorConfigSupport": true,
+        "omnisharp.enableRoslynAnalyzers": true,
+        "editor.insertSpaces": true,
+        "csharp.format.enable": true,
+        "dotnet-test-explorer.testProjectPath": "{./UnitTests/UnitTests.csproj,./SystemTests/ServiceCalls/SystemTests.ServiceCalls.csproj,./SystemTests/Daemons/SystemTests.Daemons.csproj}",
+        "dotnet-test-explorer.autoExpandTree": true,
+        "csharp.unitTestDebuggingOptions": {
+            "stopAtEntry": true,
+            "logging": {
+                "engineLogging": false,
+                "exceptions": true,
+                "programOutput": true,
+                "moduleLoad": false
+            },
+            "justMyCode": false,
+            "requireExactSource": false,
+            "suppressJITOptimizations": true,
+            "symbolOptions": {
+                "searchMicrosoftSymbolServer": true,
+                "moduleFilter": {
+                    "mode": "loadOnlyIncluded",
+                    "includeSymbolsNextToModules": true,
+                    "includedModules": [
+                        "XKit.Lib.*.dll"
+                    ]
+                },
+                "searchPaths": [
+                ]
+            }
+        },
+        "cSpell.words": [
+            "omnisharp",
+            "Retriable"
+        ]
+    }
+}

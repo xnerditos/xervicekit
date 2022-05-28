@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Connector",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/XKit.Lib.Connector.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}
