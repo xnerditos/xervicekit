@@ -3,7 +3,7 @@ using System.Threading;
 using SystemTests.Daemons.SvcWithAutoMessaging.Entities;
 using XKit.Lib.Common.Host;
 using XKit.Lib.Host.DefaultBaseClasses;
-using XKit.Lib.LocalLog;
+using XKit.Lib.Log;
 
 namespace SystemTests.Daemons.SvcWithAutoMessaging.Service {
 
@@ -13,7 +13,7 @@ namespace SystemTests.Daemons.SvcWithAutoMessaging.Service {
         protected override string Name => "AutoMessagingDaemon";
 
         public SvcWithAutoMessagingDaemon() 
-            : base(XKit.Lib.LocalLog.LogSessionFactory.Factory) {
+            : base(XKit.Lib.Log.LogSessionFactory.Factory) {
             this.WakeDelayMillisecondsWhenNoMessagesWaiting = 200;
             this.WakeDelayMillisecondsWhenMessagesWaiting = 200;
             this.EnableEnqueueEvent = true;

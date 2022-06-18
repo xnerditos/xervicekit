@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using XKit.Lib.Common.Log;
 using XKit.Lib.Common.Utility;
 using XKit.Lib.Common.Utility.Extensions;
-using XKit.Lib.LocalLog.Entities;
+using XKit.Lib.Log.Entities;
 
-namespace XKit.Lib.LocalLog {
+namespace XKit.Lib.Log {
 
     internal class LogSession : ILogSession {
 

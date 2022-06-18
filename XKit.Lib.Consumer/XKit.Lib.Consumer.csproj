@@ -21,7 +21,7 @@
 		<ProjectReference Include="../XKit.Lib.Common/XKit.Lib.Common.csproj"/>
 		<ProjectReference Include="../XKit.Lib.Connector/XKit.Lib.Connector.csproj"/>
 		<ProjectReference Include="../XKit.Lib.Connector.Protocols.Http/XKit.Lib.Connector.Protocols.Http.csproj"/>
-		<ProjectReference Include="../XKit.Lib.LocalLog/XKit.Lib.LocalLog.csproj"/>
+		<ProjectReference Include="../XKit.Lib.Log/XKit.Lib.Log.csproj"/>
 	</ItemGroup>
 	<PropertyGroup>
 		<NoWarn>$(NoWarn);NU1603</NoWarn>

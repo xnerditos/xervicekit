@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using XKit.Lib.Common.Log;
 
-namespace XKit.Lib.LocalLog.Entities {
+namespace XKit.Lib.Log.Entities {
     class LogSessionState {
         
         public Dictionary<string, object> AutoLogValues { get; } = new Dictionary<string, object>();

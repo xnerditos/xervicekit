@@ -33,6 +33,6 @@
 		<ProjectReference Include="../../XKit.Lib.Testing/XKit.Lib.Testing.csproj"/>
 		<ProjectReference Include="../../XKit.Lib.Connector.Protocols.Direct/XKit.Lib.Connector.Protocols.Direct.csproj"/>
 		<ProjectReference Include="../../XKit.Lib.Host.Helpers/XKit.Lib.Host.Helpers.csproj"/>
-		<ProjectReference Include="../../XKit.Lib.LocalLog/XKit.Lib.LocalLog.csproj"/>
+		<ProjectReference Include="../../XKit.Lib.Log/XKit.Lib.Log.csproj"/>
 	</ItemGroup>
 </Project>

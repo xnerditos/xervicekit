@@ -22,7 +22,7 @@
 		<ProjectReference Include="../XKit.Lib.Connector.Protocols.Http/XKit.Lib.Connector.Protocols.Http.csproj"/>
 		<ProjectReference Include="../XKit.Lib.Host/XKit.Lib.Host.csproj"/>
 		<ProjectReference Include="../XKit.Lib.Host.MetaServices/XKit.Lib.Host.MetaServices.csproj"/>
-		<ProjectReference Include="../XKit.Lib.LocalLog/XKit.Lib.LocalLog.csproj"/>
+		<ProjectReference Include="../XKit.Lib.Log/XKit.Lib.Log.csproj"/>
 	</ItemGroup>
 	<PropertyGroup>
 		<NoWarn>$(NoWarn);NU1603</NoWarn>

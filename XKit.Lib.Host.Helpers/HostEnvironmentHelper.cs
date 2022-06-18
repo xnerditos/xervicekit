@@ -59,7 +59,7 @@ namespace XKit.Lib.Host {
                 HttpClientFactory.Factory
             };
 
-            logSessionFactory ??= LocalLog.LogSessionFactory.Factory;
+            logSessionFactory ??= Log.LogSessionFactory.Factory;
 
             HostEnvironmentHelper.logSessionFactory = logSessionFactory;
             

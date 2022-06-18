@@ -19,11 +19,10 @@ namespace SystemTests.Daemons.Tests {
 
         [TestMethod]
         public void DaemonIsRunning() => TestHostHelper.RunTest(() => {
-
-            uint getLastMessageValue() => 
+            static uint getLastMessageValue() => 
                 SvcWithAutoMessaging.Service.SvcWithAutoMessagingDaemonOperation.LastMessageTickValue;
             
-            var testThreadId = Thread.CurrentThread.ManagedThreadId;
+            var testThreadId = System.Environment.CurrentManagedThreadId;
             Debug.WriteLine($"(test point 1) Test thread id {testThreadId}");
 
             Yield(1000);
@@ -67,6 +66,12 @@ namespace SystemTests.Daemons.Tests {
         [TestMethod]
         [Ignore]
         public void ProperlyShutsDown() => TestHostHelper.RunTest(() => {
+            throw new NotImplementedException();
+        });
+
+        [TestMethod]
+        [Ignore]
+        public void MainThreadPausesAndResumes() => TestHostHelper.RunTest(() => {
             throw new NotImplementedException();
         });
 

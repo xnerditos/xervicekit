@@ -31,7 +31,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="../XKit.Lib.Host/XKit.Lib.Host.csproj"/>
-		<ProjectReference Include="../XKit.Lib.LocalLog/XKit.Lib.LocalLog.csproj"/>
+		<ProjectReference Include="../XKit.Lib.Log/XKit.Lib.Log.csproj"/>
 		<ProjectReference Include="../XKit.Lib.Host.Helpers/XKit.Lib.Host.Helpers.csproj"/>
 		<ProjectReference Include="../XKit.Lib.Connector/XKit.Lib.Connector.csproj"/>
 		<ProjectReference Include="../XKit.Lib.Connector.Protocols.Direct/XKit.Lib.Connector.Protocols.Direct.csproj"/>
