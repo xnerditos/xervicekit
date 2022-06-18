@@ -2,7 +2,7 @@ using System;
 using XKit.Lib.Common.Log;
 using XKit.Lib.Common.Utility.Extensions;
 
-namespace XKit.Lib.LocalLog {
+namespace XKit.Lib.Log {
 
     public class ConsoleLogWriter : ILogWriter {
         public static bool PrettyOutput { get; set; } = false;

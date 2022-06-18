@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using XKit.Lib.Common.Log;
 
-namespace XKit.Lib.LocalLog.Entities {
+namespace XKit.Lib.Log.Entities {
 
     public class LogEventEntry : IReadOnlyLogEventEntry {
         private DateTime timestamp = DateTime.UtcNow;

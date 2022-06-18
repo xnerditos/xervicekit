@@ -10,7 +10,7 @@ using XKit.Lib.Connector.Fabric;
 using XKit.Lib.Common.Client;
 using XKit.Lib.Common.Utility.Threading;
 using System.Threading.Tasks;
-using XKit.Lib.LocalLog;
+using XKit.Lib.Log;
 using XKit.Lib.Common.Utility;
 using XKit.Lib.Common.Host;
 

@@ -14,15 +14,14 @@ namespace SystemTests.Daemons.Tests {
         public void Initialize() { TestBase.ClassInit(); }
 
         [TestCleanup]
-        public static void Teardown() { TestBase.ClassTeardown(); }
+        public void Teardown() { TestBase.ClassTeardown(); }
 
         [TestMethod]
         public void DaemonIsRunning() => TestHostHelper.RunTest(() => {
-
-            uint getLastMessageValue() => 
+            static uint getLastMessageValue() => 
                 SvcWithAutoMessaging.Service.SvcWithAutoMessagingDaemonOperation.LastMessageTickValue;
             
-            var testThreadId = Thread.CurrentThread.ManagedThreadId;
+            var testThreadId = System.Environment.CurrentManagedThreadId;
             Debug.WriteLine($"(test point 1) Test thread id {testThreadId}");
 
             Yield(2000);

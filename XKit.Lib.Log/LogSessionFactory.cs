@@ -1,6 +1,6 @@
 using XKit.Lib.Common.Log;
 
-namespace XKit.Lib.LocalLog {
+namespace XKit.Lib.Log {
 
     public class LogSessionFactory : ILogSessionFactory {
 
