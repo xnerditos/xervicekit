@@ -9,8 +9,8 @@ namespace XKit.Lib.Common.Utility.Threading {
     /// A lightweight mechanism for execution of tasks in order
     /// </summary>
     public class TaskQueue {
-        private readonly object locker = new object();
-        private readonly WeakReference<Task> lastTaskReference = new WeakReference<Task>(null);
+        private readonly object locker = new();
+        private readonly WeakReference<Task> lastTaskReference = new(null);
 
         public Task Enqueue(Action action) {
             return Enqueue<bool>(() => {
@@ -22,10 +22,9 @@ namespace XKit.Lib.Common.Utility.Threading {
         public Task<T> Enqueue<T>(Func<T> function) {
 
             lock(locker) {
-                Task lastTask;
                 Task<T> resultTask;
 
-                if (lastTaskReference.TryGetTarget(out lastTask)) {
+                if (lastTaskReference.TryGetTarget(out var lastTask)) {
                     resultTask = lastTask.ContinueWith(_ => function(), TaskContinuationOptions.ExecuteSynchronously);
                 } else {
                     resultTask = Task.Run(function);
@@ -39,10 +38,9 @@ namespace XKit.Lib.Common.Utility.Threading {
 
         public Task Enqueue(Func<Task> asyncAction) {
             lock(locker) {
-                Task lastTask;
                 Task resultTask;
 
-                if (lastTaskReference.TryGetTarget(out lastTask)) {
+                if (lastTaskReference.TryGetTarget(out var lastTask)) {
                     resultTask = lastTask.ContinueWith(_ => asyncAction(), TaskContinuationOptions.ExecuteSynchronously).Unwrap();
                 } else {
                     resultTask = Task.Run(asyncAction);
@@ -56,10 +54,9 @@ namespace XKit.Lib.Common.Utility.Threading {
 
         public Task<T> Enqueue<T>(Func<Task<T>> asyncFunction) {
             lock(locker) {
-                Task lastTask;
                 Task<T> resultTask;
 
-                if (lastTaskReference.TryGetTarget(out lastTask)) {
+                if (lastTaskReference.TryGetTarget(out var lastTask)) {
                     resultTask = lastTask.ContinueWith(_ => asyncFunction(), TaskContinuationOptions.ExecuteSynchronously).Unwrap();
                 } else {
                     resultTask = Task.Run(asyncFunction);
@@ -82,8 +79,7 @@ namespace XKit.Lib.Common.Utility.Threading {
 
         public Task LastTask {
             get {
-                Task lastTask = null;
-                lastTaskReference.TryGetTarget(out lastTask);
+                lastTaskReference.TryGetTarget(out var lastTask);
                 return lastTask;
             }
         }

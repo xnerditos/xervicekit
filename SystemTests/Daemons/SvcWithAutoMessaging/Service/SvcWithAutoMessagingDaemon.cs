@@ -1,11 +1,13 @@
 using System;
-using System.Threading;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using SystemTests.Daemons.SvcWithAutoMessaging.Entities;
 using XKit.Lib.Common.Host;
 using XKit.Lib.Host.DefaultBaseClasses;
-using XKit.Lib.Log;
 
 namespace SystemTests.Daemons.SvcWithAutoMessaging.Service {
+
+    public interface ISvcWithAutoMessagingService : IManagedService, IServiceBase { }
 
     public interface ISvcWithAutoMessagingDaemon : IServiceDaemon { } 
 
@@ -14,26 +16,39 @@ namespace SystemTests.Daemons.SvcWithAutoMessaging.Service {
 
         public SvcWithAutoMessagingDaemon() 
             : base(XKit.Lib.Log.LogSessionFactory.Factory) {
-            this.WakeDelayMillisecondsWhenNoMessagesWaiting = 200;
-            this.WakeDelayMillisecondsWhenMessagesWaiting = 200;
-            this.EnableEnqueueEvent = true;
-            this.AutoPulseActive = true;
+            this.DefaultTimerPeriodMilliseconds = 90;
+            this.EnableTimerEvent = true;
         }
         protected override IServiceDaemonOperation<DaemonMessage> CreateDaemonOperation(ServiceDaemonOperationContext context) 
             => new SvcWithAutoMessagingDaemonOperation(context);
 
-        protected override void OnEnqueueEvent() {
+        protected override void OnTimerEvent() {
             var nowTicks = (uint)(DateTime.Now.Ticks & 0xffffffff);
 
-             var threadId = Thread.CurrentThread.ManagedThreadId;
+             var threadId = System.Environment.CurrentManagedThreadId;
              PostMessage(new DaemonMessage {
                 Ticks = nowTicks,
                 Message = $"Clock ticks are currently {nowTicks}.  Main thread is {threadId}"
             });
         }
+    }
 
-        protected override TimeSpan? OnDetermineEnqueueEventPeriod() {
-            return TimeSpan.FromMilliseconds(1);
+    public partial class SvcWithAutoMessagingDaemonOperation 
+        : ServiceDaemonOperation<DaemonMessage> {
+
+        private static volatile uint lastMessageTickValue = 0;
+        public static uint LastMessageTickValue => lastMessageTickValue;
+
+        public SvcWithAutoMessagingDaemonOperation(
+            ServiceDaemonOperationContext context
+        ) : base(context) { }
+
+        protected override async Task DoOperationLogic(DaemonMessage message) {
+            await Task.Delay(10);
+            lastMessageTickValue = message.Ticks;
+            string name = nameof(SvcWithAutoMessagingDaemon);
+            var threadId = System.Environment.CurrentManagedThreadId;
+            Debug.WriteLine($"From {name}.  Thread id {threadId}: {message.Message}");
         }
     }
 }

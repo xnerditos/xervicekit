@@ -2,12 +2,12 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build Storage",
+            "label": "Build Consumer",
             "command": "dotnet",
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/XKit.Lib.Storage.csproj"
+                "${workspaceFolder}/XKit.Lib.Consumer.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

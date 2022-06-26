@@ -1,42 +1,40 @@
 using System;
 using System.Collections.Concurrent;
-using System.Linq;
-using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
 using XKit.Lib.Common.Host;
+using XKit.Lib.Common.Utility.Extensions;
+using XKit.Lib.Common.Utility.Threading;
 
 namespace XKit.Lib.Host.Helpers {
 
     public sealed class DaemonEngine<TMessage> : IDaemonEngine<TMessage>
         where TMessage : class {
 
-        private const int SmallSleepThreadDelayMilliseconds = 100;
+        // FUTURE:  Add a feature for a "monitor thread" that runs whatever code continuously in order to 
+        //          monitor non-periodic resources for message generation. 
         private volatile DaemonRunStateEnum runState = DaemonRunStateEnum.Stopped;
-        private Thread messageThread;
-        private ManualResetEvent messageThreadSignal = new ManualResetEvent(false);
-        private volatile int messageThreadWakeDelayMillisecondsNoWorkWaiting = -1;
-        private volatile int messageThreadWakeDelayMillisecondsWorkIsWaiting = 1000;
-        private volatile int messageThreadMillisecondsStopTimeout = 15000;
+        private System.Timers.Timer timer;
+        private volatile uint defaultTimerPeriodMilliseconds = 60 * 1000; // default 1 one minute
         private volatile int maxConcurrentMessages = 4;
-        private volatile bool autoPulseActive = true;
-        private volatile bool messageDispatchActive = true;
         private volatile bool debugMode = false;
-        private volatile bool enableEnqueueEvent = false;
-        private DateTime? nextEnqueueMessagesEvent = null;
+        private volatile bool enableTimer = false;
+        // NOTE:  Really not loving the idea of using a boolean flag to indicate
+        //        that a batch is running.  This approach makes for more complicated logic. 
+        //        Revisit this in the future.
+        private volatile bool messageBatchRunning = false; 
 
-        private ConcurrentQueue<TMessage> waitingMessages = new ConcurrentQueue<TMessage>();
-        private ConcurrentDictionary<Guid, TMessage> processingMessages = new ConcurrentDictionary<Guid, TMessage>();
-        private OnDaemonEventDelegate onStartup;
-        private OnDaemonEventPulseDelegate onPulse;
-        private OnDaemonEventDelegate onStartDispatch;
-        private OnDaemonEventDispatchMessageDelegate<TMessage> onDispatchMessage;
-        private OnDaemonEventDelegate onEndDispatch;
-        private OnDaemonEventDelegate onTeardown;
-        private OnDaemonEventDelegate onEnqueueMessagesTimer;
-        private OnDaemonEventDetermineEnqueueMessagesTimerPeriodDelegate onDetermineEnqueueMessagesTimerPeriod;
+        private readonly ConcurrentQueue<TMessage> waitingMessages = new();
+        private readonly ConcurrentDictionary<Guid, TMessage> processingMessages = new();
+        private readonly ConcurrentDictionary<Guid, Task> asyncWorkers = new();
         
-        public DaemonEngine() {
-            messageThread = new Thread(MainMessagePump);
-        }
+        private OnDaemonEventDelegate onStartProcessMessageBatch;
+        private OnDaemonEventProcessMessageDelegate<TMessage> onProcessMessage;
+        private OnDaemonEventDelegate onEndProcessMessageBatch;
+        private OnDaemonEventDelegate onTimerEvent;
+        private OnDaemonEventDetermineTimerPeriodDelegate onDetermineTimerPeriod;
+        
+        public DaemonEngine() { }
 
         // =====================================================================
         // IDaemon
@@ -47,72 +45,55 @@ namespace XKit.Lib.Host.Helpers {
         void IDaemonEngine.Pause() {
             if (this.runState == DaemonRunStateEnum.Running) {
                 this.runState = DaemonRunStateEnum.Pausing;
-                TriggerPulse();
+                StopTimerIfEnabled();
+                if (asyncWorkers.IsEmpty) {
+                    this.runState = DaemonRunStateEnum.Paused;
+                }
+                // NOTE:  IF there are background processing messages, then they will end up setting the state when they finish
             } 
         }
 
         void IDaemonEngine.Resume() {
-            if (this.runState == DaemonRunStateEnum.Paused) {
-                this.runState = DaemonRunStateEnum.Resuming;
-                TriggerPulse();
+            if (runState == DaemonRunStateEnum.Paused) {
+                runState = DaemonRunStateEnum.Running;
+                StartTimerIfEnabled();
             } 
         }
 
-        void IDaemonEngine.Pulse() {
-            TriggerPulse();
-        }
+        void IDaemonEngine<TMessage>.PostMessage(TMessage message, bool triggerProcessing) => PostMessages(triggerProcessing, message);
 
-        void IDaemonEngine<TMessage>.PostMessage(TMessage message, bool triggerPulse) {
-            if (this.runState == DaemonRunStateEnum.Stopping) {
-                throw new Exception("Cannot post messages while the daemon is stopping");
-            }
-            this.waitingMessages.Enqueue(message);
-            if (triggerPulse) { TriggerPulse(); }
-        }
+        void IDaemonEngine<TMessage>.PostMessages(TMessage[] messages, bool triggerProcessing) => PostMessages(triggerProcessing, messages);
 
-        // Guid IDaemonEngine<TMessage>.ProcessMessageDirectly(TMessage message) {
-        //     return this.RunDispatchOneMessage(message);            
-        // }
-
-        bool IDaemonEngine.DispatchMessageDirectly() 
-            => RunDispatchOneMessage() != null;
+        bool IDaemonEngine.ProcessMessages(bool background) {
+            return ProcessMessageBatch(background);
+        } 
 
         void IDaemonEngine.Start() {
-            StartMainThread(); 
+            if (runState == DaemonRunStateEnum.Stopped) {
+                runState = DaemonRunStateEnum.Running;
+                StartTimerIfEnabled();
+            }
         }
 
         void IDaemonEngine.Stop() {
-            StopMainThread();
+            if (runState != DaemonRunStateEnum.Stopping) {
+                this.runState = DaemonRunStateEnum.Stopping;
+                StopTimerIfEnabled();
+                if (asyncWorkers.IsEmpty) {
+                    this.runState = DaemonRunStateEnum.Stopped;
+                }
+                // NOTE:  IF there are background processing messages, then they will end up setting the state when they finish
+            }
         }
 
-        bool IDaemonEngine.IsAutomaticMessageDispatchActive => this.messageDispatchActive && !this.debugMode;
-
-        void IDaemonEngine.SuspendAutomaticMessageDispatch() {
-            this.messageDispatchActive = false;
-        }
-
-        void IDaemonEngine.ResumeAutomaticMessageDispatch() {
-            this.messageDispatchActive = true;        
-        }
-
-        void IDaemonEngine.SignalFinishMessageProcessing(Guid messageProcessingId) {
-            TMessage message;
-            processingMessages.TryRemove(messageProcessingId, out message);
-        }
-
-        int IDaemonEngine.WakeDelayMillisecondsNoWork { 
-            get => this.messageThreadWakeDelayMillisecondsNoWorkWaiting; 
-            set => this.messageThreadWakeDelayMillisecondsNoWorkWaiting = value; 
-        }
-
-        int IDaemonEngine.TimeoutToStopMilliseconds { 
-            get => this.messageThreadMillisecondsStopTimeout; 
-            set => this.messageThreadMillisecondsStopTimeout = value; 
-        }
-
-        int IDaemonEngine.WakeDelayMillisecondsWorkWaiting {
-            get => this.messageThreadWakeDelayMillisecondsWorkIsWaiting;
-            set => this.messageThreadWakeDelayMillisecondsWorkIsWaiting = value;
+        bool IDaemonEngine.ProcessOneMessageSync() {
+            if (CanProcessMessages()) {
+                ProcessBatchBeginIfNeeded();
+                ProcessOneMessageSync();
+                ProcessBatchEndIfReady(false);
+                return true;
+            }
+            return false;
         }
 
         int IDaemonEngine.MaxConcurrentMessages {
@@ -120,27 +101,19 @@ namespace XKit.Lib.Host.Helpers {
             set => this.maxConcurrentMessages = value;
         }
 
-        bool IDaemonEngine.AutoPulseActive { 
-            get => this.autoPulseActive;
-            set {
-                this.autoPulseActive = value;
-                if (value && this.runState == DaemonRunStateEnum.Running) {
-                    TriggerPulse();
-                }
-            }
+        uint IDaemonEngine.DefaultTimerPeriodMilliseconds { 
+            get => this.defaultTimerPeriodMilliseconds;
+            set => this.defaultTimerPeriodMilliseconds = value;
         }
 
-        bool IDaemonEngine.EnableEnqueueEvent { 
-            get => enableEnqueueEvent; 
+        bool IDaemonEngine.EnableTimer { 
+            get => enableTimer; 
             set {                
-                enableEnqueueEvent = value; 
-
-                // if the next Enqueue event has passed, set it to this so that
-                // the actual wake delay will just be the normal delay timeouts.
-                this.nextEnqueueMessagesEvent = null;
-
-                if (value && this.runState == DaemonRunStateEnum.Running) {
-                    TriggerPulse();
+                enableTimer = value; 
+                if (value) {
+                    StartTimerIfEnabled();
+                } else {
+                    StopTimerIfEnabled();
                 }
             }
         }
@@ -149,233 +122,186 @@ namespace XKit.Lib.Host.Helpers {
         int IDaemonEngine.WaitingMessageCount => this.waitingMessages.Count;
         bool IDaemonEngine.DebugMode {
             get => this.debugMode;
-            set {
-                this.debugMode = value;
-                if (!value && this.runState == DaemonRunStateEnum.Running) {
-                    TriggerPulse();
-                }
-            }
+            set => this.debugMode = value;
         }
         
-        bool IDaemonEngine.HasMessages => this.waitingMessages.Count > 0 || this.processingMessages.Count > 0;
+        bool IDaemonEngine.HasMessages => !waitingMessages.IsEmpty || !processingMessages.IsEmpty;
 
-        OnDaemonEventDelegate IDaemonEngine.OnStartup {
-            get => onStartup;
-            set => onStartup = value;
+        OnDaemonEventDelegate IDaemonEngine.OnStartProcessMessageBatch {
+            get => onStartProcessMessageBatch;
+            set => onStartProcessMessageBatch = value;
         }
 
-        OnDaemonEventPulseDelegate IDaemonEngine.OnPulse {
-            get => onPulse;
-            set => onPulse = value;
+        OnDaemonEventProcessMessageDelegate<TMessage> IDaemonEngine<TMessage>.OnProcessMessage {
+            get => onProcessMessage;
+            set => onProcessMessage = value;
         }
 
-        OnDaemonEventDelegate IDaemonEngine.OnStartDispatch {
-            get => onStartDispatch;
-            set => onStartDispatch = value;
+        OnDaemonEventDelegate IDaemonEngine.OnEndProcessMessageBatch {
+            get => onEndProcessMessageBatch;
+            set => onEndProcessMessageBatch = value;
         }
 
-        OnDaemonEventDispatchMessageDelegate<TMessage> IDaemonEngine<TMessage>.OnDispatchMessage {
-            get => onDispatchMessage;
-            set => onDispatchMessage = value;
+        OnDaemonEventDelegate IDaemonEngine.OnTimerEvent {
+            get => onTimerEvent;
+            set => onTimerEvent = value;
         }
 
-        OnDaemonEventDelegate IDaemonEngine.OnEndDispatch {
-            get => onEndDispatch;
-            set => onEndDispatch = value;
-        }
-
-        OnDaemonEventDelegate IDaemonEngine.OnTeardown { 
-            get => onTeardown;
-            set => onTeardown = value;
-        }
-
-        OnDaemonEventDelegate IDaemonEngine.OnEnqueueMessagesTimer {
-            get => onEnqueueMessagesTimer;
-            set => onEnqueueMessagesTimer = value;
-        }
-
-        OnDaemonEventDetermineEnqueueMessagesTimerPeriodDelegate IDaemonEngine.OnDetermineEnqueueMessagesTimerPeriod { 
-            get => onDetermineEnqueueMessagesTimerPeriod; 
-            set => onDetermineEnqueueMessagesTimerPeriod = value; 
+        OnDaemonEventDetermineTimerPeriodDelegate IDaemonEngine.OnDetermineTimerPeriod { 
+            get => onDetermineTimerPeriod; 
+            set => onDetermineTimerPeriod = value; 
         }
 
         // =====================================================================
-        // main thread work control
-        // =====================================================================
 
-        void TriggerPulse() {
-            messageThreadSignal.Set();
-        }
-
-        private void MainMessagePump() {
-            
-            while(true) {
-                
-                switch(runState) {
-                    
-                    case DaemonRunStateEnum.Starting:
-                        onStartup?.Invoke();
-                        runState = DaemonRunStateEnum.Running;
-                        break;
-                    
-                    case DaemonRunStateEnum.Running:
-                        CheckRunEnqueueMessagesEvent();
-                        DispatchMessagesAndSleepTilPulse();
-                        break;
-                    
-                    case DaemonRunStateEnum.Pausing:
-                        SleepWhilePaused();
-                        break;
-                    
-                    case DaemonRunStateEnum.Stopping:
-                        
-                        if (waitingMessages.Any()) {
-                            // need to clear the queue
-                            DispatchMessagesAndSleepTilPulse();
-                        } else if (processingMessages.Any()) {
-                            // need to wait for currently processing to stop
-                            SleepWaitForSignal(wakeOnDelay: true);
-                        } else {
-                            // all clear, tear it down
-                            onTeardown?.Invoke();
-                            runState = DaemonRunStateEnum.Stopped;
-                            return;
-                        }
-                        break;
-
-                    default:
-                        throw new Exception("Unexpected daemon run state");
-                }
+        private void PostMessages(bool triggerProcessing, params TMessage[] messages) {
+            if (runState != DaemonRunStateEnum.Running) {
+                throw new Exception("Can only post messages while the daemon is running");
+            }
+            messages.ForEach(m => this.waitingMessages.Enqueue(m));
+            if (triggerProcessing && !debugMode) {
+                ProcessMessageBatch(background: true);
             }
         }
 
-        private void SleepWhilePaused() {
+        private void StartTimerIfEnabled() {
+            if (runState == DaemonRunStateEnum.Running && enableTimer && onTimerEvent != null) {
+                if (this.timer == null) {
+                    timer = new() {
+                        AutoReset = false
+                    };
+                    timer.Elapsed += ElapsedTimerEventHandler;
+                }
+                this.timer.Interval = this.onDetermineTimerPeriod?.Invoke() ?? this.defaultTimerPeriodMilliseconds;
+                timer.Start();
+            }
+        }
 
-            runState = DaemonRunStateEnum.Paused;
+        private void ElapsedTimerEventHandler(object sender, ElapsedEventArgs e) {
+            if (runState == DaemonRunStateEnum.Running) {
+                onTimerEvent?.Invoke();
+                StartTimerIfEnabled();
+            }
+        }
 
+        private void StopTimerIfEnabled() {
+            timer?.Stop();
+        }
+
+        private bool CanProcessMessages() => 
+            (this.runState == DaemonRunStateEnum.Running || this.runState == DaemonRunStateEnum.Stopping) &&
+            !waitingMessages.IsEmpty;
+
+        private bool ProcessMessageBatch(bool background) {
+
+            if (CanProcessMessages()) {
+                ProcessBatchBeginIfNeeded();
+                if (!background) {
+                    // if running synchronously, just run the worker method directly
+                    ProcessMessageWorker(false);
+                } else {
+                    // the first thread will start the rest
+                    StartOneBackgroundWorker();
+                }
+                return true;
+            }
+            return false;
+        }
+
+        private void StartOneBackgroundWorker() {
+            // FUTURE:  Keep track of task and abort using thread.abort as a cancellation mechanism
+            //          for cases of tasks timing out. 
+            // FUTURE:  Automatically calculate if we want to use longRunning or not based on the average execution time
+            //          of worker threads
+
+            var workerId = Guid.NewGuid();
+            var task = TaskUtil.RunSyncAsAsync(() => {
+                    ProcessMessageWorker(true);
+                    asyncWorkers.TryRemove(workerId, out _);
+                }, true);
+
+            asyncWorkers[workerId] = task;
+            task.Start();
+            task.Forget();
+        }
+
+        private void ProcessMessageWorker(bool background) {
+
+            Guid lastProcessedMessageId;
             do {
-                SleepWaitForSignal(wakeOnDelay: false);
-            } while(runState == DaemonRunStateEnum.Paused);
-
-            // transition state
-            switch (runState) {
-                case DaemonRunStateEnum.Resuming: 
-                    runState = DaemonRunStateEnum.Running;
-                    break;
-            }
-        }
-
-        private void CheckRunEnqueueMessagesEvent() {
-            if (enableEnqueueEvent &&
-                messageDispatchActive &&
-                !debugMode &&
-                processingMessages.Count < maxConcurrentMessages
-            ) {
-
-                if (!this.nextEnqueueMessagesEvent.HasValue) {
-                    this.nextEnqueueMessagesEvent = CalculateTimeNextEnqueueMessageEvent();
-                } 
-
-                if (DateTime.UtcNow >= nextEnqueueMessagesEvent.GetValueOrDefault(DateTime.MaxValue)) {
-                    onEnqueueMessagesTimer.Invoke();
-                    this.nextEnqueueMessagesEvent = CalculateTimeNextEnqueueMessageEvent();
+                if (background) {
+                    ProcessCheckAddBackgroundWorkers();
                 }
-            } 
+                lastProcessedMessageId = ProcessOneMessageSync();
+            } while(lastProcessedMessageId != default);
+
+            ProcessBatchEndIfReady(background);
         }
 
-        private DateTime? CalculateTimeNextEnqueueMessageEvent() {
+        private void ProcessCheckAddBackgroundWorkers() {
+            // to prevent multiple threads from trying to scale workers at once, 
+            // lock on processingMessages.  Note that there is a reason we scale workers
+            // inside of the workers.  If the max number of workers is running, and
+            // work runs out so they start to finish, and during that time a new message comes
+            // in, letting the existing workers scale up will bring the number back up again.
+            lock (processingMessages) {
+                while(CanProcessMessages() && asyncWorkers.Count < maxConcurrentMessages) {
+                    StartOneBackgroundWorker();
+                }
+            }
+        }
+
+        private Guid ProcessOneMessageSync() {
             
-            var delayForNextEvent = onDetermineEnqueueMessagesTimerPeriod?.Invoke();
-            if (delayForNextEvent.HasValue) {
-                return DateTime.UtcNow.Add(delayForNextEvent.Value);
-            } else {
-                return null;
-            }
-        }
-
-        private void DispatchMessagesAndSleepTilPulse() {
-            bool canDispatch() => 
-                messageDispatchActive &&
-                !debugMode &&
-                (this.runState == DaemonRunStateEnum.Running || this.runState == DaemonRunStateEnum.Stopping) &&
-                processingMessages.Count < maxConcurrentMessages && 
-                waitingMessages.Count > 0;
-
-            if (canDispatch()) {
-                onStartDispatch?.Invoke();
-                do {
-                    RunDispatchOneMessage();
-                } while(canDispatch());
-                onEndDispatch?.Invoke();
-            }
-
-            var manualPulse = SleepWaitForSignal(wakeOnDelay: true);
-            onPulse?.Invoke(manualPulse);
-        }
-
-        private Guid? RunDispatchOneMessage() {
             if (waitingMessages.TryDequeue(out var msg)) {
-                return RunDispatchOneMessage(msg);
+                Guid messageProcessingId = Guid.NewGuid();
+                processingMessages[messageProcessingId] = msg;
+                onProcessMessage?.Invoke(messageProcessingId, msg);
+                processingMessages.TryRemove(messageProcessingId, out _);
+                return messageProcessingId;
             }
-            return null;
+            return default;
         }
 
-        private Guid? RunDispatchOneMessage(TMessage msg) {
-            Guid messageProcessingId = Guid.NewGuid();
-            processingMessages[messageProcessingId] = msg;
-            onDispatchMessage?.Invoke(messageProcessingId, msg);
-            return messageProcessingId;
-        }
-
-        /// <summary>
-        /// Wait for a signal event or timeout
-        /// </summary>
-        /// <param name="wakeOnDelay"></param>
-        /// <returns>true if wake was from a signal, false if timeout</returns>
-        private bool SleepWaitForSignal(bool wakeOnDelay) {
-            int delay = int.MaxValue;
-            if (wakeOnDelay) {
-                if (this.waitingMessages.Any()) {
-                    delay = messageThreadWakeDelayMillisecondsWorkIsWaiting;
-                } else if (autoPulseActive) {
-                    int millisecondsToNextEnqueueEvent = 
-                        !nextEnqueueMessagesEvent.HasValue ? int.MaxValue :
-                        (int)(nextEnqueueMessagesEvent.Value - DateTime.UtcNow).TotalMilliseconds;
-                    delay = 
-                        millisecondsToNextEnqueueEvent < messageThreadWakeDelayMillisecondsNoWorkWaiting ?
-                        millisecondsToNextEnqueueEvent :
-                        messageThreadWakeDelayMillisecondsNoWorkWaiting;
+        private void ProcessBatchBeginIfNeeded() {
+            lock (waitingMessages) {
+                if (!messageBatchRunning) {
+                    messageBatchRunning = true;
+                    onStartProcessMessageBatch?.Invoke();
                 }
             }
-            
-            return delay <= 0 ? false : messageThreadSignal.WaitOne(delay == int.MaxValue ? -1 : delay);    
         }
 
-        // =====================================================================
-        // base class worker methods and utility
-        // =====================================================================
+        private void ProcessBatchEndIfReady(bool background) {
+            bool canEndBatch() => messageBatchRunning && processingMessages.IsEmpty && waitingMessages.IsEmpty;
 
-        private void StartMainThread() {
-            this.runState = DaemonRunStateEnum.Starting;
-            messageThread.Start();
-        }
+            // to avoid unnecessarily locking, do a pre-check and then confirm
+            // once we lock
+            if (canEndBatch()) {
+                lock (waitingMessages) {
 
-        private bool StopMainThread() {
-            if (this.runState == DaemonRunStateEnum.Running || this.runState == DaemonRunStateEnum.Paused) {
-                this.runState = DaemonRunStateEnum.Stopping;
-            } 
-
-            this.TriggerPulse();
-            DateTime fromTime = DateTime.UtcNow;
-            while(this.runState != DaemonRunStateEnum.Stopped && !passedTimeout()) {
-                Thread.Sleep(SmallSleepThreadDelayMilliseconds);
+                    // if there are no more processing messages, then we have reached the end of the batch.
+                    if (canEndBatch()) { 
+                        onEndProcessMessageBatch?.Invoke();
+                        messageBatchRunning = false;
+                        switch (runState) {
+                            case DaemonRunStateEnum.Pausing:
+                                runState = DaemonRunStateEnum.Paused;
+                                break;
+                            case DaemonRunStateEnum.Stopping:
+                                runState = DaemonRunStateEnum.Stopped;
+                                break;
+                        }
+                    } else {
+                        // if running synchronously, we will get here quite often.  But when running async, it would be an edge
+                        // case to get here where we finished a thread and yet messages are waiting.  Basically one snuck in while
+                        // we were ending.  Give an opportunity to start new threads. 
+                        if (background) {
+                            ProcessCheckAddBackgroundWorkers();
+                        }
+                    }
+                }
             }
-
-            return this.runState == DaemonRunStateEnum.Stopped;
-
-            // -------------------------
-            bool passedTimeout()
-                => (int)DateTime.UtcNow.Subtract(fromTime).TotalMilliseconds > this.messageThreadMillisecondsStopTimeout;
         }
     }
 }

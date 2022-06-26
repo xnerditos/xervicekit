@@ -183,7 +183,7 @@ namespace XKit.Lib.Testing {
                 }
             }
 
-            TaskUtil.RunSyncSafely(() => Host?.RefreshConfigurationFromSource());
+            TaskUtil.RunAsyncAsSync(() => Host?.RefreshConfigurationFromSource());
         }
 
         public static async Task RunTestAsync(

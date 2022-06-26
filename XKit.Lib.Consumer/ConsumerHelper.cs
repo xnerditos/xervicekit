@@ -104,7 +104,7 @@ namespace XKit.Lib.Consumer {
                     typeof(IDependencyConnector)
                 );
 
-                TaskUtil.RunSyncSafely(
+                TaskUtil.RunAsyncAsSync(
                     () => fabricConnector.Register(
                         Log,
                         initialRegistryAddresses,
@@ -135,10 +135,10 @@ namespace XKit.Lib.Consumer {
         }
 
         public static void Refresh(ILogSession log) 
-            => TaskUtil.RunSyncSafely(() => fabricConnector.Refresh(log ?? Log));
+            => TaskUtil.RunAsyncAsSync(() => fabricConnector.Refresh(log ?? Log));
 
         public static void Unregister(ILogSession log) 
-            => TaskUtil.RunSyncSafely(() => fabricConnector.Unregister(log ?? Log));
+            => TaskUtil.RunAsyncAsSync(() => fabricConnector.Unregister(log ?? Log));
 
         public static Task RefreshAsync(ILogSession log) 
             => fabricConnector.Refresh(log ?? Log);

@@ -1,6 +1,5 @@
 using XKit.Lib.Common.Host;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using XKit.Lib.Host.Management;
 using UnitTests.MockWrapper;
 using System;
 using XKit.Lib.Common.Registration;

@@ -3,9 +3,8 @@ using System;
 namespace XKit.Lib.Common.Host {
 
     public delegate void OnDaemonEventDelegate();
-    public delegate void OnDaemonEventPulseDelegate(bool manualPulse);
-    public delegate void OnDaemonEventDispatchMessageDelegate<TMessage>(Guid messageProcessingId, TMessage message) where TMessage : class;
-    public delegate TimeSpan? OnDaemonEventDetermineEnqueueMessagesTimerPeriodDelegate();  
+    public delegate void OnDaemonEventProcessMessageDelegate<TMessage>(Guid messageProcessingId, TMessage message) where TMessage : class;
+    public delegate uint? OnDaemonEventDetermineTimerPeriodDelegate();  
 
     /// <summary>
     /// Interface to a daemon process.   
@@ -19,19 +18,10 @@ namespace XKit.Lib.Common.Host {
         DaemonRunStateEnum RunState { get; }
 
         /// <summary>
-        /// True if messages will be dispatched during a pulse 
-        /// </summary>
-        bool IsAutomaticMessageDispatchActive { get; }
-
         /// <summary>
         /// Starts the daemon engine running
         /// </summary>
         void Start();
-
-        /// <summary>
-        /// Pulses the message thread wake up
-        /// </summary>
-        void Pulse();
 
         /// <summary>
         /// Pauses the daemon engine.  Existing tasks (messages in process) will finish, but no new tasks or threads
@@ -47,75 +37,45 @@ namespace XKit.Lib.Common.Host {
         void Resume();
 
         /// <summary>
-        /// Suspends the dispatch of messages when the message thread pulses
-        /// </summary>
-        /// <returns></returns>
-        void SuspendAutomaticMessageDispatch();
-
-        /// <summary>
-        /// Resumes the dispatch of messages when the message thread pulses
-        /// </summary>
-        /// <returns></returns>
-        void ResumeAutomaticMessageDispatch();
-
-        /// <summary>
         /// Stops the daemon
         /// </summary>
         /// <returns></returns>
         void Stop();
 
         /// <summary>
-        /// Call to indicate that the message has finished processing
+        /// CAuses messages to be processed / processed.  Returns false if no message available to process.
+        /// <param name="count">The number of messages to attempt (max) to process</param>
+        /// <param name="background">if true, messages are processed in threads and the current thread   
+        /// If false, then messages are processed on the current thread.i</param>
         /// </summary>
-        /// <param name="messageProcessingId"></param>
-        void SignalFinishMessageProcessing(Guid messageProcessingId);
+        bool ProcessMessages(bool background = true);
 
         /// <summary>
-        /// Forces the dispatch of a message immedately on the current thread.  Returns false if 
-        /// no message available to dispatch
+        /// Processes a single message synchronously. Mostly used for debugging scenarios 
         /// </summary>
-        bool DispatchMessageDirectly();
+        /// <returns></returns>
+        bool ProcessOneMessageSync();
 
         /// <summary>
-        /// Set by the derived class to control the main message thread wake delay when
-        /// no work is in the message queue at the time of the thread sleeping.
-        /// </summary>
-        /// <value></value>
-        int WakeDelayMillisecondsNoWork { get; set; } 
-
-        /// <summary>
-        /// Set by the derived class to control the main message thread wake delay when
-        /// no work is in the message queue at the time of the thread sleeping.
-        /// </summary>
-        /// <value></value>
-        int TimeoutToStopMilliseconds { get; set; } 
-
-        /// <summary>
-        /// Controls the main message thread wake delay when
-        /// work _is_ in the message queue at the time of the thread sleeping.
-        /// </summary>
-        /// <value></value>
-        int WakeDelayMillisecondsWorkWaiting { get; set; }
-
-        /// <summary>
-        /// Controls maximum number of messages that will dispatched  
+        /// Controls maximum number of messages that will processed  
         /// to be processed concurrently if the daemon processes on the thread pool (async)
         /// </summary>
         /// <value></value>
         int MaxConcurrentMessages { get; set; }
 
         /// <summary>
-        /// Allow the message thread to automatically pulse or not.
-        /// </summary>
-        /// <value></value>
-        bool AutoPulseActive { get; set; } 
-
-        /// <summary>
         /// If enabled, the daemon will fire the events OnDetermineEnqueueMessagesTimerPeriod and
         /// OnEnqueueMessagesTimer
         /// </summary>
         /// <value></value>
-        bool EnableEnqueueEvent { get; set; }
+        bool EnableTimer { get; set; }
+
+        /// <summary>
+        /// The default period that the timer event is fired.  This value is only used if a value is not returned from
+        /// a call to OnDetermineTimerPeriod.
+        /// </summary>
+        /// <value></value>
+        uint DefaultTimerPeriodMilliseconds { get; set; }
 
         bool DebugMode { get; set; }
 
@@ -124,50 +84,32 @@ namespace XKit.Lib.Common.Host {
         bool HasMessages { get; } 
         
         /// <summary>
-        /// General process startup should go here
-        /// </summary>
-        OnDaemonEventDelegate OnStartup { get; set; }
-
-        /// <summary>
-        /// Event when a pulse occurs.
-        /// A pulse occurs in association with the message thread waking up, and can manual or can 
-        /// occur as part of the normal wake/sleep cycle.
-        /// </summary>
-        /// <param name="manualPulse"></param>
-        OnDaemonEventPulseDelegate OnPulse { get; set; }
-
-        /// <summary>
-        /// Returns a TimeSpan to inicate when the next OnEnqueueMessagesTimer Event should fire.
+        /// Returns a TimeSpan to indicate when the next OnEnqueueMessagesTimer Event should fire.  If the 
+        /// delegate returns null or if there is no OnDetermineTimerPeriod supplied, then DefaultTimerPeriodMilliseconds
+        /// will be used.
         /// </summary>
         /// <value></value>
-        OnDaemonEventDetermineEnqueueMessagesTimerPeriodDelegate OnDetermineEnqueueMessagesTimerPeriod { get; set; }
+        OnDaemonEventDetermineTimerPeriodDelegate OnDetermineTimerPeriod { get; set; }
 
         /// <summary>
-        /// Event when a timer fires to allow for messages to get posted.  The event returns
-        /// return a TimeSpan when the next event should fire.  If null is returned, then the
-        /// next event will fire with the next auto pulse.  
+        /// Event when a timer fires to allow for messages to get posted.  
         /// </summary>
         /// <value></value>
-        OnDaemonEventDelegate OnEnqueueMessagesTimer { get; set; }
+        OnDaemonEventDelegate OnTimerEvent { get; set; }
 
         /// <summary>
-        /// Occurs at the start of dispatching messages.  This is a good place to provision resources
+        /// Occurs at the start of processing messages.  This is a good place to provision resources
         /// that are needed for a block of work (as series of messages).  If the daemon should just process
         /// once per wake cycle, then drop one message in the queue and put the processing work in 
-        /// `RunDispatchMessage`
+        /// `RunProcessMessage`
         /// </summary>
-        OnDaemonEventDelegate OnStartDispatch { get; set; }
+        OnDaemonEventDelegate OnStartProcessMessageBatch { get; set; }
 
         /// <summary>
-        /// Occurs at the end of dispatching messages.  This is a good place to free resources
+        /// Occurs at the end of processing messages.  This is a good place to free resources
         /// that are needed for a block of work (as series of messages)
         /// </summary>
-        OnDaemonEventDelegate OnEndDispatch { get; set; }
-
-        /// <summary>
-        /// General process teardown should go here
-        /// </summary>
-        OnDaemonEventDelegate OnTeardown { get; set; }
+        OnDaemonEventDelegate OnEndProcessMessageBatch { get; set; }
     }
 
     public interface IDaemonEngine<TMessage> : IDaemonEngine where TMessage : class {
@@ -177,21 +119,22 @@ namespace XKit.Lib.Common.Host {
         /// queue as well, perhaps checking for some condition at each pulse.  
         /// </summary>
         /// <param name="message">message object to post</param>
-        /// <param name="triggerPulse">true if a pulse (wake event) should occur to process the message</param>
-        void PostMessage(TMessage message, bool triggerPulse = true);
+        /// <param name="triggerProcessing">true if background message processing should be triggered immediately</param>
+        void PostMessage(TMessage message, bool triggerProcessing = true);
 
         /// <summary>
-        /// Processes a message direclty and synchronously.  Not normally used.  This allows for 
-        /// control in debugging scenarios.
+        /// Posts a message for the daemon message thread.  Note that a daemon may add messages to it's own
+        /// queue as well, perhaps checking for some condition at each pulse.  
         /// </summary>
-        /// <returns>message id of processing message</returns>
-        //Guid ProcessMessageDirectly(TMessage message);
+        /// <param name="message">message object to post</param>
+        /// <param name="triggerProcessing">true if background message processing should be triggered immediately</param>
+        void PostMessages(TMessage[] message, bool triggerProcessing = true);
 
         /// <summary>
         /// Put the processing main work of handling messages here. 
         /// </summary>
         /// <param name="message"></param>
-        OnDaemonEventDispatchMessageDelegate<TMessage> OnDispatchMessage { get; set; }
+        OnDaemonEventProcessMessageDelegate<TMessage> OnProcessMessage { get; set; }
     }
 
     public enum DaemonRunStateEnum {
@@ -200,11 +143,6 @@ namespace XKit.Lib.Common.Host {
         /// Daemon is not running
         /// </summary>
         Stopped,
-
-        /// <summary>
-        /// Daemon is starting up
-        /// </summary>
-        Starting,
 
         /// <summary>
         /// Daemon is running normally
@@ -222,11 +160,6 @@ namespace XKit.Lib.Common.Host {
         /// allocated.
         /// </summary>
         Paused,
-
-        /// <summary>
-        /// Daemon is resuming from a pause.  
-        /// </summary>
-        Resuming,
 
         /// <summary>
         /// Daemon is not running. Existing work is finishing

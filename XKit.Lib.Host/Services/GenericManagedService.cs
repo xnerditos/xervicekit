@@ -35,16 +35,21 @@ namespace XKit.Lib.Host.Services {
             void IGenericManagedService.AddDaemon<TMessage>(IServiceDaemon<TMessage> daemon) => this.AddDaemon(daemon);
 
             IGenericTimerDaemon IGenericManagedService.AddGenericTimerDaemon<TDaemonOperation>(
-                ILogSessionFactory logSessionFactory,
-                int? timerDelayMilliseconds, 
-                string daemonName, 
+                ILogSessionFactory logSessionFactory, 
+                Func<bool> onDetermineCanRunOperation,
+                Func<IGenericTimerDaemon, bool> onOperationFinished,
+                uint? timerDelayMilliseconds,
+                bool timerEnabled,
+                string name,
                 Action<IGenericTimerDaemon> onEnvironmentChangeHandler
             ) {
                 var daemon = new GenericTimerDaemon<TDaemonOperation>(
                     logSessionFactory,
+                    onDetermineCanRunOperation,
+                    onOperationFinished,
                     timerDelayMilliseconds,
-                    true,
-                    daemonName,
+                    timerEnabled,
+                    name,
                     onEnvironmentChangeHandler: onEnvironmentChangeHandler
                 );
                 this.AddDaemon(daemon);

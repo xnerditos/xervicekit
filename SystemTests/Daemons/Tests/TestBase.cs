@@ -2,6 +2,8 @@ using XKit.Lib.Common.Fabric;
 using XKit.Lib.Host;
 using XKit.Lib.Common.Client;
 using XKit.Lib.Testing;
+using XKit.Lib.Common.Host;
+using System.Threading;
 
 namespace SystemTests.Daemons.Tests {
 
@@ -12,13 +14,21 @@ namespace SystemTests.Daemons.Tests {
         protected static string FabricId => 
             HostEnvironmentHelper.FabricConnector.FabricId;
 
-        protected static void ClassInit() {
+        protected IManagedService AutoMessagingService { get; private set; }
+        protected static uint LastMessageTickValue => SvcWithAutoMessaging.Service.SvcWithAutoMessagingDaemonOperation.LastMessageTickValue;
+
+        protected static void Yield(int milliseconds = 200) {
+            Thread.Sleep(milliseconds);
+        }
+
+        protected void ClassInit() {
 
             TestHostHelper.Initialize(useDaemonDebugMode: false);
-            TestHostHelper.AddService(
+            AutoMessagingService = TestHostHelper.AddService(
                 SvcWithAutoMessaging.Service.SvcWithAutoMessagingServiceFactory.Create()
             );
             TestHostHelper.StartHost();
+            Yield(1000);
         }
 
         protected static void ClassTeardown() {

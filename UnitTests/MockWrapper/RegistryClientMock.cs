@@ -15,7 +15,6 @@ namespace UnitTests.MockWrapper {
 
         private ServiceTopologyMap registerResponse;
         private ServiceTopologyMap refreshResponse;
-        private bool unregisterSucceeds;
 
         // =====================================================================
         // Setup
@@ -27,10 +26,6 @@ namespace UnitTests.MockWrapper {
 
         public void Setup_Refresh(ServiceTopologyMap response) {
             this.refreshResponse = response;
-        }
-
-        public void Setup_Unregister_Succeeds() {
-            unregisterSucceeds = true;
         }
 
         Task<IReadOnlyList<ServiceCallResult<TResponseBody>>> IServiceClient<IRegistryApi>.ExecuteWith<TRequestBody, TResponseBody>(

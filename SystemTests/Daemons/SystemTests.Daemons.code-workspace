@@ -5,14 +5,10 @@
 		}
 	],
     "settings": {
-        "csharpfixformat.style.braces.onSameLine": true,
-        "csharpfixformat.style.spaces.beforeParenthesis": false,
-        "csharpfixformat.style.indent.preprocessorIgnored": false,
         "editor.insertSpaces": true,
         "csharp.format.enable": false,
-        "dotnet-test-explorer.testProjectPath": "{./SystemTests.Daemons.csproj}",
         "csharp.unitTestDebuggingOptions": {
-            "stopAtEntry": true,
+            "stopAtEntry": false,
             "logging": {
                 "engineLogging": false,
                 "exceptions": true,

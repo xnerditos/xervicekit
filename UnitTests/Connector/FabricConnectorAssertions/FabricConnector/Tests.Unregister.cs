@@ -16,8 +16,6 @@ namespace UnitTests.Connector.FabricConnectorAssertions.FabricConnector {
             var target = CreateTarget();
             Setup_Registry();
 
-            RegistryClient.Setup_Unregister_Succeeds();
-
             await PrepareTarget_InitializeAndRegister(target);
 
             // -----------------------------------------------------------------

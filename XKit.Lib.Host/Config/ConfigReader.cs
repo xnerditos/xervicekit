@@ -31,7 +31,7 @@ namespace XKit.Lib.Host.Config {
         private TConfig GetConfig(TConfig defaultValue) {
             if (cachedConfig == null || configReloadTime < DateTime.UtcNow) {
                 var localConfigSession = localConfigSessionFactory.Create(configDocumentIdentifier, extendedConfigName);
-                cachedConfig = TaskUtil.RunSyncSafely(() => localConfigSession.GetConfig<TConfig>());
+                cachedConfig = TaskUtil.RunAsyncAsSync(() => localConfigSession.GetConfig<TConfig>());
                 configReloadTime = DateTime.UtcNow.AddSeconds(ConfigCacheSecondsBase + Math.Abs(this.GetHashCode() % ConfigCacheSecondsRandom));
             }
             return cachedConfig ?? defaultValue?.DeepCopy() ?? new TConfig();

@@ -1,7 +1,4 @@
 using System;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using XKit.Lib.Testing;
@@ -12,71 +9,37 @@ namespace SystemTests.Daemons.Tests {
     public class DaemonCtrl : TestBase {
 
         [TestInitialize]
-        public void Initialize() { TestBase.ClassInit(); }
+        public void Initialize() { ClassInit(); }
 
         [TestCleanup]
-        public void Teardown() { TestBase.ClassTeardown(); }
+        public void Teardown() { ClassTeardown(); }
 
         [TestMethod]
         public void DaemonIsRunning() => TestHostHelper.RunTest(() => {
-            static uint getLastMessageValue() => 
-                SvcWithAutoMessaging.Service.SvcWithAutoMessagingDaemonOperation.LastMessageTickValue;
             
-            var testThreadId = System.Environment.CurrentManagedThreadId;
-            Debug.WriteLine($"(test point 1) Test thread id {testThreadId}");
-
-            Yield(1000);
-            var value1 = getLastMessageValue();
-
-            value1.Should().BeGreaterThan(0);
+            LastMessageTickValue.Should().BeGreaterThan(0);
         });
 
-        // TODO:
-
         [TestMethod]
-        [Ignore]
         public void PausesAndResumesWithService() => TestHostHelper.RunTest(() => {
-            throw new NotImplementedException();
+            var value = LastMessageTickValue;
+            Yield();
+            LastMessageTickValue.Should().NotBe(value);
+            value = LastMessageTickValue;
+            Yield();
+            
+            AutoMessagingService.PauseService();
+            LastMessageTickValue.Should().NotBe(value);
+            value = LastMessageTickValue;
+            Yield();
+            
+            LastMessageTickValue.Should().Be(value);
+            Yield();
+            LastMessageTickValue.Should().Be(value);
+            
+            AutoMessagingService.ResumeService();
+            Yield();
+            LastMessageTickValue.Should().NotBe(value);
         });
-
-        [TestMethod]
-        [Ignore]
-        public void ResumesAndContinues() => TestHostHelper.RunTest(() => {
-            throw new NotImplementedException();
-        });
-
-        [TestMethod]
-        [Ignore]
-        public void ManuallyPulses() => TestHostHelper.RunTest(() => {
-            throw new NotImplementedException();
-        });
-
-        [TestMethod]
-        [Ignore]
-        public void ExceptionHandled() => TestHostHelper.RunTest(() => {
-            throw new NotImplementedException();
-        });
-
-        [TestMethod]
-        [Ignore]
-        public void HandlesMultipleMessages() => TestHostHelper.RunTest(() => {
-            throw new NotImplementedException();
-        });
-
-        [TestMethod]
-        [Ignore]
-        public void ProperlyShutsDown() => TestHostHelper.RunTest(() => {
-            throw new NotImplementedException();
-        });
-
-        [TestMethod]
-        [Ignore]
-        public void MainThreadPausesAndResumes() => TestHostHelper.RunTest(() => {
-            throw new NotImplementedException();
-        });
-
-        private void Yield(int milliseconds) {            //Thread.CurrentThread.Join(milliseconds);
-            Thread.Sleep(milliseconds);
-        }
     }
 }

@@ -11,61 +11,76 @@ namespace XKit.Lib.Host.Services {
         public const int DefaultTimerDelayMilliseconds = 1000 * 60;     // 1 minute
 
         private readonly string name;
-        private Action<IGenericTimerDaemon> onEnvironmentChangeHandler;
+        private readonly Action<IGenericTimerDaemon> onEnvironmentChangeHandler;
+        private readonly Func<bool> onDetermineCanRunOperation;
+        private readonly Func<IGenericTimerDaemon, bool> onOperationFinished;
+        private uint? nextEventDelay = default;
         protected override string Name => name;
 
         public GenericTimerDaemon(
             ILogSessionFactory logSessionFactory, 
-            int? timerDelayMilliseconds = null,
+            Func<bool> onDetermineCanRunOperation = null,
+            Func<IGenericTimerDaemon, bool> onOperationFinished = null,
+            uint? timerDelayMilliseconds = null,
             bool timerEnabled = true,
             string name = null,
             Action<IGenericTimerDaemon> onEnvironmentChangeHandler = null
         ) : base(logSessionFactory) {
             this.name = name ?? $"GenericDaemonFor_{typeof(TDaemonOperation).Name}";
             this.onEnvironmentChangeHandler = onEnvironmentChangeHandler;
-            this.WakeDelayMillisecondsWhenNoMessagesWaiting = timerDelayMilliseconds.GetValueOrDefault(DefaultTimerDelayMilliseconds);
-            this.MaxConcurrentMessages = 1;
-            this.AutoPulseActive = true;
-            this.EnableEnqueueEvent = timerEnabled;
+            this.onDetermineCanRunOperation = onDetermineCanRunOperation;
+            this.onOperationFinished = onOperationFinished;
+            DefaultTimerPeriodMilliseconds = timerDelayMilliseconds.GetValueOrDefault(DefaultTimerDelayMilliseconds);
+            MaxConcurrentMessages = 1;
+            EnableTimerEvent = timerEnabled;
         }
 
-        public void SetTimerDelay(int? milliseconds) {
-            if (!milliseconds.HasValue) { return; }
-            this.WakeDelayMillisecondsWhenNoMessagesWaiting = milliseconds.Value;
+        public void SetDefaultTimerDelay(uint milliseconds) {
+            this.DefaultTimerPeriodMilliseconds = milliseconds;
         }
 
-        public void SetNextEventReadyDelay(int? milliseconds) {
-            if (!milliseconds.HasValue) { return; }
-            this.WakeDelayMillisecondsWhenMessagesWaiting = milliseconds.Value;
+        public void SetNextEventReadyDelay(uint? milliseconds) {
+            nextEventDelay = milliseconds;
         }
 
-        public void SetTimerEnabled(bool? enabled) {
-            if (!enabled.HasValue) { return; }
-            this.EnableEnqueueEvent = enabled.Value;
+        public void SetTimerEnabled(bool enabled) {
+            EnableTimerEvent = enabled;
         }
 
         protected override void OnEnvironmentChange() {
             if (this.onEnvironmentChangeHandler != null) {
                 onEnvironmentChangeHandler.Invoke(this);
-                Pulse();
             }
         }
 
-        protected override void OnEnqueueEvent() {
-            PostMessage(new object(), false);
+        protected override void OnTimerEvent() {
+            try {
+                if (onDetermineCanRunOperation?.Invoke() ?? true) {
+                    EnableTimerEvent = false;
+                    PostMessage(new());
+                }
+            } catch(Exception exception) {
+                var attributes = new { exception };
+                Log.Erratum("Exception thrown while posting messages", attributes);
+                Log.Fatality(exception.Message, attributes);
+            } 
         }
 
-        void IGenericTimerDaemon.ManuallyPostNewTimerEvent() {
-            PostMessage(new object(), true);
+        protected override void OnEndProcessingMessages() {
+            try {
+                onOperationFinished?.Invoke(this);
+                EnableTimerEvent = true;
+            } catch(Exception exception) {
+                var attributes = new { exception };
+                Log.Erratum("Exception thrown while posting messages", attributes);
+            } 
         }
+        protected override uint? OnDetermineEnqueueEventPeriod() => this.nextEventDelay;
 
-        protected override TimeSpan? OnDetermineEnqueueEventPeriod() 
-            => TimeSpan.FromMilliseconds(this.WakeDelayMillisecondsWhenNoMessagesWaiting);
+        void IGenericTimerDaemon.SetTimerDelay(uint milliseconds) => SetDefaultTimerDelay(milliseconds);
 
-        void IGenericTimerDaemon.SetTimerDelay(int? milliseconds) => SetTimerDelay(milliseconds);
+        void IGenericTimerDaemon.SetTimerEnabled(bool enabled) => SetTimerEnabled(enabled);
 
-        void IGenericTimerDaemon.SetTimerEnabled(bool? enabled) => SetTimerEnabled(enabled);
-
-        void IGenericTimerDaemon.SetNextEventReadyDelay(int? milliseconds) => SetNextEventReadyDelay(milliseconds);
+        void IGenericTimerDaemon.SetNextEventReadyDelay(uint? milliseconds) => SetNextEventReadyDelay(milliseconds);
     }
 }
