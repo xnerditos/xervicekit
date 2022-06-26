@@ -1,8 +1,7 @@
 namespace XKit.Lib.Common.Host {
     public interface IGenericTimerDaemon : IServiceDaemon<object> { 
-        void ManuallyPostNewTimerEvent();
-        void SetTimerDelay(int? milliseconds);
-        void SetNextEventReadyDelay(int? milliseconds);
-        void SetTimerEnabled(bool? enabled);
+        void SetTimerDelay(uint milliseconds);
+        void SetNextEventReadyDelay(uint? milliseconds);
+        void SetTimerEnabled(bool enabled);
     } 
 }

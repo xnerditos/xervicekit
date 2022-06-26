@@ -21,7 +21,7 @@ namespace XKit.Lib.Common.Utility.Threading {
         /// USAGE: AsyncUtil.RunSync(() => AsyncMethod());
         /// </summary>
         /// <param name="task">Task method to execute</param>
-        public static void RunSyncSafely(Func<Task> runner, bool longRunning = false)
+        public static void RunAsyncAsSync(Func<Task> runner, bool longRunning = false)
             => taskFactory
                 .StartNew(runner, longRunning ? TaskCreationOptions.LongRunning : TaskCreationOptions.None)
                 .Unwrap()
@@ -35,7 +35,7 @@ namespace XKit.Lib.Common.Utility.Threading {
         /// <typeparam name="TResult">Return Type</typeparam>
         /// <param name="task">Task<T> method to execute</param>
         /// <returns></returns>
-        public static TResult RunSyncSafely<TResult>(Func<Task<TResult>> runner, bool longRunning = false)
+        public static TResult RunAsyncAsSync<TResult>(Func<Task<TResult>> runner, bool longRunning = false)
             => taskFactory
                 .StartNew(runner, longRunning ? TaskCreationOptions.LongRunning : TaskCreationOptions.None)
                 .Unwrap()
@@ -59,5 +59,17 @@ namespace XKit.Lib.Common.Utility.Threading {
                 return Task.FromException(ex);
             }
         }
+
+        public static Task<TResult> RunSyncAsAsync<TResult>(Func<TResult> action, bool longRunning = false) 
+            => new(
+                action,
+                longRunning ? TaskCreationOptions.LongRunning : TaskCreationOptions.None
+            );
+
+        public static Task RunSyncAsAsync(Action action, bool longRunning = false) 
+            => new(
+                action,
+                longRunning ? TaskCreationOptions.LongRunning : TaskCreationOptions.None
+            );
     }
 }

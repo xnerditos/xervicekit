@@ -2,7 +2,6 @@ using XKit.Lib.Common.Fabric;
 using XKit.Lib.Common.Host;
 using System.Threading.Tasks;
 using XKit.Lib.Common.Log;
-using XKit.Lib.Common.Utility.Threading;
 
 namespace XKit.Lib.Host.DefaultBaseClasses {
 
@@ -10,7 +9,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
 
         new protected ServiceDaemonOperationContext Context => base.Context as ServiceDaemonOperationContext;
         protected IServiceBase Service => Context.Service;
-        protected IServiceDaemonOperationOwner Daemon => Context.Daemon;
+        protected IServiceDaemon Daemon => Context.Daemon;
 
         public ServiceDaemonOperation(
             ServiceDaemonOperationContext context
@@ -78,7 +77,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             var result = await base.RunOperation<TMessage>(
                 operationName: this.OriginatorName,
                 workItem: message,
-                runSynchronous: IsOperationSynchronous || Daemon.IsDebugMode,
+                runSynchronous: true,
                 operationAction: DoOperationLogicWithResult,                
                 workItemValidationAction: ValidateMessage,
                 initAction: null,
@@ -91,10 +90,9 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             return Task.FromResult(true);
         }
 
-        private Task TeardownOperation() => TaskUtil.WrapInTask(() => {
-            this.Daemon.SignalOperationFinished(Context.MessageProcessingId);
+        private Task TeardownOperation() {
             return Task.CompletedTask;
-        });
+        }
     }
 
     public abstract class ServiceDaemonOperation<TMessage, TServiceBase> 

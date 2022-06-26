@@ -17,7 +17,6 @@
 		<ProjectReference Include="../XKit.Lib.Connector/XKit.Lib.Connector.csproj"/>
 		<ProjectReference Include="../XKit.Lib.Host/XKit.Lib.Host.csproj"/>
 		<ProjectReference Include="../XKit.Lib.Log/XKit.Lib.Log.csproj"/>
-		<ProjectReference Include="../XKit.Lib.Storage/XKit.Lib.Storage.csproj"/>
 	</ItemGroup>
 	<PropertyGroup>
 		<NoWarn>$(NoWarn);NU1603</NoWarn>

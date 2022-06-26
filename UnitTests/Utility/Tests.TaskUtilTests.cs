@@ -14,7 +14,7 @@ namespace UnitTests.UtilityAssertions {
         public void TaskReturningMethodSafelyPassesException() {
 
             try {
-                TaskUtil.RunSyncSafely(() => TaskReturningMethodThrowsException());
+                TaskUtil.RunAsyncAsSync(() => TaskReturningMethodThrowsException());
             } catch (Exception ex) {
                 // good!
 
@@ -28,7 +28,7 @@ namespace UnitTests.UtilityAssertions {
         public void AsyncMethodSafelyPassesException() {
 
             try {
-                TaskUtil.RunSyncSafely(() => AsyncMethodThrowsException());
+                TaskUtil.RunAsyncAsSync(() => AsyncMethodThrowsException());
             } catch (Exception ex) {
                 // good!
 
@@ -38,7 +38,7 @@ namespace UnitTests.UtilityAssertions {
             Assert.Fail("Should have gone into exception block above");
         }
 
-        private Task TaskReturningMethodThrowsException() {
+        private static Task TaskReturningMethodThrowsException() {
             try {
                 throw new Exception("some message");
             } catch (Exception ex) {
@@ -46,7 +46,7 @@ namespace UnitTests.UtilityAssertions {
             }
         }
 
-        private async Task AsyncMethodThrowsException() {
+        private static async Task AsyncMethodThrowsException() {
             await File.ReadAllTextAsync("/somefilethatdoesnotexist");
         }
     }

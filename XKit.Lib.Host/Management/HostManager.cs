@@ -172,7 +172,7 @@ namespace XKit.Lib.Host.Management {
                     EndHostAction();
                     return;
                 }
-                TaskUtil.RunSyncSafely(() => StopHost());
+                TaskUtil.RunAsyncAsSync(() => StopHost());
             } catch (Exception ex) {
                 EndHostAction(ex.Message);
                 throw;
@@ -284,7 +284,7 @@ namespace XKit.Lib.Host.Management {
                     return;
                 }
                 this.state = RunStateEnum.StartingUp;
-                TaskUtil.RunSyncSafely(async () => {
+                TaskUtil.RunAsyncAsSync(async () => {
                     await StartHost(
                         initialRegistryHostAddresses,
                         startupParameters?.FieldsToDictionary(), 
@@ -307,7 +307,7 @@ namespace XKit.Lib.Host.Management {
                     return;
                 }
                 this.state = RunStateEnum.StartingUp;
-                TaskUtil.RunSyncSafely(async () => {
+                TaskUtil.RunAsyncAsSync(async () => {
                     await StartHost(
                         initialRegistryHostAddresses,
                         startupParameters, 

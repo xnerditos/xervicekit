@@ -4,6 +4,13 @@ using XKit.Lib.Common.Host;
 
 namespace SystemTests.Daemons.SvcWithAutoMessaging.Service {
 
+    public partial class SvcWithAutoMessagingOperation : ServiceOperation<ISvcWithAutoMessagingService>, ISvcWithAutoMessagingApi {
+
+        public SvcWithAutoMessagingOperation(
+            ServiceOperationContext context
+        ) : base(context) { }
+    }
+
 	public class SvcWithAutoMessagingService 
         : ManagedService<SvcWithAutoMessagingOperation>, ISvcWithAutoMessagingService {
 

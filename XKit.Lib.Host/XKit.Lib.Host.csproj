@@ -18,7 +18,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="../XKit.Lib.Common/XKit.Lib.Common.csproj"/>
-		<ProjectReference Include="../XKit.Lib.Storage/XKit.Lib.Storage.csproj"/>
 		<ProjectReference Include="../XKit.Lib.Connector/XKit.Lib.Connector.csproj"/>
 	</ItemGroup>
 	<PropertyGroup>

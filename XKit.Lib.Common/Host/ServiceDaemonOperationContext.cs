@@ -9,7 +9,7 @@ namespace XKit.Lib.Common.Host {
     public class ServiceDaemonOperationContext : OperationContext {
 
         public ServiceDaemonOperationContext(
-            IServiceDaemonOperationOwner daemon,
+            IServiceDaemon daemon,
             IServiceBase service,
             ILocalEnvironment localEnvironment,
             Guid messageProcessingId,
@@ -28,7 +28,7 @@ namespace XKit.Lib.Common.Host {
         // =====================================================================
 
         public IServiceBase Service { get; }
-        public IServiceDaemonOperationOwner Daemon { get; }
+        public IServiceDaemon Daemon { get; }
         public Guid MessageProcessingId { get; }
     }
 }

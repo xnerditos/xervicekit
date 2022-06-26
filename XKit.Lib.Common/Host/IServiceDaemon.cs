@@ -24,11 +24,6 @@ namespace XKit.Lib.Common.Host {
         DaemonRunStateEnum RunState { get; }
 
         /// <summary>
-        /// True if messages will be dispatched during a pulse 
-        /// </summary>
-        bool IsAutomaticMessageDispatchActive { get; }
-
-        /// <summary>
         /// Starts the daemon process running
         /// </summary>
         void Start();
@@ -38,11 +33,6 @@ namespace XKit.Lib.Common.Host {
         /// </summary>
         /// <returns></returns>
         void SignalEnvironmentChange();
-
-        /// <summary>
-        /// Pulses the message thread wake up
-        /// </summary>
-        void Pulse();
 
         /// <summary>
         /// Pauses the daemon.  Existing tasks (messages in process) will finish, but no new tasks or threads
@@ -58,20 +48,8 @@ namespace XKit.Lib.Common.Host {
         void Resume();
 
         /// <summary>
-        /// Suspends the dispatch of messages when the message thread pulses
-        /// </summary>
-        /// <returns></returns>
-        void SuspendAutomaticMessageDispatch();
-
-        /// <summary>
-        /// Resumes the dispatch of messages when the message thread pulses
-        /// </summary>
-        /// <returns></returns>
-        void ResumeAutomaticMessageDispatch();
-
-        /// <summary>
-        /// Used to set "debug mode", which will stop automatc message dispatch and will request
-        /// syncronous message processing.  
+        /// Used to set "debug mode", which will stop automatic message dispatch and will request
+        /// synchronous message processing.  
         /// </summary>
         /// <param name="debugModeOn"></param>
         void SetDebugMode(bool debugModeOn = true);
@@ -86,15 +64,18 @@ namespace XKit.Lib.Common.Host {
             IServiceBase service
         );
 
-        void PostMessage(object message, bool triggerPulse = true);
-
-        //void ProcessMessageDirectly(object message);
+        /// <summary>
+        /// Causes the daemon to process messages.  If background is false, then message processing
+        /// will happen synchronously on the current thread. 
+        /// </summary>
+        /// <param name="background"></param>
+        void ProcessMessages(bool background = true);
 
         /// <summary>
-        /// Forces the dispatch of a message immedately on the current thread.  Returns false if 
-        /// no message available to dispatch
+        /// Processes one message synchronously for debugging scenarios.  Returns true of a message was processed. 
         /// </summary>
-        bool DispatchMessagesDirectly(int count = 1);
+        /// <returns></returns>
+        bool DebugProcessOneMessage();
 
         /// <summary>
         /// Gets the number of messages currently being processed
@@ -118,19 +99,19 @@ namespace XKit.Lib.Common.Host {
     public interface IServiceDaemon<TMessage> : IServiceDaemon 
         where TMessage : class {
 
-        void PostMessage(TMessage message, bool triggerPulse = true);
-        //void ProcessMessageDirectly(TMessage message);
-    }
-
-    public interface IServiceDaemonOperationOwner : IServiceDaemon { 
-
         /// <summary>
-        /// Called by the operation when it is finished
+        /// Posts a single message to the daemon, optionally triggering background processing.
         /// </summary>
         /// <param name="message"></param>
-        /// <param name="sender">the operation object</param>
-        void SignalOperationFinished(Guid messageProcessingId);
+        /// <param name="triggerProcessing"></param>
+        void PostMessage(TMessage message, bool triggerProcessing = true);
 
-        bool IsDebugMode { get; }
+        /// <summary>
+        /// Posts a single message to the daemon, optionally triggering background processing.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="triggerProcessing"></param>
+        void PostMessages(TMessage[] message, bool triggerProcessing = true);
+
     }
 }
