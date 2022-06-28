@@ -8,7 +8,6 @@ using XKit.Lib.Host.Config;
 using XKit.Lib.Common.Services;
 using System;
 using XKit.Lib.Common.Utility;
-using XKit.Lib.Common.ObjectInstantiation;
 using System.Collections.Concurrent;
 using System.Reflection;
 using XKit.Lib.Common.Utility.Invocation;
@@ -304,8 +303,8 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         public ServiceBase(
             ILocalEnvironment localEnvironment
         ) {
-            LocalEnvironment = localEnvironment ?? InProcessGlobalObjectRepositoryFactory.CreateSingleton().GetObject<ILocalEnvironment>();
-            if (localEnvironment.HostEnvironment == null) { 
+            LocalEnvironment = localEnvironment ?? throw new ArgumentNullException(nameof(localEnvironment));
+            if (localEnvironment?.HostEnvironment == null) { 
                 throw new Exception(
                     message: "Local environment is not a host!"
                 ); 

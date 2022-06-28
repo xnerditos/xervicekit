@@ -1,5 +1,7 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using XKit.Lib.Common.Host;
+using XKit.Lib.Host.Protocols.Http.Mvc.Helpers;
 
 namespace XKit.Lib.Host.Protocols.Http.Mvc {
     public static class AspExtensions {
@@ -30,6 +32,11 @@ namespace XKit.Lib.Host.Protocols.Http.Mvc {
                 typeof(AspExtensions)
                     .GetTypeInfo().Assembly
             );
+        }
+
+        public static void SetGlobalHostEnvironment(IHostEnvironment hostEnv) {
+            ManagedServiceRouterController.SetHostEnvironment(hostEnv);
+            MetaServiceRouterController.SetHostEnvironment(hostEnv);
         }
     }
 }

@@ -1,59 +1,55 @@
 using System;
 using System.Collections.Generic;
 
-namespace XKit.Lib.Common.ObjectInstantiation {
-    internal class InProcessGlobalObjectRepository : IInProcessGlobalObjectRepository {
+namespace XKit.Lib.Common.Utility.ObjectRepository {
+    internal class ObjectRepository : IObjectRepository {
         
-        private Dictionary<Type, Func<object>> factories = new Dictionary<Type, Func<object>>();
+        private readonly Dictionary<Type, Func<object>> factories = new();
         
-        public InProcessGlobalObjectRepository() {}
+        public ObjectRepository() {}
 
         // =====================================================================
         // IInjectableGlobalObjectRepository
         // =====================================================================
         
-        TRegisteredInterface IInProcessGlobalObjectRepository.GetObject<TRegisteredInterface>() {
-            Func<object> factory;
-            if (!factories.TryGetValue(typeof(TRegisteredInterface), out factory)) {
+        TRegisteredInterface IObjectRepository.GetObject<TRegisteredInterface>() {
+            if (!factories.TryGetValue(typeof(TRegisteredInterface), out var factory)) {
                 throw new Exception("Type not registered " + typeof(TRegisteredInterface).Name);
             }
             return (TRegisteredInterface) factory?.Invoke();
         }
 
-        object IInProcessGlobalObjectRepository.GetObject(Type interfaceType) {
-            Func<object> factory;
-            if (!factories.TryGetValue(interfaceType, out factory)) {
+        object IObjectRepository.GetObject(Type interfaceType) {
+            if (!factories.TryGetValue(interfaceType, out var factory)) {
                 throw new Exception("Type not registered " + interfaceType.Name);
             }
             return factory?.Invoke();
         }
 
-        bool IInProcessGlobalObjectRepository.HasObject(Type interfaceType) 
+        bool IObjectRepository.HasObject(Type interfaceType) 
             => factories.ContainsKey(interfaceType);
 
-        void IInProcessGlobalObjectRepository.RegisterFactory<TConcreteType>(Func<TConcreteType> createMethod, params Type[] forTypes) {            
+        void IObjectRepository.RegisterFactory<TConcreteType>(Func<TConcreteType> createMethod, params Type[] forTypes) {
             ValidateType(typeof(TConcreteType), forTypes);
 
-            Func<object> wrapperFactory = () => createMethod();
-
-            foreach(var t in forTypes) {
-                factories[t] = wrapperFactory;
+            foreach (var t in forTypes) {
+                factories[t] = () => createMethod();
             }
         }
 
-        void IInProcessGlobalObjectRepository.RegisterSingleton<TConcreteType>(TConcreteType obj, params Type[] forTypes) {
+        void IObjectRepository.RegisterSingleton<TConcreteType>(TConcreteType obj, params Type[] forTypes) {
 
             ValidateType(typeof(TConcreteType), forTypes);
 
-            Func<object> wrapperFactory = () => obj;        // the magic of closures!
-                                                            // Admit it, this is pretty darn elegant.
+            foreach (var t in forTypes) {
+                // the magic of closures!
+                // Admit it, this is pretty darn elegant.
 
-            foreach(var t in forTypes) {
-                factories[t] = wrapperFactory;
+                factories[t] = () => obj;
             }
         }
 
-        void IInProcessGlobalObjectRepository.Clear() {
+        void IObjectRepository.Clear() {
             factories.Clear();
         }
         
@@ -61,7 +57,7 @@ namespace XKit.Lib.Common.ObjectInstantiation {
         // private
         // =====================================================================
 
-        private void ValidateType(
+        private static void ValidateType(
             System.Type concreteTypeToCheck, 
             System.Type[] registeringTypes
         ) {

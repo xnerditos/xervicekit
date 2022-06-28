@@ -3,6 +3,7 @@ using XKit.Lib.Common.Config;
 using XKit.Lib.Common.Registration;
 
 namespace XKit.Lib.Common.Host {
+    
     public interface IHostEnvironment {
         
         string Address { get; }

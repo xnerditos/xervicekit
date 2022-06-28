@@ -1,7 +1,6 @@
 using System;
 using XKit.Lib.Common.Fabric;
 using XKit.Lib.Common.Host;
-using XKit.Lib.Common.ObjectInstantiation;
 using XKit.Lib.Common.Registration;
 using XKit.Lib.Common.Services;
 
@@ -21,7 +20,6 @@ namespace SystemTests.Daemons.SvcWithGenericTimer.Service {
 		IManagedService ITestServiceFactory.Create(
             ILocalEnvironment localEnvironment
         ) {
-            localEnvironment ??= InProcessGlobalObjectRepositoryFactory.CreateSingleton().GetObject<ILocalEnvironment>(); 
             if (localEnvironment == null) { throw new ArgumentNullException(nameof(localEnvironment)); }
             return new SvcWithGenericTimerService(localEnvironment);
         } 
@@ -37,7 +35,7 @@ namespace SystemTests.Daemons.SvcWithGenericTimer.Service {
         // =====================================================================
 
         public static IManagedService Create(
-            ILocalEnvironment localEnvironment = null
+            ILocalEnvironment localEnvironment
         ) => SvcWithGenericTimerServiceFactory.Factory.Create(localEnvironment);
 
         public static void InjectCustomFactory(ISvcWithGenericTimerServiceFactory factory) =>

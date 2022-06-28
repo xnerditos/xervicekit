@@ -8,7 +8,6 @@ using XKit.Lib.Host.Management;
 using XKit.Lib.Host.Config;
 using XKit.Lib.Common.Host;
 using XKit.Lib.Common.Config;
-using XKit.Lib.Common.ObjectInstantiation;
 using XKit.Lib.Common.Fabric;
 using System.IO;
 using static System.Environment;
@@ -21,19 +20,17 @@ using XKit.Lib.Connector.Protocols.Http;
 
 namespace XKit.Lib.Host {
 
-    public static class HostEnvironmentHelper {
+    public class HostEnvironmentHelper {
         
-        private static readonly Lazy<IInProcessGlobalObjectRepository> igorLazy = new(() => InProcessGlobalObjectRepositoryFactory.CreateSingleton());
-        private static IHostManager hostManager;
-        private static IDependencyConnector dependencyConnector;
-        private static IFabricConnector fabricConnector;
-        private static ILogSessionFactory logSessionFactory;
-        public static IInProcessGlobalObjectRepository InjectableGlobalObjectRepository => igorLazy.Value;
-        public static IHostManager Host => hostManager; 
-        public static IFabricConnector FabricConnector => fabricConnector; 
-        public static IDependencyConnector DependencyConnector => dependencyConnector;
-        public static ILogSessionFactory LogSessionFactory => logSessionFactory;
-        public static IHostManager CreateInitHost(
+        private IHostManager hostManager;
+        private IDependencyConnector dependencyConnector;
+        private IFabricConnector fabricConnector;
+        private ILogSessionFactory logSessionFactory;
+        public IHostManager Host => hostManager; 
+        public IFabricConnector FabricConnector => fabricConnector; 
+        public IDependencyConnector DependencyConnector => dependencyConnector;
+        public ILogSessionFactory LogSessionFactory => logSessionFactory;
+        public IHostManager CreateInitHost(
             IList<IInstanceClientFactory> instanceClientFactories,
             ILogSessionFactory logSessionFactory,
             ILocalConfigSessionFactory localConfigSessionFactory = null,
@@ -44,9 +41,6 @@ namespace XKit.Lib.Host {
             Func<HealthEnum> healthChecker = null,
             string[] capabilitiesToRegister = null
         ) {
-            if (InjectableGlobalObjectRepository.HasObject(typeof(IHostManager))) {
-                throw new Exception("Host already created");
-            }
             if (string.IsNullOrEmpty(hostAddress)) {
                 hostAddress = Environment.GetEnvironmentVariable(EnvironmentHelperConstants.EnvironmentVariables.HostBaseAddress);
                 if (string.IsNullOrEmpty(hostAddress)) {
@@ -61,7 +55,7 @@ namespace XKit.Lib.Host {
 
             logSessionFactory ??= Log.LogSessionFactory.Factory;
 
-            HostEnvironmentHelper.logSessionFactory = logSessionFactory;
+            this.logSessionFactory = logSessionFactory;
             
             localDataStorageFolderPath = EnsureLocalDataStoragePath(localDataStorageFolderPath);
             localMetadataDbPath = EnsurePath(
@@ -102,22 +96,6 @@ namespace XKit.Lib.Host {
 
             fabricConnector.Initialize();
 
-            InjectableGlobalObjectRepository.RegisterSingleton(
-                logSessionFactory, 
-                typeof(ILogSessionFactory)
-            );
-            InjectableGlobalObjectRepository.RegisterSingleton(
-                fabricConnector,
-                typeof(IFabricConnector),
-                typeof(IDependencyConnector)
-            );
-            InjectableGlobalObjectRepository.RegisterSingleton(
-                hostManager, 
-                typeof(IHostManager),
-                typeof(IHostEnvironment),
-                typeof(ILocalEnvironment)
-            );
-            
             bool doAll = capabilitiesToRegister == null;
 
             if (doAll || capabilitiesToRegister.Contains(StandardCapabilityNames.LocalRegistrationsManagement)) {
@@ -129,7 +107,7 @@ namespace XKit.Lib.Host {
             return hostManager;
         }
 
-        public static void StartHost(
+        public void StartHost(
             IEnumerable<string> initialRegistryAddresses = null,
             IDictionary<string, object> startupParameters = null, 
             bool failIfCannotRegister = false
@@ -148,17 +126,16 @@ namespace XKit.Lib.Host {
             }
         }        
 
-        public static void PauseHost() {
+        public void PauseHost() {
             hostManager?.PauseHost();
         }        
 
-        public static void ResumeHost() {
+        public void ResumeHost() {
             hostManager?.ResumeHost();
         }        
 
-        public static void StopAndDestroyHost() {
+        public void StopAndDestroyHost() {
             hostManager.StopHost();
-            InjectableGlobalObjectRepository.Clear();
             hostManager = null;
             logSessionFactory = null;
             dependencyConnector = null;            

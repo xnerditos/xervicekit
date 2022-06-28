@@ -8,12 +8,11 @@ using System.Threading;
 namespace SystemTests.Daemons.Tests {
 
     public class TestBase {
-
-        protected static IDependencyConnector DependencyConnector => 
-            HostEnvironmentHelper.DependencyConnector;
-        protected static string FabricId => 
-            HostEnvironmentHelper.FabricConnector.FabricId;
-
+        private static readonly HostEnvironmentHelper HostEnvironmentHelper = TestHostHelper.HostEnvironmentHelper;
+        protected static IDependencyConnector DependencyConnector => HostEnvironmentHelper.DependencyConnector;
+        protected static string FabricId => HostEnvironmentHelper.FabricConnector.FabricId;
+        protected static IHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
+        protected static ILocalEnvironment LocalEnvironment => HostEnvironmentHelper.Host;
         protected IManagedService AutoMessagingService { get; private set; }
         protected static uint LastMessageTickValue => SvcWithAutoMessaging.Service.SvcWithAutoMessagingDaemonOperation.LastMessageTickValue;
 
@@ -25,7 +24,7 @@ namespace SystemTests.Daemons.Tests {
 
             TestHostHelper.Initialize(useDaemonDebugMode: false);
             AutoMessagingService = TestHostHelper.AddService(
-                SvcWithAutoMessaging.Service.SvcWithAutoMessagingServiceFactory.Create()
+                SvcWithAutoMessaging.Service.SvcWithAutoMessagingServiceFactory.Create(LocalEnvironment)
             );
             TestHostHelper.StartHost();
             Yield(1000);

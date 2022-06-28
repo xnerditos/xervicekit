@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using XKit.Lib.Common.Fabric;
 using XKit.Lib.Common.Log;
-using XKit.Lib.Common.ObjectInstantiation;
 using XKit.Lib.Common.Registration;
 using XKit.Lib.Common;
 using XKit.Lib.Connector.Fabric;
@@ -47,10 +46,8 @@ namespace XKit.Lib.Consumer {
         }
 
         private static IFabricConnector fabricConnector;
-        private static readonly Lazy<IInProcessGlobalObjectRepository> igorLazy = new(() => InProcessGlobalObjectRepositoryFactory.CreateSingleton());
         private static readonly SetOnceOrThrow<ILogSession> log = new();
         
-        public static IInProcessGlobalObjectRepository InjectableGlobalObjectRepository => igorLazy.Value;
         public static IDependencyConnector DependencyConnector => fabricConnector;
         public static IFabricConnector FabricConnector => fabricConnector;
         public static string FabricId => fabricConnector.FabricId;
@@ -97,12 +94,6 @@ namespace XKit.Lib.Consumer {
                 Log.Begin(LogContextTypeEnum.ClientAction, nameof(CreateInitConsumer));
 
                 fabricConnector.Initialize();
-
-                InjectableGlobalObjectRepository.RegisterSingleton(
-                    fabricConnector,
-                    typeof(IFabricConnector),
-                    typeof(IDependencyConnector)
-                );
 
                 TaskUtil.RunAsyncAsSync(
                     () => fabricConnector.Register(

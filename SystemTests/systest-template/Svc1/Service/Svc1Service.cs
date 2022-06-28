@@ -4,8 +4,20 @@ using XKit.Lib.Common.Config;
 using XKit.Lib.Common.Host;
 using XKit.Lib.Common.Fabric;
 using XKit.Lib.Common.Utility;
+using System.Threading.Tasks;
+using SystemTests._NAMESPACE.Svc1.Entities;
+using System;
 
 namespace SystemTests._NAMESPACE.Svc1.Service {
+
+    public interface ISvc1Service : IManagedService, IServiceBase {
+        // TODO:
+        //Task<Svc1Config> GetConfig(Svc1Config defaultValue = default(Svc1Config));
+    }
+
+    public class Svc1Config {
+
+    }
 
 	public class Svc1Service 
         : ManagedService<Svc1Operation>, ISvc1Service {
@@ -56,4 +68,25 @@ namespace SystemTests._NAMESPACE.Svc1.Service {
 
         // private void OnServiceStop() { }
 	}
+
+    public partial class Svc1Operation : ServiceOperation<ISvc1Service>, ISvc1Api {
+
+        public Svc1Operation(
+            ServiceOperationContext context
+        ) : base(context) { }
+
+
+        // ---------------------------------------------------------------------
+        // ISvc1.GetTestValue
+        // ---------------------------------------------------------------------
+        async Task<ServiceCallResult<TestValueResponse>> ISvc1Api.GetTestValue(TestValueRequest request) {
+            return await RunServiceCall(
+                request,
+                operationAction: (r) => Task.FromResult(new TestValueResponse {
+                    TheIncomingValue = r.TheValue,
+                    RandomValue = Guid.NewGuid().ToString()
+                })
+            );
+        }
+    }
 }

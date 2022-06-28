@@ -21,7 +21,7 @@ namespace XKit.Lib.Testing.Mocking {
         public MockService(
             IReadOnlyDescriptor descriptor,
             Mock<TCallInterface> apiMock,
-            ILocalEnvironment localEnvironment = null
+            ILocalEnvironment localEnvironment
         ) : base(
             localEnvironment
             ) { 
@@ -31,8 +31,8 @@ namespace XKit.Lib.Testing.Mocking {
 
         public MockService(
             IReadOnlyDescriptor descriptor,
-            MockBehavior mockBehavior = MockBehavior.Loose,
-            ILocalEnvironment localEnvironment = null 
+            ILocalEnvironment localEnvironment,
+            MockBehavior mockBehavior = MockBehavior.Loose
         ) : this(
             descriptor,
             new Mock<TCallInterface>(mockBehavior),

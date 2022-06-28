@@ -12,7 +12,7 @@ namespace XKit.Lib.Host.Protocols.Http.Mvc.Helpers {
     [ApiController]
     public abstract class ServiceControllerBase : ControllerBase {
 
-        protected IHostEnvironment LocalEnvironment { get; private set; }
+        protected IHostEnvironment HostEnvironment { get; private set; }
         protected ServiceOperationContext Context { get; private set; }
         protected IServiceBase ServiceCore { get; private set; } 
         protected IServiceOperation Operation { get; private set; }
@@ -21,14 +21,14 @@ namespace XKit.Lib.Host.Protocols.Http.Mvc.Helpers {
             IHostEnvironment localEnvironment,
             IServiceBase service
         ) {
-            LocalEnvironment = localEnvironment ?? throw new ArgumentNullException(nameof(localEnvironment));
+            HostEnvironment = localEnvironment ?? throw new ArgumentNullException(nameof(localEnvironment));
             ServiceCore = service ?? throw new ArgumentNullException(nameof(service));
         }
 
         protected ServiceControllerBase(
-            IHostEnvironment localEnvironment
+            IHostEnvironment hostEnvironment
         ) {
-            LocalEnvironment = localEnvironment ?? throw new ArgumentNullException(nameof(localEnvironment));
+            HostEnvironment = hostEnvironment ?? throw new ArgumentNullException(nameof(hostEnvironment));
         }
 
         protected void SetService(

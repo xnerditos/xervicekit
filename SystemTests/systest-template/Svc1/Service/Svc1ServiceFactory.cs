@@ -1,7 +1,6 @@
 using System;
 using XKit.Lib.Common.Fabric;
 using XKit.Lib.Common.Host;
-using XKit.Lib.Common.ObjectInstantiation;
 using XKit.Lib.Common.Registration;
 using XKit.Lib.Common.Services;
 
@@ -19,13 +18,9 @@ namespace SystemTests._NAMESPACE.Svc1.Service {
         // =====================================================================
 
 		IManagedService ITestServiceFactory.Create(
-            ILocalEnvironment localEnvironment,
-            IDependencyConnector dependencyConnector
+            ILocalEnvironment localEnvironment
         ) {
-            localEnvironment ??= InProcessGlobalObjectRepositoryFactory.CreateSingleton().GetObject<ILocalEnvironment>(); 
-            dependencyConnector ??= InProcessGlobalObjectRepositoryFactory.CreateSingleton().GetObject<IDependencyConnector>();
             if (localEnvironment == null) { throw new ArgumentNullException(nameof(localEnvironment)); }
-            if (dependencyConnector == null) { throw new ArgumentNullException(nameof(dependencyConnector)); }
             return new Svc1Service(localEnvironment);
         } 
 
@@ -40,9 +35,8 @@ namespace SystemTests._NAMESPACE.Svc1.Service {
         // =====================================================================
 
         public static IManagedService Create(
-            ILocalEnvironment localEnvironment = null,
-            IDependencyConnector dependencyConnector = null
-        ) => Factory.Create(localEnvironment, dependencyConnector);
+            ILocalEnvironment localEnvironment
+        ) => Factory.Create(localEnvironment);
 
         public static void InjectCustomFactory(ISvc1ServiceFactory factory) =>
             Svc1ServiceFactory.factory = factory; 
