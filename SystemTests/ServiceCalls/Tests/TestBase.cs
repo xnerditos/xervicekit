@@ -5,7 +5,6 @@ using XKit.Lib.Host;
 using XKit.Lib.Common.Host;
 using XKit.Lib.Common.Registration;
 using XKit.Lib.Common.Client;
-using XKit.Lib.Common.ObjectInstantiation;
 using XKit.Lib.Testing;
 using XKit.Lib.Testing.TestMessageBrokerSvc;
 using SystemTests.ServiceCalls.SvcListensForMessages.Service;
@@ -15,13 +14,13 @@ namespace SystemTests.ServiceCalls.Tests {
     public class TestBase {
 
         private static volatile bool isInited = false;
-        private static readonly SemaphoreSlim synchronizer = new(1, 1);
-
-        protected IDependencyConnector DependencyConnector => HostEnvironmentHelper.DependencyConnector;
-        protected string FabricId => HostEnvironmentHelper.FabricConnector.FabricId;
-        protected static IInProcessGlobalObjectRepository Igor { get; private set; }
+        private static readonly HostEnvironmentHelper HostEnvironmentHelper = TestHostHelper.HostEnvironmentHelper;
+        protected static IDependencyConnector DependencyConnector => HostEnvironmentHelper.DependencyConnector;
+        protected static string FabricId => HostEnvironmentHelper.FabricConnector.FabricId;
         protected static IMessageBrokerSvcService TestMessageBrokerService => TestHostHelper.TestMessageBrokerService;
         protected static ISvcListensForMessagesService MessageListeningService { get; private set; }
+        protected static IHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
+        protected static ILocalEnvironment LocalEnvironment => HostEnvironmentHelper.Host;
 
         protected static void ClassInit() {
             
@@ -29,18 +28,16 @@ namespace SystemTests.ServiceCalls.Tests {
             isInited = true;
             TestHostHelper.Initialize();
 
-            Igor = InProcessGlobalObjectRepositoryFactory.CreateSingleton();
-
             TestHostHelper.AddService(
-                SvcSimple.Service.SvcSimpleServiceFactory.Create()
+                SvcSimple.Service.SvcSimpleServiceFactory.Create(LocalEnvironment)
             );
             
             TestHostHelper.AddService(
-                SvcWithDependency1.Service.SvcWithDependency1ServiceFactory.Create()
+                SvcWithDependency1.Service.SvcWithDependency1ServiceFactory.Create(LocalEnvironment)
             );
 
             TestHostHelper.AddService(
-                SvcWithDependency2.Service.SvcWithDependency2ServiceFactory.Create()
+                SvcWithDependency2.Service.SvcWithDependency2ServiceFactory.Create(LocalEnvironment)
             );
 
             TestHostHelper.AddCreateService(
@@ -49,11 +46,11 @@ namespace SystemTests.ServiceCalls.Tests {
             );
 
             TestHostHelper.AddService(
-                SvcSendsMessages.Service.SvcSendsMessagesServiceFactory.Create()
+                SvcSendsMessages.Service.SvcSendsMessagesServiceFactory.Create(LocalEnvironment)
             );
 
             MessageListeningService = (ISvcListensForMessagesService) TestHostHelper.AddService(
-                SvcListensForMessagesServiceFactory.Create()
+                SvcListensForMessagesServiceFactory.Create(LocalEnvironment)
             );
 
             TestHostHelper.StartHost();

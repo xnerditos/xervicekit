@@ -2,20 +2,23 @@ using XKit.Lib.Common.Fabric;
 using XKit.Lib.Host;
 using XKit.Lib.Common.Client;
 using XKit.Lib.Testing;
+using XKit.Lib.Common.Host;
 
 namespace SystemTests._NAMESPACE.Tests {
 
     public class TestBase {
         protected static IDependencyConnector DependencyConnector => 
-            HostEnvironmentHelper.DependencyConnector;
+            TestHostHelper.HostEnvironmentHelper.DependencyConnector;
         protected static string FabricId => 
-            HostEnvironmentHelper.FabricConnector?.FabricId;
+            TestHostHelper.HostEnvironmentHelper.FabricConnector?.FabricId;
+        protected static IHostEnvironment HostEnvironment => TestHostHelper.HostEnvironmentHelper.Host;
+        protected static ILocalEnvironment LocalEnvironment => TestHostHelper.HostEnvironmentHelper.Host;
 
         protected static void ClassInit() {
 
             TestHostHelper.Initialize();
 
-            TestHostHelper.AddService(Svc1.Service.Svc1ServiceFactory.Create());            
+            TestHostHelper.AddService(new Svc1.Service.Svc1Service(LocalEnvironment));            
 
             TestHostHelper.StartHost();       
         }

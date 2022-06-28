@@ -6,7 +6,7 @@ namespace SystemTests.ServiceCalls {
     public interface ITestServiceFactory : IServiceFactory {
 
 		IManagedService Create(
-            ILocalEnvironment localEnvironment = null
+            ILocalEnvironment localEnvironment
         );
     }
 }

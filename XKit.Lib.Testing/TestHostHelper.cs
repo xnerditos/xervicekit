@@ -17,19 +17,24 @@ using XKit.Lib.Common.Utility.Threading;
 using XKit.Lib.Testing.TestMessageBrokerSvc;
 using XKit.Lib.Common.Utility.Extensions;
 using System.IO;
+using XKit.Lib.Common.Client;
+using XKit.Lib.Connector.Protocols.Http;
 
 namespace XKit.Lib.Testing {
 
     public static partial class TestHostHelper {
 
+        public static readonly HostEnvironmentHelper HostEnvironmentHelper = new();
         private static readonly SemaphoreSlim synchronizer = new(1, 1);
         private static ILogSession log;
         private static bool daemonDebugMode = true;
         public static string LocalAddress { get; private set; }
         public static string LocalDataPath { get; private set; }
-        public static IHostManager Host { get; private set; }
+        public static IHostManager Host => HostEnvironmentHelper.Host;
         public static ILogSessionFactory LogSessionFactory => HostEnvironmentHelper.LogSessionFactory;
         public static IMessageBrokerSvcService TestMessageBrokerService { get; private set; }
+        public static IHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
+        public static ILocalEnvironment LocalEnvironment => HostEnvironmentHelper.Host;
         public static ILogSession Log {
             get {
                 if (log == null) {
@@ -52,9 +57,10 @@ namespace XKit.Lib.Testing {
             LocalAddress = "localhost";
             LocalDataPath = "./test-data-tmp/" + DateTime.Now.ToString("yyyy-MM-dd.HH.mm.ss.fff");
 
-            Host = HostEnvironmentHelper.CreateInitHost(
-                instanceClientFactories: new[] { 
-                    new DirectLocalClientFactory()
+            HostEnvironmentHelper.CreateInitHost(
+                instanceClientFactories: new IInstanceClientFactory[] { 
+                    new DirectLocalClientFactory(),
+                    new HttpClientFactory()
                 },
                 logSessionFactory: LogSessionFactory,
                 localConfigSessionFactory: LocalConfigSessionFactory.Factory,
@@ -65,15 +71,15 @@ namespace XKit.Lib.Testing {
 
             if (autoAddPlatformServices) {
                 AddService(
-                    TestRegistrySvc.RegistrySvcServiceFactory.Create()
+                    TestRegistrySvc.RegistrySvcServiceFactory.Create(LocalEnvironment)
                 );
                 
                 AddService(
-                    ConfigSvcServiceFactory.Create()
+                    ConfigSvcServiceFactory.Create(LocalEnvironment)
                 );
 
                 TestMessageBrokerService = (IMessageBrokerSvcService) AddService(
-                    MessageBrokerSvcServiceFactory.Create()
+                    MessageBrokerSvcServiceFactory.Create(LocalEnvironment)
                 );
             }
         }
@@ -91,7 +97,8 @@ namespace XKit.Lib.Testing {
         ) where TApiInterface : class, IServiceApi {
             var service = new MockService<TApiInterface>(
                 descriptor,
-                apiMock
+                apiMock,
+                LocalEnvironment
             );
             Host.AddManagedService(service);
             return service;
@@ -110,6 +117,7 @@ namespace XKit.Lib.Testing {
         ) where TApiInterface : class, IServiceCallable {
             var service = new MockService<TApiInterface>(
                 descriptor,
+                LocalEnvironment,
                 mockBehavior
             );
             Host.AddManagedService(service);
@@ -156,7 +164,6 @@ namespace XKit.Lib.Testing {
 
         public static void DestroyHost(bool cleanUpData = true) {
             HostEnvironmentHelper.StopAndDestroyHost();
-            Host = null;
             if (cleanUpData) {
                 foreach(var f in Directory.EnumerateFiles(LocalDataPath, "*.*", new EnumerationOptions { RecurseSubdirectories = true })) {
                     try { File.Delete(f); } 

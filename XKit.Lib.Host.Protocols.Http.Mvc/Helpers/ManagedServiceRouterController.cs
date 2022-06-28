@@ -2,16 +2,20 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using XKit.Lib.Common.Host;
-using XKit.Lib.Common.ObjectInstantiation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace XKit.Lib.Host.Protocols.Http.Mvc.Helpers {
 
     [Route("managed")]
     public class ManagedServiceRouterController : ServiceControllerBase {
+        private static IHostEnvironment hostEnvironment;
+
+        public static void SetHostEnvironment(IHostEnvironment hostEnvironment) {
+            ManagedServiceRouterController.hostEnvironment = hostEnvironment;
+        }
 
         public ManagedServiceRouterController() : base(
-            InProcessGlobalObjectRepositoryFactory.CreateSingleton().GetObject<IHostEnvironment>()
+            hostEnvironment
         ) { }
 
         [HttpPost("{collectionName}/{serviceName}/{serviceVersion}")]
@@ -20,7 +24,7 @@ namespace XKit.Lib.Host.Protocols.Http.Mvc.Helpers {
             [FromRoute] string serviceName,
             [FromRoute] int serviceVersion
         ) {
-            var svc = LocalEnvironment.GetManagedServices(
+            var svc = HostEnvironment.GetManagedServices(
                 collectionName,
                 serviceName,
                 serviceVersion

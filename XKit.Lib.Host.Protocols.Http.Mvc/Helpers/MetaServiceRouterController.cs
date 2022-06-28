@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using XKit.Lib.Common.Host;
-using XKit.Lib.Common.ObjectInstantiation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace XKit.Lib.Host.Protocols.Http.Mvc.Helpers {
@@ -9,9 +8,15 @@ namespace XKit.Lib.Host.Protocols.Http.Mvc.Helpers {
     [Route("meta")]
     public class MetaServiceRouterController : ServiceControllerBase {
 
+        private static IHostEnvironment hostEnvironment;
+
+        public static void SetHostEnvironment(IHostEnvironment hostEnvironment) {
+            MetaServiceRouterController.hostEnvironment = hostEnvironment;
+        }
+
         protected MetaServiceRouterController(
         ) : base(
-            InProcessGlobalObjectRepositoryFactory.CreateSingleton().GetObject<IHostEnvironment>()
+            hostEnvironment
         ) {
         }
 
@@ -21,7 +26,7 @@ namespace XKit.Lib.Host.Protocols.Http.Mvc.Helpers {
             [FromRoute] string serviceName
             //[FromRoute] int serviceVersion
         ) {
-            var svc = LocalEnvironment.GetMetaServices(
+            var svc = HostEnvironment.GetMetaServices(
                 serviceName
             ).FirstOrDefault();
             

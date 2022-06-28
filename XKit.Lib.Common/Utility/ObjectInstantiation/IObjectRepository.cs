@@ -1,12 +1,12 @@
 using System;
 
-namespace XKit.Lib.Common.ObjectInstantiation {
+namespace XKit.Lib.Common.Utility.ObjectRepository {
 
     /// <summary>
     /// Provides a quick and easy form of dependency injection for "global" objects.
     /// Acronym:  IGOR (pronounced "eye-gor") 
     /// /// </summary>
-    public interface IInProcessGlobalObjectRepository {
+    public interface IObjectRepository {
 
         /// <summary>
         /// Gets an object that has been previously registered for a type.  The type
@@ -33,7 +33,7 @@ namespace XKit.Lib.Common.ObjectInstantiation {
         /// <summary>
         /// Registers an existing object for one or more types
         /// </summary>
-        /// <param name="obj">the one object instane that is associated with the type</param>
+        /// <param name="obj">the one object instance that is associated with the type</param>
         /// <param name="forTypes">types for which this object is registered</param>
         void RegisterSingleton<TConcreteType>(TConcreteType obj, params System.Type[] forTypes);
 

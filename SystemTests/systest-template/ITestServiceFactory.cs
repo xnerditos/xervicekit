@@ -6,8 +6,7 @@ namespace SystemTests._NAMESPACE {
     public interface ITestServiceFactory : IServiceFactory {
 
 		IManagedService Create(
-            ILocalEnvironment localEnvironment = null,
-            IDependencyConnector dependencyConnector = null
+            ILocalEnvironment localEnvironment
         );
     }
 }

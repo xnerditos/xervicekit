@@ -7,7 +7,6 @@ using XKit.Lib.Common.Client;
 using XKit.Lib.Common.Fabric;
 using XKit.Lib.Common.Host;
 using XKit.Lib.Common.Log;
-using XKit.Lib.Common.ObjectInstantiation;
 using XKit.Lib.Common.Services.MessageBroker;
 using XKit.Lib.Common.Utility.Extensions;
 using XKit.Lib.Connector.Fabric;
@@ -28,9 +27,9 @@ namespace XKit.Lib.Connector.Service {
             IDependencyConnector connector,
             IMessageBrokerClient broker = null
         ) {
-            // IInProcessGlobalObjectRepository igor = null;
+            // IObjectRepository igor = null;
             // if (broker == null || clientParameters == null) {
-            //     igor = InProcessGlobalObjectRepositoryFactory.CreateSingleton();
+            //     igor = ObjectRepositoryFactory.CreateSingleton();
             // }
 
             this.Broker = broker ?? new InternalMessageBrokerClient(

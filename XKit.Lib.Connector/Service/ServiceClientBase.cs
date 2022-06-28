@@ -9,7 +9,6 @@ using XKit.Lib.Common.Client;
 using XKit.Lib.Common.Fabric;
 using XKit.Lib.Common.Host;
 using XKit.Lib.Common.Log;
-using XKit.Lib.Common.ObjectInstantiation;
 using XKit.Lib.Common.Registration;
 
 namespace XKit.Lib.Connector.Service {
@@ -53,7 +52,7 @@ namespace XKit.Lib.Connector.Service {
             IReadOnlyDescriptor descriptor,
             string callInterfaceName,
             ILogSession log,
-            IDependencyConnector dependencyConnector = null,
+            IDependencyConnector dependencyConnector,
             ServiceCallTypeParameters defaultCallTypeParameters = null,
             ServiceClientErrorHandling errorHandling = ServiceClientErrorHandling.LogWarning,
             string targetHostId = null
@@ -62,11 +61,7 @@ namespace XKit.Lib.Connector.Service {
             this.callInterfaceName = callInterfaceName;
             this.DefaultErrorHandling = errorHandling;
             this.defaultLog = log;
-            if (dependencyConnector == null) {
-                DependencyConnector = InProcessGlobalObjectRepositoryFactory.CreateSingleton().GetObject<IDependencyConnector>();
-            } else {
-                DependencyConnector = dependencyConnector;
-            }
+            DependencyConnector = dependencyConnector ?? throw new ArgumentNullException(nameof(dependencyConnector));
             this.DefaultCallTypeParameters = defaultCallTypeParameters ?? ServiceCallTypeParameters.SyncResult();
             this.TargetHostId = targetHostId;
         }

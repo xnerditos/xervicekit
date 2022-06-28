@@ -1,7 +1,5 @@
 using System;
-using XKit.Lib.Common.Fabric;
 using XKit.Lib.Common.Host;
-using XKit.Lib.Common.ObjectInstantiation;
 using XKit.Lib.Common.Registration;
 using XKit.Lib.Common.Services;
 
@@ -9,7 +7,7 @@ namespace XKit.Lib.Testing.TestConfigSvc {
 
     public interface IConfigSvcServiceFactory : IServiceFactory {
 		IManagedService Create(
-            ILocalEnvironment localEnvironment = null
+            ILocalEnvironment localEnvironment
         );
     }
 
@@ -28,7 +26,6 @@ namespace XKit.Lib.Testing.TestConfigSvc {
 		IManagedService IConfigSvcServiceFactory.Create(
             ILocalEnvironment localEnvironment
         ) {
-            localEnvironment ??= InProcessGlobalObjectRepositoryFactory.CreateSingleton().GetObject<ILocalEnvironment>(); 
             if (localEnvironment == null) { throw new ArgumentNullException(nameof(localEnvironment)); }
             return new ConfigSvcService(localEnvironment);
         } 
@@ -38,7 +35,7 @@ namespace XKit.Lib.Testing.TestConfigSvc {
         // =====================================================================
 
         public static IManagedService Create(
-            ILocalEnvironment localEnvironment = null
+            ILocalEnvironment localEnvironment
         ) => Factory.Create(localEnvironment);
 
         public static void InjectCustomFactory(IConfigSvcServiceFactory factory) =>

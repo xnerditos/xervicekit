@@ -1,6 +1,5 @@
 using System;
 using XKit.Lib.Common.Host;
-using XKit.Lib.Common.ObjectInstantiation;
 using XKit.Lib.Common.Registration;
 using XKit.Lib.Common.Services;
 
@@ -8,7 +7,7 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
 
     public interface IMessageBrokerSvcServiceFactory : IServiceFactory {
 		IManagedService Create(
-            ILocalEnvironment localEnvironment = null
+            ILocalEnvironment localEnvironment
         );
     }
 
@@ -27,7 +26,6 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
 		IManagedService IMessageBrokerSvcServiceFactory.Create(
             ILocalEnvironment localEnvironment
         ) {
-            localEnvironment ??= InProcessGlobalObjectRepositoryFactory.CreateSingleton().GetObject<ILocalEnvironment>(); 
             if (localEnvironment == null) { throw new ArgumentNullException(nameof(localEnvironment)); }
             return new MessageBrokerSvcService(localEnvironment);
         } 
@@ -37,7 +35,7 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
         // =====================================================================
 
         public static IManagedService Create(
-            ILocalEnvironment localEnvironment = null
+            ILocalEnvironment localEnvironment
         ) => Factory.Create(localEnvironment);
 
         public static void InjectCustomFactory(IMessageBrokerSvcServiceFactory factory) =>
