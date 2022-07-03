@@ -15,9 +15,9 @@ using XKit.Lib.Common.Host;
 
 namespace XKit.Lib.Consumer {
 
-    public static class ConsumerHelper {
+    public class ConsumerHelper {
 
-        private static readonly List<IReadOnlyDescriptor> Dependencies = new();
+        private readonly List<IReadOnlyDescriptor> Dependencies = new();
         
         private class SimpleFabricEnvironment : ILocalEnvironment {
             private readonly string fabricId = Identifiers.GenerateIdentifier();
@@ -34,7 +34,7 @@ namespace XKit.Lib.Consumer {
             IHostEnvironment ILocalEnvironment.HostEnvironment => null;
 
             IEnumerable<IReadOnlyDescriptor> ILocalEnvironment.GetDependencies() 
-                => this.getDependenciesSource?.Invoke()?.Select(d => d.Clone()).ToArray() ?? Array.Empty<Descriptor>();
+                => getDependenciesSource?.Invoke()?.Select(d => d.Clone()).ToArray() ?? Array.Empty<Descriptor>();
 
             public SimpleFabricEnvironment(
                 Func<IList<IReadOnlyDescriptor>> getDependenciesSource,
@@ -45,35 +45,35 @@ namespace XKit.Lib.Consumer {
             }
         }
 
-        private static IFabricConnector fabricConnector;
-        private static readonly SetOnceOrThrow<ILogSession> log = new();
+        private IFabricConnector fabricConnector;
+        private readonly SetOnceOrThrow<ILogSession> log = new();
         
-        public static IDependencyConnector DependencyConnector => fabricConnector;
-        public static IFabricConnector FabricConnector => fabricConnector;
-        public static string FabricId => fabricConnector.FabricId;
-        public static ILogSession Log => log.Value;
+        public IDependencyConnector DependencyConnector => fabricConnector;
+        public IFabricConnector FabricConnector => fabricConnector;
+        public string FabricId => fabricConnector.FabricId;
+        public ILogSession Log => log.Value;
 
-        public static IFabricConnector CreateInitConsumer(
-            IEnumerable<IInstanceClientFactory> instanceClientFactories,
-            IEnumerable<IServiceClientFactory> dependencyFactories,
+        public IFabricConnector CreateInitConsumer(
+            IEnumerable<IServiceClientFactory> dependencies,
             IEnumerable<string> initialRegistryAddresses = null,
+            IEnumerable<IInstanceClientFactory> instanceClientFactories = null,
             bool fatalIfCannotRegister = false
         ) {
             return CreateInitConsumer(
-                instanceClientFactories, 
-                dependencyFactories.Select(df => df.Descriptor),
+                dependencies.Select(df => df.Descriptor),
                 initialRegistryAddresses,
+                instanceClientFactories, 
                 fatalIfCannotRegister
             );
         }
 
-        public static IFabricConnector CreateInitConsumer(
-            IEnumerable<IInstanceClientFactory> instanceClientFactories = null,
+        public IFabricConnector CreateInitConsumer(
             IEnumerable<IReadOnlyDescriptor> dependencies = null,
             IEnumerable<string> initialRegistryAddresses = null,
+            IEnumerable<IInstanceClientFactory> instanceClientFactories = null,
             bool fatalIfCannotRegister = true
         ) {
-            if (ConsumerHelper.fabricConnector == null) {
+            if (fabricConnector == null) {
                 if (initialRegistryAddresses == null) {
                     string registryAddresses = Environment.GetEnvironmentVariable(EnvironmentHelperConstants.EnvironmentVariables.InitialRegistryAddresses);
                     initialRegistryAddresses = registryAddresses?.Split(';', StringSplitOptions.RemoveEmptyEntries);
@@ -84,7 +84,7 @@ namespace XKit.Lib.Consumer {
                         XKit.Lib.Connector.Protocols.Http.HttpClientFactory.Factory
                     };
                 }
-                ConsumerHelper.fabricConnector = FabricConnectorFactory.Create(instanceClientFactories.ToList());
+                fabricConnector = FabricConnectorFactory.Create(instanceClientFactories.ToList());
 
                 if (dependencies != null) {
                     Dependencies.AddRange(dependencies);
@@ -107,12 +107,12 @@ namespace XKit.Lib.Consumer {
             return fabricConnector;
         }
 
-        public static void ResetDependencies(IEnumerable<IReadOnlyDescriptor> dependencies) {
+        public void ResetDependencies(IEnumerable<IReadOnlyDescriptor> dependencies) {
             Dependencies.Clear();
             Dependencies.AddRange(dependencies);
         }
 
-        public static TServiceClientInterface CreateServiceClient<TServiceClientInterface>(
+        public TServiceClientInterface CreateServiceClient<TServiceClientInterface>(
             IServiceClientFactory<TServiceClientInterface> factory,
             ILogSession log = null,
             ServiceCallTypeParameters defaultCallParameters = null
@@ -125,16 +125,16 @@ namespace XKit.Lib.Consumer {
             );
         }
 
-        public static void Refresh(ILogSession log) 
+        public void Refresh(ILogSession log) 
             => TaskUtil.RunAsyncAsSync(() => fabricConnector.Refresh(log ?? Log));
 
-        public static void Unregister(ILogSession log) 
+        public void Unregister(ILogSession log) 
             => TaskUtil.RunAsyncAsSync(() => fabricConnector.Unregister(log ?? Log));
 
-        public static Task RefreshAsync(ILogSession log) 
+        public Task RefreshAsync(ILogSession log) 
             => fabricConnector.Refresh(log ?? Log);
 
-        public static async Task UnregisterAsync(ILogSession log) {
+        public async Task UnregisterAsync(ILogSession log) {
             await fabricConnector.Unregister(log ?? Log);
             Log.End(LogResultStatusEnum.Unknown);
         }

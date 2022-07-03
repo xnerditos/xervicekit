@@ -24,7 +24,7 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
         ) => RunServiceCall(
                 request,
                 operationAction: (r) => {
-                    Service.SendMessage(r);
+                    Service.SendMessage(r, Log);
                     return Task.CompletedTask;
                 }
             );
@@ -34,7 +34,7 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
         ) => RunServiceCall(
                 request,
                 operationAction: (r) => {
-                    Service.SendMessage(r);
+                    Service.SendMessage(r, Log);
                     return Task.CompletedTask;
                 }
             );

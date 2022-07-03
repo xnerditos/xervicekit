@@ -9,19 +9,19 @@ namespace SystemTests.Daemons.Tests {
     public class DaemonCtrl : TestBase {
 
         [TestInitialize]
-        public void Initialize() { ClassInit(); }
+        public void Initialize() { TestInit(); }
 
         [TestCleanup]
-        public void Teardown() { ClassTeardown(); }
+        public void Teardown() { TestTeardown(); }
 
         [TestMethod]
-        public void DaemonIsRunning() => TestHostHelper.RunTest(() => {
+        public void DaemonIsRunning() => TestHelper.RunTest(() => {
             
             LastMessageTickValue.Should().BeGreaterThan(0);
         });
 
         [TestMethod]
-        public void PausesAndResumesWithService() => TestHostHelper.RunTest(() => {
+        public void PausesAndResumesWithService() => TestHelper.RunTest(() => {
             var value = LastMessageTickValue;
             Yield();
             LastMessageTickValue.Should().NotBe(value);

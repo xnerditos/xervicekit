@@ -40,7 +40,7 @@ namespace XKit.Lib.Testing.TestRegistrySvc {
             );
 
         // =====================================================================
-        // workers
+        // private workers
         // =====================================================================
 
         private Task<ServiceTopologyMap> Register(FabricRegistration registration) {
@@ -63,10 +63,6 @@ namespace XKit.Lib.Testing.TestRegistrySvc {
         private Task Unregister(UnregisterRequest request) {
             return Task.CompletedTask;     // Does nothing 
         }
-
-        // =====================================================================
-        // private
-        // =====================================================================
 
         private ServiceTopologyMap CreateTopologyMap() {
 

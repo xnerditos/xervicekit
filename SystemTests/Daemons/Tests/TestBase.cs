@@ -8,39 +8,40 @@ using System.Threading;
 namespace SystemTests.Daemons.Tests {
 
     public class TestBase {
-        private static readonly HostEnvironmentHelper HostEnvironmentHelper = TestHostHelper.HostEnvironmentHelper;
-        protected static IDependencyConnector DependencyConnector => HostEnvironmentHelper.DependencyConnector;
-        protected static string FabricId => HostEnvironmentHelper.FabricConnector.FabricId;
-        protected static IHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
-        protected static ILocalEnvironment LocalEnvironment => HostEnvironmentHelper.Host;
+        protected readonly TestHostHelper TestHelper = new();
+        protected HostEnvironmentHelper HostEnvironmentHelper => TestHelper.HostEnvironmentHelper;
+        protected IDependencyConnector DependencyConnector => HostEnvironmentHelper.DependencyConnector;
+        protected string FabricId => HostEnvironmentHelper.FabricConnector.FabricId;
+        protected IHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
+        protected ILocalEnvironment LocalEnvironment => HostEnvironmentHelper.Host;
         protected IManagedService AutoMessagingService { get; private set; }
-        protected static uint LastMessageTickValue => SvcWithAutoMessaging.Service.SvcWithAutoMessagingDaemonOperation.LastMessageTickValue;
+        protected uint LastMessageTickValue => TestServices.SvcWithAutoMessaging.SvcWithAutoMessagingDaemonOperation.LastMessageTickValue;
 
         protected static void Yield(int milliseconds = 200) {
             Thread.Sleep(milliseconds);
         }
 
-        protected void ClassInit() {
+        protected void TestInit() {
 
-            TestHostHelper.Initialize(useDaemonDebugMode: false);
-            AutoMessagingService = TestHostHelper.AddService(
-                SvcWithAutoMessaging.Service.SvcWithAutoMessagingServiceFactory.Create(LocalEnvironment)
+            TestHelper.InitializeLocalTestHost(useDaemonDebugMode: false);
+            AutoMessagingService = TestHelper.AddService(
+                TestServices.SvcWithAutoMessaging.SvcWithAutoMessagingServiceFactory.Create(LocalEnvironment)
             );
-            TestHostHelper.StartHost();
+            TestHelper.StartHost();
             Yield(1000);
         }
 
-        protected static void ClassTeardown() {
+        protected void TestTeardown() {
 
-            TestHostHelper.DestroyHost();
+            TestHelper.DestroyHost();
         }
 
-        protected static T CreateClient<T>(
+        protected T CreateClient<T>(
             IServiceClientFactory<T> factory, 
             ServiceCallTypeParameters callTypeParameters = null
         ) {
             return factory.CreateServiceClient(
-                log: TestHostHelper.Log,
+                log: TestHelper.Log,
                 connector: DependencyConnector,
                 defaultCallTypeParameters: callTypeParameters ?? ServiceCallTypeParameters.SyncResult()
             );

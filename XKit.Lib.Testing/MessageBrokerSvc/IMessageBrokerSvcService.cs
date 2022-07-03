@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using XKit.Lib.Common.Fabric;
 using XKit.Lib.Common.Host;
+using XKit.Lib.Common.Log;
 using XKit.Lib.Common.Services.MessageBroker;
 
 namespace XKit.Lib.Testing.TestMessageBrokerSvc {
@@ -50,8 +51,7 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
 
         Task<IReadOnlyList<ServiceCallResult>> SendMessage(
             FabricMessage message,
-            string requestorFabricId = null,
-            string correlationId = null
+            ILogSession log
         );
         
         Task<IReadOnlyList<ServiceCallResult>> SendMessage<TCallInterface, TMessage>(

@@ -121,7 +121,7 @@ namespace UnitTests.Connector.FabricConnectorAssertions {
         // =====================================================================
 
         /// <summary>
-        /// Sets up for the Initialize and Register calls to be made
+        /// Sets up for the InitializeLocalTestHost and Register calls to be made
         /// </summary>
         /// <returns></returns>
         protected ServiceCallRouterMockWrapper Setup_Registry(
@@ -223,7 +223,7 @@ namespace UnitTests.Connector.FabricConnectorAssertions {
         }
 
         /// <summary>
-        /// Does the Initialize and Register calls on the target to prepare it
+        /// Does the InitializeLocalTestHost and Register calls on the target to prepare it
         /// </summary>
         protected async Task PrepareTarget_InitializeAndRegister(IFabricConnector target) {
             var hostId = target.Initialize();

@@ -22,20 +22,21 @@ using XKit.Lib.Connector.Protocols.Http;
 
 namespace XKit.Lib.Testing {
 
-    public static partial class TestHostHelper {
+    public partial class TestHostHelper {
 
-        public static readonly HostEnvironmentHelper HostEnvironmentHelper = new();
-        private static readonly SemaphoreSlim synchronizer = new(1, 1);
-        private static ILogSession log;
-        private static bool daemonDebugMode = true;
-        public static string LocalAddress { get; private set; }
-        public static string LocalDataPath { get; private set; }
-        public static IHostManager Host => HostEnvironmentHelper.Host;
-        public static ILogSessionFactory LogSessionFactory => HostEnvironmentHelper.LogSessionFactory;
-        public static IMessageBrokerSvcService TestMessageBrokerService { get; private set; }
-        public static IHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
-        public static ILocalEnvironment LocalEnvironment => HostEnvironmentHelper.Host;
-        public static ILogSession Log {
+        private HostEnvironmentHelper hostEnvironmentHelper;
+        public HostEnvironmentHelper HostEnvironmentHelper => hostEnvironmentHelper;
+        private readonly SemaphoreSlim synchronizer = new(1, 1);
+        private ILogSession log;
+        private bool daemonDebugMode = true;
+        public string LocalAddress { get; private set; }
+        public string LocalDataPath { get; private set; }
+        public IHostManager Host => HostEnvironmentHelper.Host;
+        public ILogSessionFactory LogSessionFactory => HostEnvironmentHelper.LogSessionFactory;
+        public IMessageBrokerSvcService TestMessageBrokerService { get; private set; }
+        public IHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
+        public ILocalEnvironment LocalEnvironment => HostEnvironmentHelper.Host;
+        public ILogSession Log {
             get {
                 if (log == null) {
                     log = LogSessionFactory.CreateLogSession(
@@ -47,21 +48,50 @@ namespace XKit.Lib.Testing {
                 return log;
             }
         }
-        public static void Initialize(
+
+        public void InitializeLocalTestHost(
             bool autoAddPlatformServices = true,
             bool loadMetaServices = false,
             bool useDaemonDebugMode = true
+        ) => Initialize(
+            localAddress: "localhost",
+            autoAddPlatformServices: autoAddPlatformServices,
+            loadMetaServices: loadMetaServices,
+            useDaemonDebugMode: useDaemonDebugMode,
+            instanceClientFactories: new IInstanceClientFactory[] { 
+                new DirectLocalClientFactory()
+            }
+        );
+
+        public void InitializeRemoteTestHost(
+            bool autoAddPlatformServices = true,
+            bool loadMetaServices = false,
+            bool useDaemonDebugMode = true
+        ) => Initialize(
+            localAddress: "localhost:8080",
+            autoAddPlatformServices: autoAddPlatformServices,
+            loadMetaServices: loadMetaServices,
+            useDaemonDebugMode: useDaemonDebugMode,
+            instanceClientFactories: new IInstanceClientFactory[] { 
+                new HttpClientFactory()
+            }
+        );
+
+        private void Initialize(
+            string localAddress,
+            bool autoAddPlatformServices,
+            bool loadMetaServices,
+            bool useDaemonDebugMode,
+            IList<IInstanceClientFactory> instanceClientFactories
         ) {
+            hostEnvironmentHelper = new();
             daemonDebugMode = useDaemonDebugMode;
 
-            LocalAddress = "localhost";
+            LocalAddress = localAddress ?? "localhost";
             LocalDataPath = "./test-data-tmp/" + DateTime.Now.ToString("yyyy-MM-dd.HH.mm.ss.fff");
 
             HostEnvironmentHelper.CreateInitHost(
-                instanceClientFactories: new IInstanceClientFactory[] { 
-                    new DirectLocalClientFactory(),
-                    new HttpClientFactory()
-                },
+                instanceClientFactories: instanceClientFactories,
                 logSessionFactory: LogSessionFactory,
                 localConfigSessionFactory: LocalConfigSessionFactory.Factory,
                 hostAddress: LocalAddress,
@@ -91,7 +121,7 @@ namespace XKit.Lib.Testing {
         /// <param name="createMockApiOperation">a delegate that returns a mock api operation</param>
         /// <typeparam name="TApiInterface">The operation interface for the mock operation</typeparam>
         /// <returns></returns>
-        public static IMockService<TApiInterface> AddMockService<TApiInterface>(
+        public IMockService<TApiInterface> AddMockService<TApiInterface>(
             IReadOnlyDescriptor descriptor, 
             Mock<TApiInterface> apiMock
         ) where TApiInterface : class, IServiceApi {
@@ -111,7 +141,7 @@ namespace XKit.Lib.Testing {
         /// <param name="createMockApiOperation">a delegate that returns a mock api operation</param>
         /// <typeparam name="TApiInterface">The operation interface for the mock operation</typeparam>
         /// <returns></returns>
-        public static IMockService<TApiInterface> AddMockService<TApiInterface>(
+        public IMockService<TApiInterface> AddMockService<TApiInterface>(
             IReadOnlyDescriptor descriptor, 
             MockBehavior mockBehavior = MockBehavior.Loose
         ) where TApiInterface : class, IServiceCallable {
@@ -124,7 +154,7 @@ namespace XKit.Lib.Testing {
             return service;
         }
 
-        public static IManagedService AddService(
+        public IManagedService AddService(
             IManagedService service
         ) {
             if (daemonDebugMode) {
@@ -136,7 +166,7 @@ namespace XKit.Lib.Testing {
             return service;
         }
 
-        public static IManagedService AddCreateService(
+        public IManagedService AddCreateService(
             IReadOnlyDescriptor descriptor,
             Type apiOperationInterfaceType
         ) {
@@ -151,7 +181,7 @@ namespace XKit.Lib.Testing {
             return service;
         }
 
-        public static void StartHost(
+        public void StartHost(
             Dictionary<string,object> hostStartupParams = null
         ) {
 
@@ -162,7 +192,7 @@ namespace XKit.Lib.Testing {
             );
         }
 
-        public static void DestroyHost(bool cleanUpData = true) {
+        public void DestroyHost(bool cleanUpData = true) {
             HostEnvironmentHelper.StopAndDestroyHost();
             if (cleanUpData) {
                 foreach(var f in Directory.EnumerateFiles(LocalDataPath, "*.*", new EnumerationOptions { RecurseSubdirectories = true })) {
@@ -170,9 +200,10 @@ namespace XKit.Lib.Testing {
                     catch {}
                 }
             }
+            hostEnvironmentHelper = null;
         }
 
-        public static void SetRuntimeConfiguration(
+        public void SetRuntimeConfiguration(
             HostConfigDocument hostConfig = null,
             IDictionary<IReadOnlyDescriptor, object> servicesConfig = null,
             bool clearAllExisting = true
@@ -193,7 +224,7 @@ namespace XKit.Lib.Testing {
             TaskUtil.RunAsyncAsSync(() => Host?.RefreshConfigurationFromSource());
         }
 
-        public static async Task RunTestAsync(
+        public async Task RunTestAsync(
             Func<Task> action,
             [CallerMemberName] string testName = null
         ) {
@@ -222,7 +253,7 @@ namespace XKit.Lib.Testing {
             } 
         }
 
-        public static void RunTest(
+        public void RunTest(
             Action action,
             [CallerMemberName] string testName = null
         ) {
@@ -251,7 +282,7 @@ namespace XKit.Lib.Testing {
             } 
         }
 
-        public static void WriteLineConsole(string message) {
+        public void WriteLineConsole(string message) {
             Console.WriteLine(message);
             Debug.WriteLine(message);
         }
