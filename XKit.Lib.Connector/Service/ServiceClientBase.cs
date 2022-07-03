@@ -406,8 +406,8 @@ namespace XKit.Lib.Connector.Service {
             correlationId: Log?.CorrelationId, 
             operationName: this.callInterfaceName == null || operationName.Contains('.') ? operationName : $"{this.callInterfaceName}.{operationName}", 
             requestBody: requestBody,
-            requestorFabricId: Log.OriginatorFabricId,
-            requestorInstanceId: Log.OriginatorInstanceId
+            requestorFabricId: Log?.OriginatorFabricId,
+            requestorInstanceId: Log?.OriginatorInstanceId
         );
 
         private ServiceCallRequest CreateRequest(
@@ -418,8 +418,8 @@ namespace XKit.Lib.Connector.Service {
             callTypeParameters: CallTypeParameters, 
             correlationId: Log?.CorrelationId, 
             operationName: this.callInterfaceName == null || operationName.Contains('.') ? operationName : $"{this.callInterfaceName}.{operationName}",
-            requestorFabricId: Log.OriginatorFabricId,
-            requestorInstanceId: Log.OriginatorInstanceId
+            requestorFabricId: Log?.OriginatorFabricId,
+            requestorInstanceId: Log?.OriginatorInstanceId
         );
 
         private ServiceCallResult HydrateResult(

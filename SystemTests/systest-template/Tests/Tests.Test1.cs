@@ -8,14 +8,26 @@ namespace SystemTests._NAMESPACE.Tests {
     [TestClass]
     public class Test1 : TestBase {
 
-        [ClassInitialize]
-        public static void Initialize(TestContext context) { TestBase.ClassInit(); }
+        // [ClassInitialize]
+        // public static void Initialize(TestContext context) { TestBase.ClassInit(); }
 
-        [ClassCleanup]
-        public static void Teardown() { TestBase.ClassTeardown(); }
+        // [ClassCleanup]
+        // public static void Teardown() { TestBase.ClassTeardown(); }
+
+        [TestInitialize]
+        public void Initialize() { 
+            var testHelper = new TestHostHelper();
+            testHelper.InitializeLocalTestHost();
+            InitTests(testHelper, testHelper.Host.DependencyConnector); 
+        }
+
+        [TestCleanup]
+        public void Teardown() { 
+            TeardownTests(); 
+        }
 
         [TestMethod]
-        public async Task Succeeds() => await TestHostHelper.RunTestAsync(async () => {
+        public async Task Succeeds() => await TestHelper.RunTestAsync(async () => {
             
             // TODO:  Write Test code
 

@@ -3,37 +3,50 @@ using XKit.Lib.Host;
 using XKit.Lib.Common.Client;
 using XKit.Lib.Testing;
 using XKit.Lib.Common.Host;
+using System.Collections.Generic;
+using XKit.Lib.Common.Registration;
 
 namespace SystemTests._NAMESPACE.Tests {
 
     public class TestBase {
-        protected static IDependencyConnector DependencyConnector => 
-            TestHostHelper.HostEnvironmentHelper.DependencyConnector;
-        protected static string FabricId => 
-            TestHostHelper.HostEnvironmentHelper.FabricConnector?.FabricId;
-        protected static IHostEnvironment HostEnvironment => TestHostHelper.HostEnvironmentHelper.Host;
-        protected static ILocalEnvironment LocalEnvironment => TestHostHelper.HostEnvironmentHelper.Host;
+        private IDependencyConnector clientDependencyConnector;
+        private TestHostHelper testHelper;
+        public TestHostHelper TestHelper => testHelper;
+        public HostEnvironmentHelper HostEnvironmentHelper => TestHelper.HostEnvironmentHelper;
+        public string FabricId => HostEnvironmentHelper.FabricConnector.FabricId;
+        public IHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
+        public ILocalEnvironment LocalEnvironment => HostEnvironmentHelper.Host;
 
-        protected static void ClassInit() {
+        public void InitTests(TestHostHelper testHelper, IDependencyConnector clientDependencyConnector = null) {
+            
+            this.testHelper = testHelper;
 
-            TestHostHelper.Initialize();
+            // TODO:  Add test services here
+            // TestHelper.AddService(
+            //     TestServices.SvcSendsMessages.SvcSendsMessagesServiceFactory.Create(LocalEnvironment)
+            // );
 
-            TestHostHelper.AddService(new Svc1.Service.Svc1Service(LocalEnvironment));            
-
-            TestHostHelper.StartHost();       
+            TestHelper.StartHost();
+            this.clientDependencyConnector = clientDependencyConnector ?? TestHelper.LocalEnvironment.DependencyConnector;
         }
 
-        protected static void ClassTeardown() {
-            TestHostHelper.DestroyHost();
+        public void TeardownTests() {            
+            TestHelper.DestroyHost();
+            testHelper = null;
         }
 
-        protected static T CreateClient<T>(
+        public void SetRuntimeConfiguration(
+            HostConfigDocument hostConfig = null,
+            IDictionary<IReadOnlyDescriptor, object> servicesConfig = null
+        ) => TestHelper.SetRuntimeConfiguration(hostConfig, servicesConfig);
+
+        public T CreateClient<T>(
             IServiceClientFactory<T> factory, 
             ServiceCallTypeParameters callTypeParameters = null
         ) {
             return factory.CreateServiceClient(
-                log: TestHostHelper.Log,
-                DependencyConnector,
+                log: TestHelper.Log,
+                clientDependencyConnector,
                 defaultCallTypeParameters: callTypeParameters ?? ServiceCallTypeParameters.SyncResult()
             );
         }

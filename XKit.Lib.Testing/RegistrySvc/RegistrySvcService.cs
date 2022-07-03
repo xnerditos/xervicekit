@@ -3,6 +3,7 @@ using XKit.Lib.Common.Registration;
 using XKit.Lib.Host.DefaultBaseClasses;
 using XKit.Lib.Common.Host;
 using XKit.Lib.Common.Utility;
+using System;
 
 namespace XKit.Lib.Testing.TestRegistrySvc {
 
@@ -18,7 +19,7 @@ namespace XKit.Lib.Testing.TestRegistrySvc {
 
 		protected override IReadOnlyDescriptor Descriptor => descriptor;
 
-        protected override IEnumerable<IReadOnlyDescriptor> Dependencies => new IReadOnlyDescriptor[0];
+        protected override IEnumerable<IReadOnlyDescriptor> Dependencies => Array.Empty<IReadOnlyDescriptor>();
 
         protected override IReadOnlyServiceCallPolicy CallPolicy => DefaultPolicy;
         
@@ -39,8 +40,6 @@ namespace XKit.Lib.Testing.TestRegistrySvc {
             case RunStateEnum.Paused:
             case RunStateEnum.Unknown:
             return false;
-            // For the registry, we specifically allow operations during shutdown
-            // case RunStateEnum.ShuttingDown:
             }
             return this.RunState == RunStateEnum.Active;
         }    

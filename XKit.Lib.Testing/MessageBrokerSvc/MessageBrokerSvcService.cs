@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using XKit.Lib.Common.Client;
 using XKit.Lib.Common.Fabric;
 using XKit.Lib.Common.Host;
+using XKit.Lib.Common.Log;
 using XKit.Lib.Common.Registration;
 using XKit.Lib.Common.Services.MessageBroker;
 using XKit.Lib.Common.Utility;
@@ -139,8 +140,7 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
 
         public async Task<IReadOnlyList<ServiceCallResult>> SendMessage(
             FabricMessage message,
-            string requestorFabricId = null,
-            string correlationId = null
+            ILogSession log
         ) {
             var allResults = new List<ServiceCallResult>();
 
@@ -150,7 +150,7 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
                 var client = ClientFactory.Factory.CreateGenericServiceClient(
                     descriptor: subscription.Recipient,
                     operationInterfaceName: messageNameParsed.Length < 2 ? null : messageNameParsed[0],
-                    TestHostHelper.Log,
+                    log,
                     DependencyConnector,
                     ServiceCallTypeParameters.SyncResult(),
                     errorHandling: subscription.ErrorHandling.GetValueOrDefault(ServiceClientErrorHandling.LogWarning),

@@ -8,7 +8,7 @@
         "editor.insertSpaces": true,
         "csharp.format.enable": false,
         "csharp.unitTestDebuggingOptions": {
-            "stopAtEntry": true,
+            "stopAtEntry": false,
             "logging": {
                 "engineLogging": false,
                 "exceptions": true,

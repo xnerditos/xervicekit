@@ -10,7 +10,7 @@
 		<IsPackable>true</IsPackable>
 	</PropertyGroup>
 	<PropertyGroup>
-		<GenerateProgramFile>false</GenerateProgramFile>
+	<!-- <GenerateProgramFile>false</GenerateProgramFile>  -->
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<NoWarn>$(NoWarn);RAZORSDK1006</NoWarn>
 		<NoWarn>$(NoWarn);CS8034</NoWarn>
@@ -35,5 +35,6 @@
 		<ProjectReference Include="../../XKit.Lib.Host.Helpers/XKit.Lib.Host.Helpers.csproj"/>
 		<ProjectReference Include="../../XKit.Lib.Log/XKit.Lib.Log.csproj"/>
 		<ProjectReference Include="../../XKit.Lib.Consumer/XKit.Lib.Consumer.csproj"/>
+		<ProjectReference Include="../TestServices/TestServices.csproj"/>
 	</ItemGroup>
 </Project>
