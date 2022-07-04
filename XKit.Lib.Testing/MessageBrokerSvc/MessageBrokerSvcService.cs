@@ -40,8 +40,8 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
         // =====================================================================
 
         public MessageBrokerSvcService(
-            ILocalEnvironment localFabric
-        ) : base(localFabric) { }
+            IXkitHostEnvironment hostEnv
+        ) : base(hostEnv) { }
 
         // =====================================================================
         // IMessageBrokerSvcService
@@ -151,7 +151,7 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
                     descriptor: subscription.Recipient,
                     operationInterfaceName: messageNameParsed.Length < 2 ? null : messageNameParsed[0],
                     log,
-                    DependencyConnector,
+                    Connector,
                     ServiceCallTypeParameters.SyncResult(),
                     errorHandling: subscription.ErrorHandling.GetValueOrDefault(ServiceClientErrorHandling.LogWarning),
                     targetHostId: subscription.RecipientHostId
@@ -187,7 +187,7 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
             new FabricMessage {
                 MessageId = messageId == default ? Guid.NewGuid() : messageId,
                 MessageTypeName = typeof(TCallInterface).Name + "." + methodName,
-                JsonPayload = Json.To<TMessage>(payload)
+                JsonPayload = Json.ToJson<TMessage>(payload)
             },
             null
         );

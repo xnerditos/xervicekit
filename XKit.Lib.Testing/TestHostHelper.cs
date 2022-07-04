@@ -31,11 +31,10 @@ namespace XKit.Lib.Testing {
         private bool daemonDebugMode = true;
         public string LocalAddress { get; private set; }
         public string LocalDataPath { get; private set; }
-        public IHostManager Host => HostEnvironmentHelper.Host;
+        public IXkitHost Host => HostEnvironmentHelper.Host;
         public ILogSessionFactory LogSessionFactory => HostEnvironmentHelper.LogSessionFactory;
         public IMessageBrokerSvcService TestMessageBrokerService { get; private set; }
-        public IHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
-        public ILocalEnvironment LocalEnvironment => HostEnvironmentHelper.Host;
+        public IXkitHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
         public ILogSession Log {
             get {
                 if (log == null) {
@@ -68,7 +67,7 @@ namespace XKit.Lib.Testing {
             bool loadMetaServices = false,
             bool useDaemonDebugMode = true
         ) => Initialize(
-            localAddress: "localhost:8080",
+            localAddress: "localhost:8090",
             autoAddPlatformServices: autoAddPlatformServices,
             loadMetaServices: loadMetaServices,
             useDaemonDebugMode: useDaemonDebugMode,
@@ -101,15 +100,15 @@ namespace XKit.Lib.Testing {
 
             if (autoAddPlatformServices) {
                 AddService(
-                    TestRegistrySvc.RegistrySvcServiceFactory.Create(LocalEnvironment)
+                    TestRegistrySvc.RegistrySvcServiceFactory.Create(HostEnvironment)
                 );
                 
                 AddService(
-                    ConfigSvcServiceFactory.Create(LocalEnvironment)
+                    ConfigSvcServiceFactory.Create(HostEnvironment)
                 );
 
                 TestMessageBrokerService = (IMessageBrokerSvcService) AddService(
-                    MessageBrokerSvcServiceFactory.Create(LocalEnvironment)
+                    MessageBrokerSvcServiceFactory.Create(HostEnvironment)
                 );
             }
         }
@@ -128,7 +127,7 @@ namespace XKit.Lib.Testing {
             var service = new MockService<TApiInterface>(
                 descriptor,
                 apiMock,
-                LocalEnvironment
+                HostEnvironment
             );
             Host.AddManagedService(service);
             return service;
@@ -147,7 +146,7 @@ namespace XKit.Lib.Testing {
         ) where TApiInterface : class, IServiceCallable {
             var service = new MockService<TApiInterface>(
                 descriptor,
-                LocalEnvironment,
+                HostEnvironment,
                 mockBehavior
             );
             Host.AddManagedService(service);

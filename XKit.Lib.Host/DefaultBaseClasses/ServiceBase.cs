@@ -66,10 +66,9 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         // protected
         // =====================================================================
                 
-        protected ILocalEnvironment LocalEnvironment { get; }
-        protected IHostEnvironment HostEnvironment => LocalEnvironment.HostEnvironment;
+        protected IXkitHostEnvironment HostEnvironment { get; }
 
-        protected IDependencyConnector DependencyConnector => LocalEnvironment.DependencyConnector;
+        protected IFabricConnector Connector => HostEnvironment.Connector;
 
         protected RunStateEnum RunState { get; private set; }  = RunStateEnum.Inactive; 
 
@@ -160,7 +159,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             
             var operationContext = new ServiceOperationContext(
                 service: this,
-                localEnv: this.LocalEnvironment,
+                hostEnv: this.HostEnvironment,
                 callTypeParameters: request.CallTypeParameters,
                 requestorInstanceId: request.RequestorInstanceId,
                 requestorFabricId: request.RequestorFabricId,
@@ -301,14 +300,9 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         // =====================================================================
 
         public ServiceBase(
-            ILocalEnvironment localEnvironment
+            IXkitHostEnvironment hostEnvironment
         ) {
-            LocalEnvironment = localEnvironment ?? throw new ArgumentNullException(nameof(localEnvironment));
-            if (localEnvironment?.HostEnvironment == null) { 
-                throw new Exception(
-                    message: "Local environment is not a host!"
-                ); 
-            }
+            HostEnvironment = hostEnvironment ?? throw new ArgumentNullException(nameof(hostEnvironment));
             var serviceCallMethods = GetServiceCallMethodsInfo();
             serviceCallMethods.ForEach(m => {
                 // FUTURE:  In the future we might perhaps enforce inheritance for operation name.  That is,
@@ -335,8 +329,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         IEnumerable<IReadOnlySubscription> IServiceBase.EventSubscriptions => EventSubscriptions;
         IEnumerable<IReadOnlySubscription> IServiceBase.CommandSubscriptions => CommandsSubscriptions;
         IReadOnlyServiceCallPolicy IServiceBase.CallPolicy => CallPolicy;        
-        IHostEnvironment IServiceBase.HostEnvironment => HostEnvironment;
-        ILocalEnvironment IServiceBase.LocalEnvironment => LocalEnvironment;
+        IXkitHostEnvironment IServiceBase.HostEnvironment => HostEnvironment;
 
         void IServiceBase.SignalEnvironmentChange()
             => SignalEnvironmentChange();        
@@ -450,7 +443,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
                 Policy = policy,
                 RecipientHostId = 
                     policy?.CallPattern.GetValueOrDefault() == ServiceCallPatternEnum.SpecificHost ? 
-                        LocalEnvironment.FabricId :
+                        HostEnvironment.FabricId :
                         null,
                 MessageTypeName = $"{typeof(TCallInterface).Name}.{method}",
                 ErrorHandling = errorHandling,
@@ -495,7 +488,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
                 Policy = policy,
                 RecipientHostId = 
                     policy?.CallPattern.GetValueOrDefault() == ServiceCallPatternEnum.SpecificHost ? 
-                        this.LocalEnvironment.FabricId :
+                        this.HostEnvironment.FabricId :
                         null,
                 MessageTypeName = $"{typeof(TCallInterface).Name}.{method}",
                 ErrorHandling = errorHandling,
@@ -521,7 +514,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
                 Service = this.Descriptor.Clone(),
                 OperationId = operationId,
                 Timestamp = DateTime.UtcNow,
-                ResponderFabricId = LocalEnvironment.FabricId,
+                ResponderFabricId = HostEnvironment.FabricId,
                 ResponderInstanceId = this.InstanceId,
                 Message = message,
                 OperationStatus = LogResultStatusEnum.Fault,

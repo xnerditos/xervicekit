@@ -26,11 +26,6 @@ namespace SystemTests._NAMESPACE.Svc1.Service {
 		
 		private readonly SetOnceOrThrow<IConfigReader<Svc1Config>> configReader = new();
 
-		private IConfigReader<Svc1Config> ConfigReader {
-            get => configReader.Value;
-            set => configReader.Value = value;
-        }
-
 		// =====================================================================
 		// overrides
 		// =====================================================================
@@ -42,8 +37,8 @@ namespace SystemTests._NAMESPACE.Svc1.Service {
 		// =====================================================================
 
 		public Svc1Service(
-            ILocalEnvironment localEnvironment
-		) : base(localEnvironment) { }
+            IXkitHostEnvironment xkitEnvironment
+		) : base(xkitEnvironment) { }
 		// TODO:
         //     this.OnServiceStartEvent += this.OnServiceStart;
         //     this.OnServiceStopEvent += this.OnServiceStop;

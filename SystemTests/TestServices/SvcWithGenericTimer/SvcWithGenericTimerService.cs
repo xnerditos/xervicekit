@@ -23,11 +23,11 @@ namespace TestServices.SvcWithGenericTimer {
 		// =====================================================================
 
 		public SvcWithGenericTimerService(
-            ILocalEnvironment localEnvironment
-		) : base(localEnvironment) { 
+            IXkitHostEnvironment hostEnv
+		) : base(hostEnv) { 
             AddDaemon(
                 new GenericTimerDaemon<SvcWithGenericTimerDaemonOperation>(
-                    logSessionFactory: localEnvironment.LogSessionFactory,
+                    logSessionFactory: hostEnv.LogSessionFactory,
                     timerDelayMilliseconds: 1000
             ));
         }	

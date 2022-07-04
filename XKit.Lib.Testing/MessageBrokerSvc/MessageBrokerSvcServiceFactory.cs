@@ -7,7 +7,7 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
 
     public interface IMessageBrokerSvcServiceFactory : IServiceFactory {
 		IManagedService Create(
-            ILocalEnvironment localEnvironment
+            IXkitHostEnvironment hostEnv
         );
     }
 
@@ -24,10 +24,10 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
         // =====================================================================
 
 		IManagedService IMessageBrokerSvcServiceFactory.Create(
-            ILocalEnvironment localEnvironment
+            IXkitHostEnvironment hostEnvironment
         ) {
-            if (localEnvironment == null) { throw new ArgumentNullException(nameof(localEnvironment)); }
-            return new MessageBrokerSvcService(localEnvironment);
+            if (hostEnvironment == null) { throw new ArgumentNullException(nameof(hostEnvironment)); }
+            return new MessageBrokerSvcService(hostEnvironment);
         } 
 
         // =====================================================================
@@ -35,8 +35,8 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
         // =====================================================================
 
         public static IManagedService Create(
-            ILocalEnvironment localEnvironment
-        ) => Factory.Create(localEnvironment);
+            IXkitHostEnvironment hostEnv
+        ) => Factory.Create(hostEnv);
 
         public static void InjectCustomFactory(IMessageBrokerSvcServiceFactory factory) =>
             MessageBrokerSvcServiceFactory.factory = factory; 

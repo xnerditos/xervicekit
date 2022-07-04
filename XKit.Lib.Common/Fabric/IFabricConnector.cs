@@ -9,7 +9,7 @@ namespace XKit.Lib.Common.Fabric {
     /// <summary>
     /// Provides the ability to connect with the service fabric.
     /// </summary>
-    public interface IFabricConnector : IDependencyConnector {
+    public interface IFabricConnector {
 
         /// <summary>
         /// Called to initialize the client 
@@ -22,12 +22,26 @@ namespace XKit.Lib.Common.Fabric {
         /// </summary>
         /// <param name="registration">entity describing the host</param>
         /// <param name="initialRegistryHostAddresses">Hosts that have the Registry service</param>
-        /// <param name="localEnvironment">The host environment object that gives access to the current host</param>
+        /// <param name="xkitEnvironment">The host environment object that gives access to the current host</param>
         /// <returns>true if success</returns>
         Task<bool> Register(
             ILogSession log,
             IEnumerable<string> initialRegistryHostAddresses,
-            ILocalEnvironment localEnvironment,
+            IXkitEnvironment xkitEnvironment,
+            bool failIfUnableToRegister = false
+        );
+
+        /// <summary>
+        /// Registers as a consumer or host with the registry.   
+        /// </summary>
+        /// <param name="registration">entity describing the host</param>
+        /// <param name="initialRegistryHostAddresses">Hosts that have the Registry service</param>
+        /// <param name="hostEnvironment">The host environment object that gives access to the current host</param>
+        /// <returns>true if success</returns>
+        Task<bool> Register(
+            ILogSession log,
+            IEnumerable<string> initialRegistryHostAddresses,
+            IXkitHostEnvironment hostEnvironment,
             bool failIfUnableToRegister = false
         );
 
@@ -50,6 +64,19 @@ namespace XKit.Lib.Common.Fabric {
         );
 
         Task<bool> Unregister(ILogSession log);
+
+        /// <summary>
+        /// Gets an IServiceCallRouter capable of communicating with the target dependency
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="failIfNotAvailable"></param>
+        /// <returns></returns>
+        Task<IServiceCallRouter> CreateCallRouter(
+            IReadOnlyDescriptor target, 
+            ILogSession log,
+            bool failIfNotAvailable = true,
+            bool allowRegistryRefreshIfRequested = true
+        );
 
         string FabricId { get; }
 

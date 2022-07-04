@@ -17,7 +17,7 @@ public partial class SvcSendsMessagesOperation : ServiceOperation<ISvcSendsMessa
             operationAction: (r) => {
                 var messenger = ClientFactory.Factory.CreateEventMessengerClient<TestEvents>(
                     Log,
-                    DependencyConnector
+                    Connector
                 );
                 messenger.RaiseEvent<Message>(
                     (x) => x.Event1(null), 
@@ -34,7 +34,7 @@ public partial class SvcSendsMessagesOperation : ServiceOperation<ISvcSendsMessa
             operationAction: (r) => {
                 var messenger = ClientFactory.Factory.CreateEventMessengerClient<TestEvents>(
                     Log,
-                    DependencyConnector
+                    Connector
                 );
                 messenger.RaiseEvent<Message>(
                     x => x.Event2(null), 
@@ -51,7 +51,7 @@ public partial class SvcSendsMessagesOperation : ServiceOperation<ISvcSendsMessa
             operationAction: (r) => {
                 var messenger = ClientFactory.Factory.CreateCommandMessengerClient<TestCommands>(
                     Log,
-                    DependencyConnector
+                    Connector
                 );
                 messenger.IssueCommand<Message>(
                     x => x.Command1(null), 
@@ -68,7 +68,7 @@ public partial class SvcSendsMessagesOperation : ServiceOperation<ISvcSendsMessa
             operationAction: (r) => {
                 var messenger = ClientFactory.Factory.CreateCommandMessengerClient<TestCommands>(
                     Log,
-                    DependencyConnector
+                    Connector
                 );
                 messenger.IssueCommand<Message>(
                     x => x.Command2(null), 
@@ -85,7 +85,7 @@ public partial class SvcSendsMessagesOperation : ServiceOperation<ISvcSendsMessa
             operationAction: async (r) => {
                 var messenger = ClientFactory.Factory.CreateCommandMessengerClient<TestCommands>(
                     Log,
-                    DependencyConnector
+                    Connector
                 );
                 var messageGuid = await messenger.IssueCommand<Message>(
                     x => x.Command1(null), 

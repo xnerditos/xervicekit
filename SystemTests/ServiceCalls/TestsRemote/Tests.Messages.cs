@@ -6,28 +6,22 @@ using XKit.Lib.Testing;
 namespace SystemTests.ServiceCalls.TestsRemote {
 
     [TestClass]
-    public class Messages {
+    public class Messages : RemoteTestBase {
 
         private readonly TestsCommon.Messages Tests = new(); 
         private readonly ConsumerHelper ConsumerHelper = new();
 
         [TestInitialize]
         public void Initialize() { 
-            var testHelper = new TestHostHelper();
-            RemoteTestHelper.InitAsp();
-            testHelper.InitializeRemoteTestHost();
+            InitializeCommon();
+            Tests.InitTests(TestHelper); 
             ConsumerHelper.CreateInitConsumer(
                 dependencies: new XKit.Lib.Common.Client.IServiceClientFactory[] {
                     TestServices.SvcSendsMessages.SvcSendsMessagesClientFactory.Factory,
                 },
-                initialRegistryAddresses: new[] { "localhost:8080" }
+                initialRegistryAddresses: new[] { "localhost:8090" }
             );
-            Tests.InitTests(testHelper, ConsumerHelper.DependencyConnector); 
-        }
-
-        [TestCleanup]
-        public void Teardown() { 
-            Tests.TeardownTests(); 
+            Tests.SetConnectorForTestClients(ConsumerHelper.Connector);
         }
 
         [TestMethod]

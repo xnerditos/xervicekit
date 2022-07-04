@@ -23,6 +23,6 @@ public class SvcSendsMessagesService
     // =====================================================================
 
     public SvcSendsMessagesService(
-        ILocalEnvironment localEnvironment
-    ) : base(localEnvironment) { }
+        IXkitHostEnvironment hostEnv
+    ) : base(hostEnv) { }
 }

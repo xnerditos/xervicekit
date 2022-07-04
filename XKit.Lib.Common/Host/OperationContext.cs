@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using XKit.Lib.Common.Fabric;
 
 namespace XKit.Lib.Common.Host {
@@ -11,10 +10,10 @@ namespace XKit.Lib.Common.Host {
     public class OperationContext {
 
         public OperationContext(
-            ILocalEnvironment localEnvironment,
+            IXkitHostEnvironment hostEnv,
             string correlationId
         ) {
-            this.LocalEnvironment = localEnvironment ?? throw new ArgumentNullException(nameof(localEnvironment));
+            this.HostEnv = hostEnv ?? throw new ArgumentNullException(nameof(hostEnv));
             this.CorrelationId = correlationId ?? Common.Utility.Identifiers.GenerateIdentifier();
             this.OperationId = Guid.NewGuid();
         }
@@ -25,7 +24,7 @@ namespace XKit.Lib.Common.Host {
 
         public Guid OperationId { get; }
         public string CorrelationId { get; }
-        public ILocalEnvironment LocalEnvironment { get; }
-        public IDependencyConnector DependencyConnector => LocalEnvironment.DependencyConnector;
+        public IXkitHostEnvironment HostEnv { get; }
+        public IFabricConnector Connector => HostEnv.Connector;
     }
 }

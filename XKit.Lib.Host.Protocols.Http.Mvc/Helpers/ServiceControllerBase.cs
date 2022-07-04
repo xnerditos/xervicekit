@@ -12,21 +12,21 @@ namespace XKit.Lib.Host.Protocols.Http.Mvc.Helpers {
     [ApiController]
     public abstract class ServiceControllerBase : ControllerBase {
 
-        protected IHostEnvironment HostEnvironment { get; private set; }
+        protected IXkitHostEnvironment HostEnvironment { get; private set; }
         protected ServiceOperationContext Context { get; private set; }
         protected IServiceBase ServiceCore { get; private set; } 
         protected IServiceOperation Operation { get; private set; }
 
         protected ServiceControllerBase(
-            IHostEnvironment localEnvironment,
+            IXkitHostEnvironment xkitEnvironment,
             IServiceBase service
         ) {
-            HostEnvironment = localEnvironment ?? throw new ArgumentNullException(nameof(localEnvironment));
+            HostEnvironment = xkitEnvironment ?? throw new ArgumentNullException(nameof(xkitEnvironment));
             ServiceCore = service ?? throw new ArgumentNullException(nameof(service));
         }
 
         protected ServiceControllerBase(
-            IHostEnvironment hostEnvironment
+            IXkitHostEnvironment hostEnvironment
         ) {
             HostEnvironment = hostEnvironment ?? throw new ArgumentNullException(nameof(hostEnvironment));
         }
@@ -47,7 +47,7 @@ namespace XKit.Lib.Host.Protocols.Http.Mvc.Helpers {
 
             using var reader = new StreamReader(Request.Body);
             string content = await reader.ReadToEndAsync();
-            ServiceCallRequest request = Json.From<ServiceCallRequest>(content);                        
+            ServiceCallRequest request = Json.FromJson<ServiceCallRequest>(content);                        
 
             ServiceCallResult result = null;
             Exception operationException = null;
@@ -57,8 +57,6 @@ namespace XKit.Lib.Host.Protocols.Http.Mvc.Helpers {
                 operationException = ex; 
             }
             
-            var serviceStatus = ServiceCore.GetServiceStatus();
-
             return Ok(result);
         }
     }

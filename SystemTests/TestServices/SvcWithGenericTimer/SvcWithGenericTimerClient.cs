@@ -11,7 +11,7 @@ namespace TestServices.SvcWithGenericTimer {
         public SvcWithGenericTimerClient(
             IReadOnlyDescriptor dependency,
             ILogSession log,
-            IDependencyConnector connector,
+            IFabricConnector connector,
             ServiceCallTypeParameters defaultCallTypeParameters
         ) : base(
             dependency,

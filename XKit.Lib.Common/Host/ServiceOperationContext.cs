@@ -11,13 +11,13 @@ namespace XKit.Lib.Common.Host {
 
         public ServiceOperationContext(
             IServiceOperationOwner service,
-            ILocalEnvironment localEnv,
+            IXkitHostEnvironment hostEnv,
             ServiceCallTypeParameters callTypeParameters,
             string requestorInstanceId,
             string requestorFabricId,
             string correlationId
         ) : base(
-            localEnv,
+            hostEnv,
             correlationId
         ) {
             //this.Service = (service as IServiceOperationOwner) ?? throw new ArgumentNullException(nameof(service));

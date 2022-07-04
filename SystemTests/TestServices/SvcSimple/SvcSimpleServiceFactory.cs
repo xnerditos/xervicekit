@@ -18,10 +18,10 @@ public class SvcSimpleServiceFactory : ISvcSimpleServiceFactory {
     // =====================================================================
 
     IManagedService ITestServiceFactory.Create(
-        ILocalEnvironment localEnvironment
+        IXkitHostEnvironment xkitEnvironment
     ) {
-        if (localEnvironment == null) { throw new ArgumentNullException(nameof(localEnvironment)); }
-        return new SvcSimpleService(localEnvironment);
+        if (xkitEnvironment == null) { throw new ArgumentNullException(nameof(xkitEnvironment)); }
+        return new SvcSimpleService(xkitEnvironment);
     }
 
     IReadOnlyDescriptor IServiceFactory.Descriptor => Constants.ServiceDescriptor;
@@ -31,8 +31,8 @@ public class SvcSimpleServiceFactory : ISvcSimpleServiceFactory {
     // =====================================================================
 
     public static IManagedService Create(
-        ILocalEnvironment localEnvironment
-    ) => SvcSimpleServiceFactory.Factory.Create(localEnvironment);
+        IXkitHostEnvironment xkitEnvironment
+    ) => Factory.Create(xkitEnvironment);
 
     public static void InjectCustomFactory(ISvcSimpleServiceFactory factory) =>
         SvcSimpleServiceFactory.factory = factory;

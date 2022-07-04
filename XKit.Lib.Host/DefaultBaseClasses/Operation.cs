@@ -12,9 +12,8 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
     public abstract partial class Operation : IOperation {
 
         private bool isActive;
-        protected ILocalEnvironment LocalEnvironment => Context.LocalEnvironment;
-        protected IHostEnvironment LocalHostEnvironment => Context.LocalEnvironment.HostEnvironment;
-        protected IDependencyConnector DependencyConnector => Context.DependencyConnector;
+        protected IXkitHostEnvironment HostEnvironment => Context.HostEnv as IXkitHostEnvironment;
+        protected IFabricConnector Connector => Context.Connector;
         protected OperationContext Context { get; }
         protected ILogSession Log { get; private set; }
         protected string OperationName { get; private set; }
@@ -75,10 +74,10 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
 
             try {
                 OperationName = operationName;
-                Log = LocalEnvironment.LogSessionFactory.CreateLogSession(
+                Log = HostEnvironment.LogSessionFactory.CreateLogSession(
                     this.OriginatorName,
                     this.OriginatorVersion,
-                    LocalEnvironment.FabricId,
+                    HostEnvironment.FabricId,
                     this.OriginatorInstanceId,
                     Context?.CorrelationId
                 );
@@ -89,7 +88,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
                     attributes: additionalLogAttributes
                 );
 
-                if (LocalHostEnvironment.HostRunState == RunStateEnum.Inactive || !CanStartNewOperation()) {
+                if (HostEnvironment.HostRunState == RunStateEnum.Inactive || !CanStartNewOperation()) {
                     Log.Fatality(
                         "Instance unavailable.",
                         new Dictionary<string, object> {

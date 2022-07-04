@@ -22,7 +22,7 @@ namespace XKit.Lib.Connector.Service {
 
         public EventMessenger(
             ILogSession log,
-            IDependencyConnector connector,
+            IFabricConnector connector,
             IMessageBrokerApi broker = null
         ) {
             //IObjectRepository igor = null;
@@ -70,7 +70,7 @@ namespace XKit.Lib.Connector.Service {
             return (await Broker.RaiseEvent(
                 new FabricMessage {
                     MessageId = id,
-                    JsonPayload = Json.To<TPayload>(payload),
+                    JsonPayload = Json.ToJson<TPayload>(payload),
                     MessageTypeName = $"{typeof(TCallInterface).Name}.{((MethodCallExpression)expression.Body).Method.Name}"
                 }
             )).HasError ? (Guid?)null : id;

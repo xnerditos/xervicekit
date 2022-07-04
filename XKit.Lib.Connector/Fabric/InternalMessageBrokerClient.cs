@@ -13,7 +13,7 @@ namespace XKit.Lib.Connector.Fabric {
     public class InternalMessageBrokerClient : ServiceClientBase<IMessageBrokerApi>, IMessageBrokerClient {
         public InternalMessageBrokerClient(
             ILogSession log,
-            IDependencyConnector connector,
+            IFabricConnector connector,
             ServiceClientErrorHandling errorHandling = ServiceClientErrorHandling.LogError,
             ServiceCallTypeParameters callType = null
         ) : base(

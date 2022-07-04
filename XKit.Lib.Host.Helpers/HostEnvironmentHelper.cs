@@ -22,15 +22,13 @@ namespace XKit.Lib.Host {
 
     public class HostEnvironmentHelper {
         
-        private IHostManager hostManager;
-        private IDependencyConnector dependencyConnector;
-        private IFabricConnector fabricConnector;
+        private IXkitHost xKitHost;
+        private IFabricConnector connector;
         private ILogSessionFactory logSessionFactory;
-        public IHostManager Host => hostManager; 
-        public IFabricConnector FabricConnector => fabricConnector; 
-        public IDependencyConnector DependencyConnector => dependencyConnector;
+        public IXkitHost Host => xKitHost; 
+        public IFabricConnector Connector => connector; 
         public ILogSessionFactory LogSessionFactory => logSessionFactory;
-        public IHostManager CreateInitHost(
+        public IXkitHost CreateInitHost(
             IList<IInstanceClientFactory> instanceClientFactories,
             ILogSessionFactory logSessionFactory,
             ILocalConfigSessionFactory localConfigSessionFactory = null,
@@ -80,31 +78,30 @@ namespace XKit.Lib.Host {
                 localConfigFolderPath
             );
 
-            fabricConnector = FabricConnectorFactory.Create(instanceClientFactories);
-            dependencyConnector = fabricConnector;
+            connector = FabricConnectorFactory.Create(instanceClientFactories);
 
-            HostManagerFactory.SetHealthChecker(healthChecker);
+            XkitHostFactory.SetHealthChecker(healthChecker);
 
-            hostManager = HostManagerFactory.Create(
+            xKitHost = XkitHostFactory.Create(
                 hostAddress,
                 localMetadataDbPath,
                 localDataStorageFolderPath,
                 logSessionFactory,
                 localConfigSessionFactory,
-                fabricConnector
+                connector
             );
 
-            fabricConnector.Initialize();
+            connector.Initialize();
 
             bool doAll = capabilitiesToRegister == null;
 
             if (doAll || capabilitiesToRegister.Contains(StandardCapabilityNames.LocalRegistrationsManagement)) {
-                hostManager.AddMetaService(
-                    RegistrationsManagementMetaServiceFactory.Create(hostManager)
+                xKitHost.AddMetaService(
+                    RegistrationsManagementMetaServiceFactory.Create(xKitHost)
                 );
             }
 
-            return hostManager;
+            return xKitHost;
         }
 
         public void StartHost(
@@ -112,13 +109,13 @@ namespace XKit.Lib.Host {
             IDictionary<string, object> startupParameters = null, 
             bool failIfCannotRegister = false
         ) {
-            if (hostManager != null) {
+            if (xKitHost != null) {
 
                 if (initialRegistryAddresses == null) {
                     string registryAddresses = Environment.GetEnvironmentVariable(EnvironmentHelperConstants.EnvironmentVariables.InitialRegistryAddresses);
                     initialRegistryAddresses = registryAddresses?.Split(';', StringSplitOptions.RemoveEmptyEntries);
                 }
-                hostManager.StartHost(
+                xKitHost.StartHost(
                     initialRegistryAddresses ?? Array.Empty<string>(),
                     startupParameters,
                     failIfCannotRegister
@@ -127,18 +124,17 @@ namespace XKit.Lib.Host {
         }        
 
         public void PauseHost() {
-            hostManager?.PauseHost();
+            xKitHost?.PauseHost();
         }        
 
         public void ResumeHost() {
-            hostManager?.ResumeHost();
+            xKitHost?.ResumeHost();
         }        
 
         public void StopAndDestroyHost() {
-            hostManager.StopHost();
-            hostManager = null;
+            xKitHost.StopHost();
+            xKitHost = null;
             logSessionFactory = null;
-            dependencyConnector = null;            
         }        
 
         // =====================================================================
@@ -170,9 +166,9 @@ namespace XKit.Lib.Host {
         //             using var logSession = logManager.CreateWriteableSession(
         //                 LogContextTypeEnum.HostAction,
         //                 Identifiers.NameOriginatorAsHost,
-        //                 hostManager.VersionLevel.GetValueOrDefault(),
+        //                 xKitHost.VersionLevel.GetValueOrDefault(),
         //                 null,
-        //                 hostManager.FabricId
+        //                 xKitHost.FabricId
         //             );
 
         //             await logSession.BeginLog();

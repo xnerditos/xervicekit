@@ -11,7 +11,7 @@ namespace TestServices.SvcWithAutoMessaging {
         public SvcWithAutoMessagingClient(
             IReadOnlyDescriptor dependency,
             ILogSession log,
-            IDependencyConnector connector,
+            IFabricConnector connector,
             ServiceCallTypeParameters defaultCallTypeParameters
         ) : base(
             dependency,

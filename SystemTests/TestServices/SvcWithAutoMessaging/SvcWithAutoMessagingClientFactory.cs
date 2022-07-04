@@ -18,7 +18,7 @@ namespace TestServices.SvcWithAutoMessaging {
 
 		ISvcWithAutoMessagingApi IServiceClientFactory<ISvcWithAutoMessagingApi>.CreateServiceClient(
             ILogSession log,
-            IDependencyConnector connector,
+            IFabricConnector connector,
             ServiceCallTypeParameters defaultCallTypeParameters
 		) => new SvcWithAutoMessagingClient(
 				Constants.ServiceDescriptor,

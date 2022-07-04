@@ -18,7 +18,7 @@ namespace TestServices.SvcWithDependency2 {
 
 		ISvcWithDependency2 IServiceClientFactory<ISvcWithDependency2>.CreateServiceClient(
             ILogSession log,
-            IDependencyConnector connector,
+            IFabricConnector connector,
             ServiceCallTypeParameters defaultCallTypeParameters
 		) => new SvcWithDependency2Client(
 				Constants.ServiceDescriptor,
@@ -35,7 +35,7 @@ namespace TestServices.SvcWithDependency2 {
 
         public static ISvcWithDependency2 CreateServiceClient(
             ILogSession log,
-            IDependencyConnector connector,
+            IFabricConnector connector,
             ServiceCallTypeParameters defaultCallTypeParameters = null
         ) => Factory.CreateServiceClient(
             log,

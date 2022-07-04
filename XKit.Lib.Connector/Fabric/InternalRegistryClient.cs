@@ -14,7 +14,7 @@ namespace XKit.Lib.Connector.Fabric {
     public class InternalRegistryClient : ServiceClientBase<IRegistryApi>, IRegistryClient {
         public InternalRegistryClient(
             ILogSession log,
-            IDependencyConnector connector
+            IFabricConnector connector
         ) : base(
             StandardConstants.Managed.StandardServices.Registry.Descriptor,
             log,

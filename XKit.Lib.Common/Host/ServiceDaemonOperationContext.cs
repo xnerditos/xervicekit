@@ -11,11 +11,11 @@ namespace XKit.Lib.Common.Host {
         public ServiceDaemonOperationContext(
             IServiceDaemon daemon,
             IServiceBase service,
-            ILocalEnvironment localEnvironment,
+            IXkitHostEnvironment hostEnv,
             Guid messageProcessingId,
             string correlationId = null
         ) : base(
-            localEnvironment,
+            hostEnv,
             correlationId
         ) {
             this.Service = service ?? throw new ArgumentNullException(nameof(service));

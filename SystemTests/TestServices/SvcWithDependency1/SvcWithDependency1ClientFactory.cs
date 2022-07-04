@@ -20,7 +20,7 @@ private static ISvcWithDependency1ClientFactory factory = new SvcWithDependency1
 
     ISvcWithDependency1 IServiceClientFactory<ISvcWithDependency1>.CreateServiceClient(
         ILogSession log,
-        IDependencyConnector connector,
+        IFabricConnector connector,
         ServiceCallTypeParameters defaultCallTypeParameters
     ) => new SvcWithDependency1Client(
             Constants.ServiceDescriptor,

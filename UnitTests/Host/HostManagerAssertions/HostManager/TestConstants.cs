@@ -1,4 +1,4 @@
-namespace UnitTests.Host.HostManagerAssertions.HostManager {
+namespace UnitTests.Host.XKitHostAssertions.XKitHost {
     public static class TestConstants {
     }
 }

@@ -11,7 +11,7 @@ public class SvcSimpleClient : ServiceClientBase<ISvcSimpleApi>, ISvcSimpleApi {
     public SvcSimpleClient(
         IReadOnlyDescriptor dependency,
         ILogSession log,
-        IDependencyConnector connector,
+        IFabricConnector connector,
         ServiceCallTypeParameters defaultCallTypeParameters
     ) : base(
         dependency,

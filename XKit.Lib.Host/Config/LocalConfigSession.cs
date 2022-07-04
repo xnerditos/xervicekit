@@ -21,7 +21,7 @@ namespace XKit.Lib.Host.Config {
                 try {
                     if (File.Exists(configFile)) {
                         string jsonStr = await File.ReadAllTextAsync(configFile);
-                        return jsonStr.FromJsonDynamic();
+                        return jsonStr.FromJson();
                     }
                     return defaultConfig?.DeepCopy();
                 } catch {
@@ -76,7 +76,7 @@ namespace XKit.Lib.Host.Config {
             var tries = 5;
             while(tries-- > 0) {
                 try {
-                    string jsonStr = Json.To(configEntity);
+                    string jsonStr = Json.ToJson(configEntity);
                     await File.WriteAllTextAsync(configFile, jsonStr, Encoding.UTF8);
                     return;
                 } catch {

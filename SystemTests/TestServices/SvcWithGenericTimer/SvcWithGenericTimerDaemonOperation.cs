@@ -16,11 +16,11 @@ namespace TestServices.SvcWithGenericTimer {
             ServiceDaemonOperationContext context
         ) : base(context) { }
 
-        protected async override Task DoOperationLogic(object _) {
+        protected override async Task DoOperationLogic(object _) {
             await Task.Delay(10);
             string name = nameof(SvcWithGenericTimerDaemonOperation);
             var threadId = Thread.CurrentThread.ManagedThreadId;
-            Debug.WriteLine($"From {name}.  Thread id {threadId}");
+            Debug.WriteLine($"FromJson {name}.  Thread id {threadId}");
         }
     }
 }

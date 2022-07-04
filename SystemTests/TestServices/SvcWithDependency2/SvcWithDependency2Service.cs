@@ -29,7 +29,7 @@ namespace TestServices.SvcWithDependency2 {
 		// =====================================================================
 
 		public SvcWithDependency2Service(
-            ILocalEnvironment localEnvironment
-		) : base(localEnvironment) { }
+            IXkitHostEnvironment hostEnv
+		) : base(hostEnv) { }
 	}
 }

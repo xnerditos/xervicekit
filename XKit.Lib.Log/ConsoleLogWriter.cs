@@ -8,7 +8,7 @@ namespace XKit.Lib.Log {
         public static bool PrettyOutput { get; set; } = false;
 
         void ILogWriter.WriteEvent(IReadOnlyLogEventEntry logEvent) {                
-            Console.WriteLine(Json.To(logEvent, PrettyOutput));
+            Console.WriteLine(Json.ToJson(logEvent, PrettyOutput));
             // Console.Write($"* {entry.Timestamp.ToString("yyyy/MM/dd HH:mm:ss:FFF")} LOG:{entry.EventTypeName} |jobid={entry.LogJobEntryId} |id={entry.LogEventEntryId}");
             // if (entry.Code != null) { Console.Write($" |code={entry.Code}"); }
             // if (entry.Message != null) { Console.Write($" |message={entry.Message}"); }

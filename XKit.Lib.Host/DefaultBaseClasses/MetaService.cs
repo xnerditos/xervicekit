@@ -29,8 +29,8 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
 
         public MetaService(
             string capabilityKeyName,
-            ILocalEnvironment localEnvironment
-        ) : base(localEnvironment) {
+            IXkitHostEnvironment hostEnvironment
+        ) : base(hostEnvironment) {
             this.CapabilityKeyName = capabilityKeyName ?? throw new ArgumentNullException(capabilityKeyName);
         }
 

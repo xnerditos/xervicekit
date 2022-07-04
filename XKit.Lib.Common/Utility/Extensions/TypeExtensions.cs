@@ -9,7 +9,7 @@ namespace XKit.Lib.Common.Utility.Extensions {
         // =====================================================================
 
         public static object FromJson(this Type t, string json) {
-            return Json.From(json, t);
+            return Json.FromJson(json, t);
         }
     }
 }

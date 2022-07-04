@@ -31,8 +31,8 @@ namespace XKit.Lib.Connector.Protocols.Direct {
 
         private readonly Dictionary<string, IServiceBase> ServicesByIdentifier = new();
         private string LocalHostFabricId => localFabric.Value?.FabricId;
-        private IHostEnvironment HostEnvironment => localFabric.Value?.HostEnvironment;
-        private readonly SetOnceOrIgnore<ILocalEnvironment> localFabric = new();
+        private IXkitHostEnvironment HostEnvironment => localFabric.Value as IXkitHostEnvironment;
+        private readonly SetOnceOrIgnore<IXkitEnvironment> localFabric = new();
         private bool autoDiscoverLocalServices = true;
 
         public DirectLocalClientFactory() { }
@@ -42,7 +42,7 @@ namespace XKit.Lib.Connector.Protocols.Direct {
         // =============================================================================
 
         void IInstanceClientFactory.InitializeFactory(
-            ILocalEnvironment localFabric
+            IXkitEnvironment localFabric
         ) {
             this.localFabric.Value = localFabric;
             ServicesByIdentifier.Clear();

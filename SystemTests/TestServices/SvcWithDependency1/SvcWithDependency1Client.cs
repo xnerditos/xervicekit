@@ -12,7 +12,7 @@ public class SvcWithDependency1Client : ServiceClientBase<ISvcWithDependency1>, 
     public SvcWithDependency1Client(
         IReadOnlyDescriptor dependency,
         ILogSession log,
-        IDependencyConnector connector,
+        IFabricConnector connector,
         ServiceCallTypeParameters defaultCallTypeParameters
     ) : base(
         dependency,

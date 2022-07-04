@@ -1,8 +1,8 @@
 using XKit.Lib.Common.Fabric;
 
-namespace UnitTests.Host.HostManagerAssertions.HostManager {
+namespace UnitTests.Host.XKitHostAssertions.XKitHost {
 
-    public partial class HostManagerTestsCommon : HostManagerTestBase {
+    public partial class XKitHostTestsCommon : XKitHostTestBase {
 
     }
 }

@@ -4,6 +4,8 @@ using XKit.Lib.Host.DefaultBaseClasses;
 using XKit.Lib.Common.Host;
 using XKit.Lib.Common.Utility;
 using System;
+using System.Linq;
+using System.Collections.Concurrent;
 
 namespace XKit.Lib.Testing.TestRegistrySvc {
 
@@ -11,7 +13,7 @@ namespace XKit.Lib.Testing.TestRegistrySvc {
 
 		private static readonly IReadOnlyDescriptor descriptor = XKit.Lib.Common.Services.StandardConstants.Managed.StandardServices.Registry.Descriptor;
 		
-        private FabricRegistration testRegistration;
+        private readonly ConcurrentDictionary<string, FabricRegistration> testRegistrations = new();
 
 		// =====================================================================
 		// overrides
@@ -30,8 +32,8 @@ namespace XKit.Lib.Testing.TestRegistrySvc {
 		// =====================================================================
 
 		public RegistrySvcService(
-            ILocalEnvironment localFabric
-		) : base(localFabric) { }
+            IXkitHostEnvironment hostEnv
+		) : base(hostEnv) { }
 
         protected override bool CanStartNewOperation() {
             switch(HostEnvironment.HostRunState)
@@ -48,10 +50,10 @@ namespace XKit.Lib.Testing.TestRegistrySvc {
 		// IRegistryService
 		// =====================================================================
 
-		IReadOnlyFabricRegistration IRegistrySvcService.GetTestRegistration()
-            => testRegistration;
+		IReadOnlyList<IReadOnlyFabricRegistration> IRegistrySvcService.GetTestRegistrations() 
+            => testRegistrations.Values.ToArray();
 
-        void IRegistrySvcService.SetTestRegistration(FabricRegistration registration) 
-            => testRegistration ??= registration;
+        void IRegistrySvcService.AddTestRegistration(FabricRegistration registration) 
+            => testRegistrations.TryAdd(registration.FabricId, registration);
 	}
 }

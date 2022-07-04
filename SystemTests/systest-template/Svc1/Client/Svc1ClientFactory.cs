@@ -18,7 +18,7 @@ namespace SystemTests._NAMESPACE.Svc1.Client {
 
 		ISvc1Api IServiceClientFactory<ISvc1Api>.CreateServiceClient(
             ILogSession log,
-            IDependencyConnector connector,
+            IFabricConnector connector,
             ServiceCallTypeParameters defaultCallTypeParameters
 		) => new Svc1Client(
 				Constants.ServiceDescriptor,
@@ -35,7 +35,7 @@ namespace SystemTests._NAMESPACE.Svc1.Client {
 
         public static ISvc1Api CreateServiceClient(
             ILogSession log,
-            IDependencyConnector connector,
+            IFabricConnector connector,
             ServiceCallTypeParameters defaultCallTypeParameters = null
         ) => Factory.CreateServiceClient(
             log,

@@ -2,10 +2,10 @@ using XKit.Lib.Common.Host;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace UnitTests.Host.HostManagerAssertions.HostManager {
+namespace UnitTests.Host.XKitHostAssertions.XKitHost {
 
     [TestClass]
-    public class RegisterMetaService : HostManagerTestsCommon {
+    public class RegisterMetaService : XKitHostTestsCommon {
                 
         [TestMethod]
         public void SuccessfullyRegisters() {

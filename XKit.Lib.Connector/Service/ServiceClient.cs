@@ -18,7 +18,7 @@ namespace XKit.Lib.Connector.Service {
             IReadOnlyDescriptor descriptor,
             string operationInterfaceName,
             ILogSession log,
-            IDependencyConnector connector = null,
+            IFabricConnector connector = null,
             ServiceCallTypeParameters defaultCallTypeParameters = null,
             ServiceClientErrorHandling errorHandling = ServiceClientErrorHandling.LogWarning,
             string targetHostId = null

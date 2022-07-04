@@ -6,32 +6,39 @@ namespace XKit.Lib.Common.Utility.Extensions {
 
     public static class Json {
 
-        public static string To<T>(T obj, bool pretty = false) {
+        private static JsonSerializerOptions baseOptions = new() {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            PropertyNameCaseInsensitive = true,
+            IgnoreReadOnlyProperties = true
+        };
+
+        private static JsonSerializerOptions baseOptionsPretty = new() {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            PropertyNameCaseInsensitive = true,
+            IgnoreReadOnlyProperties = true
+        };
+
+        public static string ToJson<T>(T obj, bool pretty = false) {
             if (obj == null) { return null; }
-            return JsonSerializer.Serialize(obj, new JsonSerializerOptions() { WriteIndented = pretty });
+            return JsonSerializer.Serialize(obj, pretty ? baseOptionsPretty : baseOptions);
         }
 
-        public static string To(object obj, bool pretty = false) {
+        public static string ToJson(object obj, bool pretty = false) {
             if (obj == null) { return null; }
-            return JsonSerializer.Serialize<dynamic>(obj, new JsonSerializerOptions() { WriteIndented = pretty });
+            return JsonSerializer.Serialize<dynamic>(obj, pretty ? baseOptionsPretty : baseOptions);
         }
 
-        public static string ToDynamic(object obj, bool pretty = false) {
-            if (obj == null) { return null; }
-            return JsonSerializer.Serialize<dynamic>(obj, new JsonSerializerOptions() { WriteIndented = pretty });
-        }
-
-        public static T From<T>(string json) {
+        public static T FromJson<T>(string json) {
             if (json == null) { return default; }
-            return JsonSerializer.Deserialize<T>(json);
+            return JsonSerializer.Deserialize<T>(json, baseOptions);
         }
 
-        public static object From(string json, Type type) {
+        public static object FromJson(string json, Type type) {
             if (json == null) { return null; }
-            return JsonSerializer.Deserialize(json, type);
+            return JsonSerializer.Deserialize(json, type, baseOptions);
         }
 
-        public static object FromDynamic(string json) {
+        public static dynamic FromJson(string json) {
             return JsonSerializer.Deserialize<dynamic>(json);
         }
     }

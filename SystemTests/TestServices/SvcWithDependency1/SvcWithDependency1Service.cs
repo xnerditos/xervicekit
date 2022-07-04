@@ -31,6 +31,6 @@ public class SvcWithDependency1Service
     // =====================================================================
 
     public SvcWithDependency1Service(
-        ILocalEnvironment localEnvironment
-    ) : base(localEnvironment) {}
+        IXkitHostEnvironment hostEnv
+    ) : base(hostEnv) {}
 }

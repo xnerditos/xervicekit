@@ -4,9 +4,7 @@ using XKit.Lib.Common.Registration;
 
 namespace XKit.Lib.Common.Host {
     
-    public interface IHostManager : IHostEnvironment, ILocalEnvironment {
-
-		RunStateEnum HostState { get; }
+    public interface IXkitHost : IXkitHostEnvironment {
 
         string LocalDataFolderPath { get; }
 
@@ -117,7 +115,7 @@ namespace XKit.Lib.Common.Host {
         /// <summary>
         /// Called when the local environment has changed
         /// </summary>
-        void SignalLocalEnvironmentChange();
+        void SignalXkitEnvironmentChange();
 
     }
 }

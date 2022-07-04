@@ -3,10 +3,10 @@ using XKit.Lib.Common.Host;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace UnitTests.Host.HostManagerAssertions.HostManager {
+namespace UnitTests.Host.XKitHostAssertions.XKitHost {
 
     [TestClass]
-    public class RegisterManagedService : HostManagerTestsCommon {
+    public class RegisterManagedService : XKitHostTestsCommon {
                 
         [TestMethod]
         public void SuccessfullyRegisters() {

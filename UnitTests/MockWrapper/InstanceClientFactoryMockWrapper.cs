@@ -25,7 +25,7 @@ namespace UnitTests.MockWrapper {
 
         public void Setup_InitializeFactory() {
             // NOTE:  We can't easily know the fabric id at the time of setup
-            Mock.Setup(x => x.InitializeFactory(It.IsAny<ILocalEnvironment>()));
+            Mock.Setup(x => x.InitializeFactory(It.IsAny<IXkitEnvironment>()));
         }
     }
 }

@@ -1,8 +1,8 @@
 using XKit.Lib.Common.Fabric;
 
-namespace UnitTests.Host.HostManagerAssertions.LocalFabricEnvironment {
+namespace UnitTests.Host.XKitHostAssertions.LocalFabricEnvironment {
 
-    public partial class LocalFabricEnvironmentTestsCommon : HostManagerTestBase {
+    public partial class LocalFabricEnvironmentTestsCommon : XKitHostTestBase {
 
     }
 }

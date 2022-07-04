@@ -22,7 +22,7 @@ namespace TestServices.SvcWithDependency2 {
                 operationAction: async (r) => {
                     var svcSimple = SvcSimple.SvcSimpleClientFactory.CreateServiceClient(
                         log: Log,
-                        connector: DependencyConnector
+                        connector: Connector
                     );
                     var result = await svcSimple.GetTestValueNoDependencies(new SvcSimple.TestValueRequest {
                         TheValue = r.TheValue
@@ -45,7 +45,7 @@ namespace TestServices.SvcWithDependency2 {
                 operationAction: async (r) => {
                     var svcSimple = SvcSimple.SvcSimpleClientFactory.CreateServiceClient(
                         log: Log,
-                        connector: DependencyConnector,
+                        connector: Connector,
                         defaultCallTypeParameters: ServiceCallTypeParameters.FireAndForget()
                     );
                     var result = await svcSimple.ChangeStaticValue(new SvcSimple.TestValueRequest {
