@@ -9,16 +9,9 @@ namespace XKit.Lib.Host.MetaServices.RegistrationsManagement {
 
     internal class RegistrationsManagementOperation : ServiceOperation<IRegistrationsManagementMetaService>, IRegistrationsManagementApi {
 
-        private readonly IFabricConnector FabricConnector;
-
         public RegistrationsManagementOperation(
-            ServiceOperationContext context,
-            IFabricConnector fabricConnector
-        ) :base(
-            context
-        ) {
-            this.FabricConnector = fabricConnector;
-        }
+            ServiceOperationContext context
+        ) :base(context) { }
 
         // =====================================================================
         // IRegistrationManagementOperation
@@ -28,12 +21,12 @@ namespace XKit.Lib.Host.MetaServices.RegistrationsManagement {
             ServiceTopologyMap map
         ) => await RunServiceCall(
             map, 
-            operationAction: async (r) => await FabricConnector.ForceResetTopologyMap(r)
+            operationAction: async (r) => await Connector.ForceResetTopologyMap(r)
         ); 
 
         async Task<ServiceCallResult> IRegistrationsManagementApi.TriggerRefresh() 
             => await RunServiceCall(
-                operationAction: async () => { await FabricConnector.Refresh(Log); }
+                operationAction: async () => { await Connector.Refresh(Log); }
             );
     }
 }

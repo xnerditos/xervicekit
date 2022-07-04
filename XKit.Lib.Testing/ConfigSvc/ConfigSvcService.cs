@@ -43,8 +43,8 @@ namespace XKit.Lib.Testing.TestConfigSvc {
         // =====================================================================
 
         public ConfigSvcService(
-            ILocalEnvironment localEnv
-        ) : base(localEnv) { }
+            IXkitHostEnvironment hostEnv
+        ) : base(hostEnv) { }
 
         // =====================================================================
         // GetConfigForService

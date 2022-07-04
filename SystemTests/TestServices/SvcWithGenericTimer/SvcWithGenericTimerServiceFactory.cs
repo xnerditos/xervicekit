@@ -18,10 +18,10 @@ namespace TestServices.SvcWithGenericTimer {
         // =====================================================================
 
 		IManagedService ITestServiceFactory.Create(
-            ILocalEnvironment localEnvironment
+            IXkitHostEnvironment hostEnv
         ) {
-            if (localEnvironment == null) { throw new ArgumentNullException(nameof(localEnvironment)); }
-            return new SvcWithGenericTimerService(localEnvironment);
+            if (hostEnv == null) { throw new ArgumentNullException(nameof(hostEnv)); }
+            return new SvcWithGenericTimerService(hostEnv);
         } 
 
         // =====================================================================
@@ -35,8 +35,8 @@ namespace TestServices.SvcWithGenericTimer {
         // =====================================================================
 
         public static IManagedService Create(
-            ILocalEnvironment localEnvironment
-        ) => SvcWithGenericTimerServiceFactory.Factory.Create(localEnvironment);
+            IXkitHostEnvironment hostEnv
+        ) => Factory.Create(hostEnv);
 
         public static void InjectCustomFactory(ISvcWithGenericTimerServiceFactory factory) =>
             SvcWithGenericTimerServiceFactory.factory = factory; 

@@ -11,7 +11,7 @@ namespace XKit.Lib.Connector.Service {
             IReadOnlyDescriptor descriptor,
             string operationInterfaceName,
             ILogSession log,
-            IDependencyConnector connector,
+            IFabricConnector connector,
             ServiceCallTypeParameters defaultCallTypeParameters = null,
             ServiceClientErrorHandling errorHandling = ServiceClientErrorHandling.LogWarning,
             string targetHostId = null
@@ -19,7 +19,7 @@ namespace XKit.Lib.Connector.Service {
         IGenericServiceClient CreateGenericServiceClient<TCallInterface>(
             IReadOnlyDescriptor descriptor,
             ILogSession log,
-            IDependencyConnector connector,
+            IFabricConnector connector,
             ServiceCallTypeParameters defaultCallTypeParameters = null,
             ServiceClientErrorHandling errorHandling = ServiceClientErrorHandling.LogWarning,
             string targetHostId = null
@@ -27,12 +27,12 @@ namespace XKit.Lib.Connector.Service {
 
         ICommandMessenger<TCommandInterface> CreateCommandMessengerClient<TCommandInterface>(
             ILogSession log,
-            IDependencyConnector connector
+            IFabricConnector connector
         ) where TCommandInterface : IServiceCommands;
 
         IEventMessenger<TEventInterface> CreateEventMessengerClient<TEventInterface>(
             ILogSession log,
-            IDependencyConnector connector
+            IFabricConnector connector
         ) where TEventInterface : IServiceEvents;
     }
 
@@ -48,19 +48,19 @@ namespace XKit.Lib.Connector.Service {
 
         ICommandMessenger<TCommandInterface> IClientFactory.CreateCommandMessengerClient<TCommandInterface>(
             ILogSession log,
-            IDependencyConnector connector
+            IFabricConnector connector
         ) => new CommandMessenger<TCommandInterface>(log, connector);
 
         IEventMessenger<TEventInterface> IClientFactory.CreateEventMessengerClient<TEventInterface>(
             ILogSession log,
-            IDependencyConnector connector
+            IFabricConnector connector
         ) => new EventMessenger<TEventInterface>(log, connector);
 
         IGenericServiceClient IClientFactory.CreateGenericServiceClient(
             IReadOnlyDescriptor descriptor, 
             string operationInterfaceName, 
             ILogSession log,
-            IDependencyConnector connector,
+            IFabricConnector connector,
             ServiceCallTypeParameters defaultCallTypeParameters, 
             ServiceClientErrorHandling errorHandling, 
             string targetHostId
@@ -77,7 +77,7 @@ namespace XKit.Lib.Connector.Service {
         IGenericServiceClient IClientFactory.CreateGenericServiceClient<TCallInterface>(
             IReadOnlyDescriptor descriptor, 
             ILogSession log,
-            IDependencyConnector connector,
+            IFabricConnector connector,
             ServiceCallTypeParameters defaultCallTypeParameters, 
             ServiceClientErrorHandling errorHandling, 
             string targetHostId

@@ -10,7 +10,7 @@ public class SvcGenericClient : ServiceClientBase<ISvcGenericApi>, ISvcGenericAp
     public SvcGenericClient(
         IReadOnlyDescriptor dependency,
         ILogSession log,
-        IDependencyConnector connector,
+        IFabricConnector connector,
         ServiceCallTypeParameters defaultCallTypeParameters
     ) : base(
         dependency,

@@ -44,23 +44,23 @@ namespace XKit.Lib.Common.Fabric {
         public string Payload { get; set; }
 
         public T GetBody<T>() where T : class {
-            return Json.From<T>(this.Payload);
+            return Json.FromJson<T>(this.Payload);
         }
 
         public object GetBody(System.Type type) {
-            return Json.From(this.Payload, type);
+            return Json.FromJson(this.Payload, type);
         }
 
         public object GetBody() {
-            return Json.FromDynamic(this.Payload);
+            return Json.FromJson(this.Payload);
         }
 
         public void SetBody(object body) {
-            this.Payload = Json.ToDynamic(body);
+            this.Payload = Json.ToJson(body);
         }
 
         public void SetBody<T>(T body) {
-            this.Payload = Json.To<T>(body);
+            this.Payload = Json.ToJson<T>(body);
         }
 
         public ServiceCallResult<T> ConvertTo<T>() where T : class

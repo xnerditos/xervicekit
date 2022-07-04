@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using TestServices.SvcSendsMessages;
@@ -16,8 +17,8 @@ namespace SystemTests.ServiceCalls.TestsCommon {
             var result = await client.RaisesEvent1(new Message {
                 TheValue = testValue
             });
-            
             result.ImmediateSuccess.Should().BeTrue();
+            Thread.Sleep(500);
             TestMessageBrokerService.WasMessageSent<TestEvents>(nameof(TestEvents.Event1)).Should().BeTrue();
         });
 
@@ -31,6 +32,7 @@ namespace SystemTests.ServiceCalls.TestsCommon {
             });
             
             result.ImmediateSuccess.Should().BeTrue();
+            Thread.Sleep(500);
             TestMessageBrokerService.WasMessageSent<TestCommands>(nameof(TestCommands.Command1)).Should().BeTrue();
         });
 
@@ -46,8 +48,9 @@ namespace SystemTests.ServiceCalls.TestsCommon {
                 },
                 messageId: messageId
             );
+            Thread.Sleep(500);
             
-            MessageListeningService.TestValue.Should().Be(testValue);
+            GetSvcListensForMessagesService().TestValue.Should().Be(testValue);
         });
 
         public async Task Test_SubscriberReceivesCommand() => await TestHelper.RunTestAsync(async () => {
@@ -62,8 +65,9 @@ namespace SystemTests.ServiceCalls.TestsCommon {
                 },
                 messageId: messageId
             );
+            Thread.Sleep(500);
             
-            MessageListeningService.TestValue.Should().Be(testValue);
+            GetSvcListensForMessagesService().TestValue.Should().Be(testValue);
         });
     }
 }

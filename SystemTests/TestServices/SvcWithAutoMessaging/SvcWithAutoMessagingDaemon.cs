@@ -47,7 +47,7 @@ namespace TestServices.SvcWithAutoMessaging {
             lastMessageTickValue = message.Ticks;
             string name = nameof(SvcWithAutoMessagingDaemon);
             var threadId = System.Environment.CurrentManagedThreadId;
-            Debug.WriteLine($"From {name}.  Thread id {threadId}: {message.Message}");
+            Debug.WriteLine($"FromJson {name}.  Thread id {threadId}: {message.Message}");
         }
     }
 }

@@ -9,7 +9,7 @@ using XKit.Lib.Common.MetaServices;
 using XKit.Lib.Common.Registration;
 using XKit.Lib.Common.Services.MessageBroker;
 
-namespace UnitTests.Host.HostManagerAssertions.HostManager {
+namespace UnitTests.Host.XKitHostAssertions.XKitHost {
 
     public interface ITestMetaService : IMetaService { }
 
@@ -84,9 +84,9 @@ namespace UnitTests.Host.HostManagerAssertions.HostManager {
         RunStateEnum IServiceBase.ServiceState =>
             throw new NotImplementedException();
 
-        public IHostEnvironment HostEnvironment => throw new NotImplementedException();
+        public IXkitHostEnvironment HostEnvironment => throw new NotImplementedException();
 
-        public ILocalEnvironment LocalEnvironment => throw new NotImplementedException();
+        public IXkitEnvironment XkitEnvironment => throw new NotImplementedException();
 
         Task<ServiceCallResult> IServiceBase.ExecuteCall(
             ServiceCallRequest request

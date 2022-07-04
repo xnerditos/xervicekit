@@ -20,7 +20,7 @@ namespace TestServices.SvcWithGenericTimer {
 
 		ISvcWithGenericTimerApi IServiceClientFactory<ISvcWithGenericTimerApi>.CreateServiceClient(
             ILogSession log,
-            IDependencyConnector connector,
+            IFabricConnector connector,
             ServiceCallTypeParameters defaultCallTypeParameters
 		) => new SvcWithGenericTimerClient(
 				Constants.ServiceDescriptor,

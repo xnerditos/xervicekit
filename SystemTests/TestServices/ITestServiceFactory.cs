@@ -6,6 +6,6 @@ namespace TestServices;
 public interface ITestServiceFactory : IServiceFactory {
 
     IManagedService Create(
-        ILocalEnvironment localEnvironment
+        IXkitHostEnvironment hostEnv
     );
 }

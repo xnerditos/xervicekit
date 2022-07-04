@@ -15,7 +15,7 @@ namespace XKit.Lib.Connector.Protocols.Http {
   		// ===========================================================================
 
         void IInstanceClientFactory.InitializeFactory(
-            ILocalEnvironment localEnv
+            IXkitEnvironment localEnv
         ) { }
 
 		IInstanceClient IInstanceClientFactory.TryCreateClient(

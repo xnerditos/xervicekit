@@ -56,11 +56,9 @@ namespace UnitTests.Connector.FabricConnectorAssertions.FabricConnector {
             );
 
             var fabricId = target.Initialize();
-            LocalEnvironment.SetupAll(
-                HostEnvironment,
+            XkitEnvironment.SetupAll(
                 fabricId
             );
-            HostEnvironment.SetupAll(TestConstants.FakeLocalHostAddress);
 
             // -----------------------------------------------------------------
             // Act
@@ -68,7 +66,7 @@ namespace UnitTests.Connector.FabricConnectorAssertions.FabricConnector {
             await target.Register(
                 null,
                 new[] { TestConstants.FakeServiceHostAddress1, TestConstants.FakeServiceHostAddress2 },
-                LocalEnvironment.Object
+                XkitEnvironment.Object
             );
 
             // -----------------------------------------------------------------
@@ -109,17 +107,14 @@ namespace UnitTests.Connector.FabricConnectorAssertions.FabricConnector {
             );
 
             var fabricId = target.Initialize();
-            LocalEnvironment.SetupAll(
-                HostEnvironment,
-                fabricId,
-                dependencies: new [] { TestConstants.Dependency1 }
-            );
             HostEnvironment.SetupAll(
                 FabricConnectorAssertions.TestConstants.FakeLocalHostAddress,
+                fabricId: fabricId,
                 hostedServices: new[] {
                     CreateServiceRegistration(fabricId, TestConstants.Dependency1, TestConstants.FakeLocalHostAddress ),
                     CreateServiceRegistration(fabricId, TestConstants.Dependency2, TestConstants.FakeLocalHostAddress )
-                }
+                },
+                dependencies: new [] { TestConstants.Dependency1 }
             );
 
             // -----------------------------------------------------------------
@@ -128,7 +123,7 @@ namespace UnitTests.Connector.FabricConnectorAssertions.FabricConnector {
             await target.Register(
                 null,
                 new[] { TestConstants.FakeLocalHostAddress },
-                LocalEnvironment.Object
+                HostEnvironment.Object
             );
 
             // -----------------------------------------------------------------
@@ -177,17 +172,14 @@ namespace UnitTests.Connector.FabricConnectorAssertions.FabricConnector {
             );
 
             var fabricId = target.Initialize();
-            LocalEnvironment.SetupAll(
-                HostEnvironment,
-                fabricId,
-                dependencies: new [] { TestConstants.Dependency1 }
-            );
             HostEnvironment.SetupAll(
                 FabricConnectorAssertions.TestConstants.FakeLocalHostAddress,
+                fabricId: fabricId,
                 hostedServices: new[] {
                     CreateServiceRegistration(fabricId, TestConstants.Dependency1, TestConstants.FakeLocalHostAddress ),
                     CreateServiceRegistration(fabricId, TestConstants.Dependency2, TestConstants.FakeLocalHostAddress )
-                }
+                },
+                dependencies: new [] { TestConstants.Dependency1 }
             );
             
             // -----------------------------------------------------------------
@@ -196,7 +188,7 @@ namespace UnitTests.Connector.FabricConnectorAssertions.FabricConnector {
             await target.Register(
                 null,
                 new[] { XKit.Lib.Common.Host.HostConstants.LocalHostAddressFlag },
-                LocalEnvironment.Object
+                HostEnvironment.Object
             );
 
             // -----------------------------------------------------------------
@@ -239,18 +231,15 @@ namespace UnitTests.Connector.FabricConnectorAssertions.FabricConnector {
             );
             
             var fabricId = target.Initialize();
-            LocalEnvironment.SetupAll(
-                HostEnvironment,
-                fabricId,
-                dependencies: new [] { TestConstants.Dependency1 }
-            );
             HostEnvironment.SetupAll(
                 FabricConnectorAssertions.TestConstants.FakeLocalHostAddress,
+                fabricId: fabricId,
                 hostedServices: new[] { 
                     // The same host has the dependency
                     CreateServiceRegistration(fabricId, TestConstants.Dependency1, TestConstants.FakeLocalHostAddress ),
                     CreateServiceRegistration(fabricId, TestConstants.Dependency2, TestConstants.FakeLocalHostAddress )
-                }
+                },
+                dependencies: new [] { TestConstants.Dependency1 }
             );
 
             
@@ -260,7 +249,7 @@ namespace UnitTests.Connector.FabricConnectorAssertions.FabricConnector {
             await target.Register(
                 null,
                 new[] { TestConstants.FakeServiceHostAddress1 },
-                LocalEnvironment.Object
+                HostEnvironment.Object
             );
 
             // -----------------------------------------------------------------
@@ -302,12 +291,9 @@ namespace UnitTests.Connector.FabricConnectorAssertions.FabricConnector {
             HostEnvironment.Setup_GetCapabilities();
             HostEnvironment.Setup_GetHealth();
             HostEnvironment.Setup_HasHostedServices(true);
+            HostEnvironment.Setup_FabricId(target.FabricId);
             // Create a dependency on a service we have
-            LocalEnvironment.SetupAll(
-                HostEnvironment,
-                target.FabricId,
-                dependencies: new [] { TestConstants.Dependency1 }
-            );
+            HostEnvironment.Setup_Dependencies(new [] { TestConstants.Dependency1 });
             HostEnvironment.Setup_GetHostedServices(new[] { 
                 // The same host has the dependency
                 CreateServiceRegistration(TestConstants.HostFabricId, TestConstants.Dependency1, TestConstants.FakeLocalHostAddress ),
@@ -320,7 +306,7 @@ namespace UnitTests.Connector.FabricConnectorAssertions.FabricConnector {
             await target.Register(
                 null,
                 new[] { TestConstants.FakeServiceHostAddress1 },
-                LocalEnvironment.Object
+                HostEnvironment.Object
             );
 
             // -----------------------------------------------------------------

@@ -9,45 +9,45 @@ using XKit.Lib.Connector.Fabric;
 
 namespace XKit.Lib.Host.Management {
 
-    public interface IHostManagerFactory {
-        IHostManager Create(
+    public interface IXkitHostFactory {
+        IXkitHost Create(
             string hostAddress,
             string localMetaDataDbPath,
             string localDataFolderPath,
             ILogSessionFactory logSessionFactory,
             ILocalConfigSessionFactory localConfigSessionFactory,
-            IFabricConnector fabricConnector,
+            IFabricConnector connector,
             IConfigClient configClient = null,
             IMessageBrokerClient messagingClient = null
         );
         void SetHealthChecker(Func<HealthEnum> healthChecker);
     }
 
-    public class HostManagerFactory : IHostManagerFactory {
+    public class XkitHostFactory : IXkitHostFactory {
 
-        private static IHostManagerFactory factory = new HostManagerFactory(
+        private static IXkitHostFactory factory = new XkitHostFactory(
             () => HealthEnum.Unknown
         );
 
-        public static IHostManagerFactory Factory => factory;
+        public static IXkitHostFactory Factory => factory;
 
         private Func<HealthEnum> healthChecker;
 
-        public HostManagerFactory(Func<HealthEnum> defaultHealthChecker) {
+        public XkitHostFactory(Func<HealthEnum> defaultHealthChecker) {
             this.healthChecker = defaultHealthChecker;
         }
 
         // =====================================================================
-        // IHostManagerFactory
+        // IXkitHostFactory
         // =====================================================================
 
-        IHostManager IHostManagerFactory.Create(
+        IXkitHost IXkitHostFactory.Create(
             string hostAddress,
             string localMetaDataDbPath,
             string localDataFolderPath,
             ILogSessionFactory logSessionFactory,
             ILocalConfigSessionFactory localConfigSessionFactory,
-            IFabricConnector fabricConnector,
+            IFabricConnector connector,
             IConfigClient configClient,
             IMessageBrokerClient messagingClient
         )  {
@@ -66,13 +66,13 @@ namespace XKit.Lib.Host.Management {
             if (string.IsNullOrEmpty(localDataFolderPath)) {
                 throw new ArgumentNullException("Must provide the local data folder");
             }
-            if (fabricConnector == null) {
+            if (connector == null) {
                 throw new ArgumentNullException("Must provide fabric connector");
             }
             
-            var hostManager = new HostManager(
+            var xKitHost = new XkitHost(
                 hostAddress,
-                fabricConnector,
+                connector,
                 logSessionFactory,
                 localConfigSessionFactory,
                 localMetaDataDbPath,
@@ -82,10 +82,10 @@ namespace XKit.Lib.Host.Management {
                 messagingClient
             );
 
-            return hostManager;
+            return xKitHost;
         }
 
-        void IHostManagerFactory.SetHealthChecker(Func<HealthEnum> healthChecker) {
+        void IXkitHostFactory.SetHealthChecker(Func<HealthEnum> healthChecker) {
             this.healthChecker = healthChecker;
         }
 
@@ -93,13 +93,13 @@ namespace XKit.Lib.Host.Management {
         // Static
         // =====================================================================
 
-        public static IHostManager Create(
+        public static IXkitHost Create(
             string hostAddress,
             string localMetaDataDbPath,
             string localDataFolderPath,
             ILogSessionFactory logSessionFactory,
             ILocalConfigSessionFactory localConfigSessionFactory,
-            IFabricConnector fabricConnector,
+            IFabricConnector connector,
             IConfigClient configClient = null
         ) => Factory.Create(
             hostAddress,
@@ -107,12 +107,12 @@ namespace XKit.Lib.Host.Management {
             localDataFolderPath,
             logSessionFactory,
             localConfigSessionFactory,
-            fabricConnector,
+            connector,
             configClient
         );
         
-        public static void InjectCustomFactory(IHostManagerFactory factory)
-            => HostManagerFactory.factory = factory;
+        public static void InjectCustomFactory(IXkitHostFactory factory)
+            => XkitHostFactory.factory = factory;
 
          public static void SetHealthChecker(Func<HealthEnum> healthChecker)
             => Factory.SetHealthChecker(healthChecker);

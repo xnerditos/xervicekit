@@ -18,10 +18,10 @@ namespace SystemTests._NAMESPACE.Svc1.Service {
         // =====================================================================
 
 		IManagedService ITestServiceFactory.Create(
-            ILocalEnvironment localEnvironment
+            IXkitHostEnvironment hostEnv
         ) {
-            if (localEnvironment == null) { throw new ArgumentNullException(nameof(localEnvironment)); }
-            return new Svc1Service(localEnvironment);
+            if (hostEnv == null) { throw new ArgumentNullException(nameof(hostEnv)); }
+            return new Svc1Service(hostEnv);
         } 
 
         // =====================================================================
@@ -35,8 +35,8 @@ namespace SystemTests._NAMESPACE.Svc1.Service {
         // =====================================================================
 
         public static IManagedService Create(
-            ILocalEnvironment localEnvironment
-        ) => Factory.Create(localEnvironment);
+            IXkitHostEnvironment hostEnv
+        ) => Factory.Create(hostEnv);
 
         public static void InjectCustomFactory(ISvc1ServiceFactory factory) =>
             Svc1ServiceFactory.factory = factory; 

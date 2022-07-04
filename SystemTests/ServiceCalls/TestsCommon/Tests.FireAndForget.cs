@@ -5,7 +5,6 @@ using XKit.Lib.Common.Fabric;
 using FluentAssertions;
 using SystemTests.ServiceCalls.Environment;
 using XKit.Lib.Common.Log;
-using XKit.Lib.Testing;
 
 namespace SystemTests.ServiceCalls.TestsCommon {
 

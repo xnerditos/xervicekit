@@ -13,7 +13,7 @@ namespace XKit.Lib.Host.Helpers {
     public class InternalConfigClient : ServiceClientBase<IConfigApi>, IConfigClient {
         public InternalConfigClient(
             ILogSession log,
-            IDependencyConnector connector
+            IFabricConnector connector
         ) : base(
             StandardConstants.Managed.StandardServices.Config.Descriptor,
             log,

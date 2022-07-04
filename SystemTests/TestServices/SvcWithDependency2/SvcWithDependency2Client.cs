@@ -12,7 +12,7 @@ namespace TestServices.SvcWithDependency2 {
         public SvcWithDependency2Client(
             IReadOnlyDescriptor dependency,
             ILogSession log,
-            IDependencyConnector connector,
+            IFabricConnector connector,
             ServiceCallTypeParameters defaultCallTypeParameters
         ) : base(
             dependency,

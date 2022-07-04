@@ -18,7 +18,7 @@ namespace SystemTests._NAMESPACE.Tests {
         public void Initialize() { 
             var testHelper = new TestHostHelper();
             testHelper.InitializeLocalTestHost();
-            InitTests(testHelper, testHelper.Host.DependencyConnector); 
+            InitTests(testHelper, testHelper.Host.Connector); 
         }
 
         [TestCleanup]

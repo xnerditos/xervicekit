@@ -6,30 +6,31 @@ using XKit.Lib.Testing;
 namespace SystemTests.ServiceCalls.TestsRemote {
 
     [TestClass]
-    public class SyncResult {
+    public class SyncResult : RemoteTestBase {
 
         private readonly TestsCommon.SyncResult Tests = new(); 
         private readonly ConsumerHelper ConsumerHelper = new();
 
         [TestInitialize]
         public void Initialize() { 
-            var testHelper = new TestHostHelper();
-            RemoteTestHelper.InitAsp();
-            testHelper.InitializeRemoteTestHost();
+            InitializeCommon();
+            Tests.InitTests(TestHelper); 
             ConsumerHelper.CreateInitConsumer(
                 dependencies: new XKit.Lib.Common.Client.IServiceClientFactory[] {
                     TestServices.SvcSimple.SvcSimpleClientFactory.Factory,
                     TestServices.SvcWithDependency1.SvcWithDependency1ClientFactory.Factory
                 },
-                initialRegistryAddresses: new[] { "localhost:8080" }
+                initialRegistryAddresses: new[] { "localhost:8090" }
             );
-            Tests.InitTests(testHelper, ConsumerHelper.DependencyConnector); 
+            Tests.SetConnectorForTestClients(ConsumerHelper.Connector);
         }
 
-        [TestCleanup]
-        public void Teardown() { 
-            Tests.TeardownTests(); 
-        }
+        // For the remote tests, we do not tear down since we use the same
+        // one for all tests
+        // [TestCleanup]
+        // public void Teardown() { 
+        //     Tests.TeardownTests(); 
+        // }
 
         [TestMethod]
         public async Task SingleServiceCallHappyPath() => await Tests.Test_SingleServiceCallHappyPath();

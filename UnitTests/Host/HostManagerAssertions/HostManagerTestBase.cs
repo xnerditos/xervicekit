@@ -4,16 +4,16 @@ using UnitTests.MockWrapper;
 using System;
 using XKit.Lib.Common.Registration;
 
-namespace UnitTests.Host.HostManagerAssertions {
+namespace UnitTests.Host.XKitHostAssertions {
 
     [TestClass]
-    public partial class HostManagerTestBase : TestBase {
+    public partial class XKitHostTestBase : TestBase {
 
         protected FabricConnectorMockWrapper FabricConnectorMockWrapper { get; private set; }
         protected LogSessionFactoryMockWrapper LogSessionFactoryMockWrapper { get; private set; }
         protected LocalConfigSessionFactoryMockWrapper LocalConfigSessionMockWrapper { get; private set; }
         protected ConfigClientMockWrapper ConfigClientWrapper { get; private set; }
-        public HostManagerTestBase() {
+        public XKitHostTestBase() {
             this.FabricConnectorMockWrapper = Mocks.CreateWrapper<FabricConnectorMockWrapper>();
             this.LogSessionFactoryMockWrapper = Mocks.CreateWrapper<LogSessionFactoryMockWrapper>();
             this.LocalConfigSessionMockWrapper = Mocks.CreateWrapper<LocalConfigSessionFactoryMockWrapper>();
@@ -25,8 +25,8 @@ namespace UnitTests.Host.HostManagerAssertions {
         // create
         // =====================================================================
 
-        protected IHostManager CreateTarget(Func<HealthEnum> hostHealthGetter = null)  
-            => new XKit.Lib.Host.Management.HostManager(
+        protected IXkitHost CreateTarget(Func<HealthEnum> hostHealthGetter = null)  
+            => new XKit.Lib.Host.Management.XkitHost(
                 Constants.HostAddress,
                 FabricConnectorMockWrapper.Object,
                 LogSessionFactoryMockWrapper.Object,

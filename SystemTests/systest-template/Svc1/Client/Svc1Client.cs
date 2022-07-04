@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using SystemTests._NAMESPACE.Svc1.Entities;
-using XKit.Lib.Common.Client;
 using XKit.Lib.Common.Fabric;
 using XKit.Lib.Common.Log;
 using XKit.Lib.Common.Registration;
@@ -13,7 +12,7 @@ namespace SystemTests._NAMESPACE.Svc1.Client {
         public Svc1Client(
             IReadOnlyDescriptor dependency,
             ILogSession log,
-            IDependencyConnector connector,
+            IFabricConnector connector,
             ServiceCallTypeParameters defaultCallTypeParameters
         ) : base(
             dependency,

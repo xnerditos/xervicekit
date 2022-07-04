@@ -44,10 +44,10 @@ namespace XKit.Lib.Connector.Fabric {
         private DateTime? cacheExpiration;
         private readonly SetOnceOrThrow<string> fabricId = new();
         private readonly IReadOnlyList<IInstanceClientFactory> instanceClientFactories;
-        private readonly SetOnceOrThrow<ILocalEnvironment> localEnvironment = new();
-        private readonly SetOnceOrThrow<IHostEnvironment> hostEnvironment = new();
-        private ILocalEnvironment LocalEnvironment => localEnvironment.Value;
-        private IHostEnvironment HostEnvironment => hostEnvironment.Value;
+        private readonly SetOnceOrThrow<IXkitEnvironment> xkitEnvironment = new();
+        private readonly SetOnceOrThrow<IXkitHostEnvironment> hostEnvironment = new();
+        private IXkitEnvironment XkitEnvironment => xkitEnvironment.Value;
+        private IXkitHostEnvironment HostEnvironment => hostEnvironment.Value;
         private string FabricId => fabricId.Value;
         private bool isRegisteredWithFabric = false;
         bool IsHost => this.HostEnvironment != null;
@@ -88,13 +88,26 @@ namespace XKit.Lib.Connector.Fabric {
         Task<bool> IFabricConnector.Register(
             ILogSession log,
             IEnumerable<string> initialRegistryHostAddresses,
-            ILocalEnvironment localEnvironment,
+            IXkitEnvironment xkitEnvironment,
             bool fatalIfUnableToRegister
         ) => Register(
             log,
             initialRegistryHostAddresses,
-            localEnvironment,
-            localEnvironment.HostEnvironment,
+            xkitEnvironment,
+            xkitEnvironment as IXkitHostEnvironment,
+            fatalIfUnableToRegister
+        );
+
+        Task<bool> IFabricConnector.Register(
+            ILogSession log,
+            IEnumerable<string> initialRegistryHostAddresses,
+            IXkitHostEnvironment hostEnvironment,
+            bool fatalIfUnableToRegister
+        ) => Register(
+            log,
+            initialRegistryHostAddresses,
+            hostEnvironment,
+            hostEnvironment,
             fatalIfUnableToRegister
         );
 
@@ -125,11 +138,7 @@ namespace XKit.Lib.Connector.Fabric {
         
         bool IFabricConnector.IsHost => IsHost;
 
-        // =====================================================================
-        // IDependencyConnector
-        // =====================================================================
-
-        async Task<IServiceCallRouter> IDependencyConnector.CreateCallRouter(
+        async Task<IServiceCallRouter> IFabricConnector.CreateCallRouter(
             IReadOnlyDescriptor target, 
             ILogSession log,
             bool failIfNotAvailable,
@@ -171,17 +180,17 @@ namespace XKit.Lib.Connector.Fabric {
         async Task<bool> Register(
             ILogSession log,
             IEnumerable<string> initialRegistryHostAddresses,
-            ILocalEnvironment localEnvironment,
-            IHostEnvironment hostEnvironment,
+            IXkitEnvironment xkitEnvironment,
+            IXkitHostEnvironment hostEnvironment,
             bool fatalIfUnableToRegister
         ) {
-            localEnvironment = localEnvironment ?? throw new ArgumentNullException(nameof(localEnvironment));
-            if (localEnvironment.FabricId != FabricId) {
+            xkitEnvironment = xkitEnvironment ?? throw new ArgumentNullException(nameof(xkitEnvironment));
+            if (xkitEnvironment.FabricId != FabricId) {
                 throw new ArgumentException("Local fabric environment does not match this fabric connector id");
             }
             initialRegistryHostAddresses ??= Array.Empty<string>();
 
-            this.localEnvironment.Value = localEnvironment;
+            this.xkitEnvironment.Value = xkitEnvironment;
             this.hostEnvironment.Value = hostEnvironment;
             InitializeAccess(initialRegistryHostAddresses);
 
@@ -255,7 +264,7 @@ namespace XKit.Lib.Connector.Fabric {
             IEnumerable<string> initialRegistryHostAddresses
         ) {
             foreach(var instanceClientFactory in this.instanceClientFactories) {
-                instanceClientFactory.InitializeFactory(LocalEnvironment);
+                instanceClientFactory.InitializeFactory(XkitEnvironment);
             }
 
             // set up initial access to the registry service. 
@@ -300,19 +309,19 @@ namespace XKit.Lib.Connector.Fabric {
             bool fatalIfUnableToRegister
         ) {
             
-            dependencies = LocalEnvironment
+            dependencies = XkitEnvironment
                 .GetDependencies()
                 .Select(d => (IReadOnlyDescriptor) d.Clone())
                 .ToArray();
 
             var registration = new FabricRegistration {
-                FabricId = LocalEnvironment.FabricId,
+                FabricId = XkitEnvironment.FabricId,
                 Capabilities = HostEnvironment?.GetCapabilities()?.ToList(),
                 Address = HostEnvironment?.Address,
                 Dependencies = dependencies?.Select(d => d.Clone()).ToList(),
                 HostedServices = HostEnvironment?.GetHostedServices().Select(s => s.Clone()).ToList(),
                 Status = new FabricStatus {
-                    FabricId = LocalEnvironment.FabricId,
+                    FabricId = XkitEnvironment.FabricId,
                     Health = HostEnvironment?.GetHealth(),
                     RunState = HostEnvironment?.HostRunState
                 }

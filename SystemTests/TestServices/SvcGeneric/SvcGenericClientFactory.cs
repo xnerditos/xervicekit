@@ -18,7 +18,7 @@ public class SvcGenericClientFactory : ISvcGenericClientFactory {
 
     ISvcGenericApi IServiceClientFactory<ISvcGenericApi>.CreateServiceClient(
         ILogSession log,
-        IDependencyConnector connector,
+        IFabricConnector connector,
         ServiceCallTypeParameters defaultCallTypeParameters
     ) => new SvcGenericClient(
             Constants.ServiceDescriptor,

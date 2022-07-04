@@ -31,7 +31,7 @@ namespace XKit.Lib.Connector.Service {
         // private
         // =====================================================================
         private readonly IReadOnlyDescriptor Descriptor;
-        private readonly IDependencyConnector DependencyConnector;
+        private readonly IFabricConnector Connector;
         private readonly ServiceCallTypeParameters DefaultCallTypeParameters;
         private readonly ServiceClientErrorHandling DefaultErrorHandling;
         private ServiceCallTypeParameters currentCallTypeParameters;
@@ -52,7 +52,7 @@ namespace XKit.Lib.Connector.Service {
             IReadOnlyDescriptor descriptor,
             string callInterfaceName,
             ILogSession log,
-            IDependencyConnector dependencyConnector,
+            IFabricConnector connector,
             ServiceCallTypeParameters defaultCallTypeParameters = null,
             ServiceClientErrorHandling errorHandling = ServiceClientErrorHandling.LogWarning,
             string targetHostId = null
@@ -61,7 +61,7 @@ namespace XKit.Lib.Connector.Service {
             this.callInterfaceName = callInterfaceName;
             this.DefaultErrorHandling = errorHandling;
             this.defaultLog = log;
-            DependencyConnector = dependencyConnector ?? throw new ArgumentNullException(nameof(dependencyConnector));
+            Connector = connector ?? throw new ArgumentNullException(nameof(connector));
             this.DefaultCallTypeParameters = defaultCallTypeParameters ?? ServiceCallTypeParameters.SyncResult();
             this.TargetHostId = targetHostId;
         }
@@ -94,7 +94,7 @@ namespace XKit.Lib.Connector.Service {
             if (callRouter != null) {
                 return callRouter;
             }
-            return await DependencyConnector.CreateCallRouter(
+            return await Connector.CreateCallRouter(
                 Descriptor,
                 Log,
                 ErrorHandling == ServiceClientErrorHandling.ThrowException, 
@@ -457,7 +457,7 @@ namespace XKit.Lib.Connector.Service {
         public ServiceClientBase(
             IReadOnlyDescriptor descriptor,
             ILogSession log,
-            IDependencyConnector connector,
+            IFabricConnector connector,
             ServiceCallTypeParameters defaultCallTypeParameters = null,
             ServiceClientErrorHandling errorHandling = ServiceClientErrorHandling.LogWarning,
             string targetHostId = null

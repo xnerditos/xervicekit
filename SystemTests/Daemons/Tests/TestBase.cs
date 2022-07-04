@@ -10,12 +10,11 @@ namespace SystemTests.Daemons.Tests {
     public class TestBase {
         protected readonly TestHostHelper TestHelper = new();
         protected HostEnvironmentHelper HostEnvironmentHelper => TestHelper.HostEnvironmentHelper;
-        protected IDependencyConnector DependencyConnector => HostEnvironmentHelper.DependencyConnector;
-        protected string FabricId => HostEnvironmentHelper.FabricConnector.FabricId;
-        protected IHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
-        protected ILocalEnvironment LocalEnvironment => HostEnvironmentHelper.Host;
+        protected IFabricConnector Connector => HostEnvironmentHelper.Connector;
+        protected string FabricId => HostEnvironmentHelper.Connector.FabricId;
+        protected IXkitHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
         protected IManagedService AutoMessagingService { get; private set; }
-        protected uint LastMessageTickValue => TestServices.SvcWithAutoMessaging.SvcWithAutoMessagingDaemonOperation.LastMessageTickValue;
+        protected static uint LastMessageTickValue => TestServices.SvcWithAutoMessaging.SvcWithAutoMessagingDaemonOperation.LastMessageTickValue;
 
         protected static void Yield(int milliseconds = 200) {
             Thread.Sleep(milliseconds);
@@ -25,7 +24,7 @@ namespace SystemTests.Daemons.Tests {
 
             TestHelper.InitializeLocalTestHost(useDaemonDebugMode: false);
             AutoMessagingService = TestHelper.AddService(
-                TestServices.SvcWithAutoMessaging.SvcWithAutoMessagingServiceFactory.Create(LocalEnvironment)
+                TestServices.SvcWithAutoMessaging.SvcWithAutoMessagingServiceFactory.Create(HostEnvironment)
             );
             TestHelper.StartHost();
             Yield(1000);
@@ -42,7 +41,7 @@ namespace SystemTests.Daemons.Tests {
         ) {
             return factory.CreateServiceClient(
                 log: TestHelper.Log,
-                connector: DependencyConnector,
+                connector: Connector,
                 defaultCallTypeParameters: callTypeParameters ?? ServiceCallTypeParameters.SyncResult()
             );
         }

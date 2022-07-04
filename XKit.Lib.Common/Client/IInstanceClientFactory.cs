@@ -6,7 +6,7 @@ namespace XKit.Lib.Common.Client {
     public interface IInstanceClientFactory {
 
         void InitializeFactory(
-            ILocalEnvironment localFabric = null
+            IXkitEnvironment localFabric = null
         );
 
 		IInstanceClient TryCreateClient(

@@ -22,7 +22,7 @@ public partial class SvcWithDependency1Operation : ServiceOperation<ISvcWithDepe
             operationAction: async (r) => {
                 var svcWithDep2 = SvcWithDependency2.SvcWithDependency2ClientFactory.CreateServiceClient(
                     log: Log,
-                    connector: DependencyConnector,
+                    connector: Connector,
                     defaultCallTypeParameters: ServiceCallTypeParameters.SyncResult()
                 );
                 var result = await svcWithDep2.GetTestValueWithDependency1Level(new SvcWithDependency2.TestValueRequest {
@@ -49,7 +49,7 @@ public partial class SvcWithDependency1Operation : ServiceOperation<ISvcWithDepe
             operationAction: async (r) => {
                 var svcWithDep2 = SvcWithDependency2.SvcWithDependency2ClientFactory.CreateServiceClient(
                     log: Log,
-                    connector: DependencyConnector,
+                    connector: Connector,
                     defaultCallTypeParameters: ServiceCallTypeParameters.FireAndForget()
                 );
                 var result = await svcWithDep2.ChangeStaticValueWithDependency1Level(new SvcWithDependency2.TestValueRequest {

@@ -15,9 +15,9 @@ namespace XKit.Lib.Host.Services {
 
             public GenericManagedService(
                 Descriptor descriptor,
-                ILocalEnvironment localFabric
+                IXkitHostEnvironment hostEnv
             ) : base(
-                localFabric
+                hostEnv
             ) {
                 this.descriptor = descriptor;
             }

@@ -8,16 +8,8 @@ namespace XKit.Lib.Host.Protocols.Http.Mvc.Helpers {
     [Route("meta")]
     public class MetaServiceRouterController : ServiceControllerBase {
 
-        private static IHostEnvironment hostEnvironment;
-
-        public static void SetHostEnvironment(IHostEnvironment hostEnvironment) {
-            MetaServiceRouterController.hostEnvironment = hostEnvironment;
-        }
-
-        protected MetaServiceRouterController(
-        ) : base(
-            hostEnvironment
-        ) {
+        protected MetaServiceRouterController(IXkitHostEnvironment hostEnvironment) 
+            : base(hostEnvironment) {
         }
 
         [HttpPost("{collectionName}/{serviceName}/{serviceVersion}")]

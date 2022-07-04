@@ -8,13 +8,8 @@ namespace XKit.Lib.Host.Protocols.Http.Mvc.Helpers {
 
     [Route("managed")]
     public class ManagedServiceRouterController : ServiceControllerBase {
-        private static IHostEnvironment hostEnvironment;
 
-        public static void SetHostEnvironment(IHostEnvironment hostEnvironment) {
-            ManagedServiceRouterController.hostEnvironment = hostEnvironment;
-        }
-
-        public ManagedServiceRouterController() : base(
+        public ManagedServiceRouterController(IXkitHostEnvironment hostEnvironment) : base(
             hostEnvironment
         ) { }
 

@@ -33,10 +33,5 @@ namespace XKit.Lib.Host.Protocols.Http.Mvc {
                     .GetTypeInfo().Assembly
             );
         }
-
-        public static void SetGlobalHostEnvironment(IHostEnvironment hostEnv) {
-            ManagedServiceRouterController.SetHostEnvironment(hostEnv);
-            MetaServiceRouterController.SetHostEnvironment(hostEnv);
-        }
     }
 }

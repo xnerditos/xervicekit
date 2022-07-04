@@ -13,7 +13,7 @@ namespace SystemTests.ServiceCalls.TestsLocal {
         public void Initialize() { 
             var testHelper = new TestHostHelper();
             testHelper.InitializeLocalTestHost();
-            Tests.InitTests(testHelper, testHelper.Host.DependencyConnector); 
+            Tests.InitTests(testHelper); 
         }
 
         [TestCleanup]

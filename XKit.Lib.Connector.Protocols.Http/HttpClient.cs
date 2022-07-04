@@ -45,6 +45,7 @@ namespace XKit.Lib.Connector.Protocols.Http {
                 IRestRequest restRequest = new RestRequest(GetOperationUrl());
                 restRequest.JsonSerializer = JsonSerializer.Default;
                 restRequest.AddJsonBody(request.Clone());
+                restRequest.Timeout = 1000 * 60 * 5;
 
                 var tcs = new TaskCompletionSource<ServiceCallResult>();
                 client.PostAsync<ServiceCallResult>(restRequest, (restResponse, handle) => {

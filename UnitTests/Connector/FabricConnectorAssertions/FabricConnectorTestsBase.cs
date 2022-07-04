@@ -18,7 +18,7 @@ namespace UnitTests.Connector.FabricConnectorAssertions {
         // =====================================================================
         protected ServiceCallFactoryMockWrapper ServiceCallRouterFactory { get; private set; } 
         protected InstanceClientFactoryMockWrapper InstanceClientFactory { get; private set; }
-        protected LocalEnvironmentMockWrapper LocalEnvironment { get; private set; }
+        protected XkitEnvironmentMockWrapper XkitEnvironment { get; private set; }
         protected HostEnvironmentMockWrapper HostEnvironment { get; private set; }
         protected RegistryClientMock RegistryClient { get; private set; }
 
@@ -29,7 +29,7 @@ namespace UnitTests.Connector.FabricConnectorAssertions {
         public FabricConnectorTestsBase() { 
             ServiceCallRouterFactory = Mocks.CreateWrapper<ServiceCallFactoryMockWrapper>();
             InstanceClientFactory = Mocks.CreateWrapper<InstanceClientFactoryMockWrapper>();
-            LocalEnvironment = Mocks.CreateWrapper<LocalEnvironmentMockWrapper>();
+            XkitEnvironment = Mocks.CreateWrapper<XkitEnvironmentMockWrapper>();
             HostEnvironment = Mocks.CreateWrapper<HostEnvironmentMockWrapper>();
             RegistryClient = new RegistryClientMock();
         }
@@ -156,10 +156,7 @@ namespace UnitTests.Connector.FabricConnectorAssertions {
             }
             HostEnvironment.SetupAll(
                 TestConstants.FakeLocalHostAddress,
-                hostedServices: hostedServices
-            );
-            LocalEnvironment.SetupAll(
-                hostEnvironmentMockWrapper: HostEnvironment,
+                hostedServices: hostedServices,
                 fabricId: TestConstants.HostFabricId,
                 dependencies: initialServiceRegistrationsForDependencies.Select(sv => sv.Descriptor)              
             );
@@ -227,11 +224,12 @@ namespace UnitTests.Connector.FabricConnectorAssertions {
         /// </summary>
         protected async Task PrepareTarget_InitializeAndRegister(IFabricConnector target) {
             var hostId = target.Initialize();
-            LocalEnvironment.Setup_FabricId(hostId);
+            XkitEnvironment.Setup_FabricId(hostId);
+            XkitEnvironment.Setup_Dependencies();
             await target.Register(
                 null,
                 new[] { TestConstants.FakeServiceHostAddress1 },
-                LocalEnvironment.Object
+                XkitEnvironment.Object
             );
         }
     }

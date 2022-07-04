@@ -18,7 +18,7 @@ public class SvcSimpleClientFactory : ISvcSimpleClientFactory {
 
     ISvcSimpleApi IServiceClientFactory<ISvcSimpleApi>.CreateServiceClient(
         ILogSession log,
-        IDependencyConnector connector,
+        IFabricConnector connector,
         ServiceCallTypeParameters defaultCallTypeParameters
     ) => new SvcSimpleClient(
             Constants.ServiceDescriptor,
@@ -35,7 +35,7 @@ public class SvcSimpleClientFactory : ISvcSimpleClientFactory {
 
     public static ISvcSimpleApi CreateServiceClient(
         ILogSession log,
-        IDependencyConnector connector,
+        IFabricConnector connector,
         ServiceCallTypeParameters defaultCallTypeParameters = null
     ) => SvcSimpleClientFactory.Factory.CreateServiceClient(
         log,

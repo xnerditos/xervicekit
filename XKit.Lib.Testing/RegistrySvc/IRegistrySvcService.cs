@@ -1,11 +1,12 @@
+using System.Collections.Generic;
 using XKit.Lib.Common.Host;
 using XKit.Lib.Common.Registration;
 
 namespace XKit.Lib.Testing.TestRegistrySvc {
     public interface IRegistrySvcService : IManagedService, IServiceBase {
 
-        IReadOnlyFabricRegistration GetTestRegistration();
+        IReadOnlyList<IReadOnlyFabricRegistration> GetTestRegistrations();
 
-        void SetTestRegistration(FabricRegistration registration);
+        void AddTestRegistration(FabricRegistration registration);
     }
 }

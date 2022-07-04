@@ -9,7 +9,7 @@ public class SvcSendsMessagesClient : ServiceClientBase<ISvcSendsMessagesApi>, I
     public SvcSendsMessagesClient(
         IReadOnlyDescriptor dependency,
         XKit.Lib.Common.Log.ILogSession log,
-        IDependencyConnector connector,
+        IFabricConnector connector,
         ServiceCallTypeParameters defaultCallTypeParameters
     ) : base(
         dependency,

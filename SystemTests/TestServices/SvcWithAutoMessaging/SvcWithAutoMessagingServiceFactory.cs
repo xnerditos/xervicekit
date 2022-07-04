@@ -17,10 +17,10 @@ namespace TestServices.SvcWithAutoMessaging {
         // =====================================================================
 
 		IManagedService ITestServiceFactory.Create(
-            ILocalEnvironment localEnvironment
+            IXkitHostEnvironment xkitEnvironment
         ) {
-            if (localEnvironment == null) { throw new ArgumentNullException(nameof(localEnvironment)); }
-            return new SvcWithAutoMessagingService(localEnvironment);
+            if (xkitEnvironment == null) { throw new ArgumentNullException(nameof(xkitEnvironment)); }
+            return new SvcWithAutoMessagingService(xkitEnvironment);
         } 
 
         // =====================================================================
@@ -34,7 +34,7 @@ namespace TestServices.SvcWithAutoMessaging {
         // =====================================================================
 
         public static IManagedService Create(
-            ILocalEnvironment localEnvironment
-        ) => Factory.Create(localEnvironment);
+            IXkitHostEnvironment xkitEnvironment
+        ) => Factory.Create(xkitEnvironment);
 	}
 }

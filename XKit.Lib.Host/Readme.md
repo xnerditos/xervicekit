@@ -56,13 +56,13 @@ See samples
 
 0) Pre-init
 * If any of the default behaviour should be overriden, use the corresponding method InjectCustomFactory for that factory to inject your own implementation
-* Set a health checker with a call to HostManagerFactory.SetHealthChecker()
+* Set a health checker with a call to XKitHostFactory.SetHealthChecker()
 
 1) Init
-* Create the IHostManager singleton with a call to HostManagerFactory.CreateSingleton()
+* Create the IXKitHost singleton with a call to XKitHostFactory.CreateSingleton()
 * Register additional (non default) meta services that run in the context of the host
 * Create service implementation objects and do any init activity that is required
-* Register any service implementations with hostManager.RegisterService().  
+* Register any service implementations with xKitHost.RegisterService().  
 * Start the host
 
 2) Add controllers to asp.net.  In Startup.cs ...

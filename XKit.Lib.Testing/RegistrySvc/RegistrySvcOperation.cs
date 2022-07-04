@@ -45,7 +45,7 @@ namespace XKit.Lib.Testing.TestRegistrySvc {
 
         private Task<ServiceTopologyMap> Register(FabricRegistration registration) {
             try {
-                Service.SetTestRegistration(registration);
+                Service.AddTestRegistration(registration);
                 return Task.FromResult(CreateTopologyMap());
             } catch (Exception ex) {
                 return Task.FromException<ServiceTopologyMap>(ex);
@@ -66,9 +66,13 @@ namespace XKit.Lib.Testing.TestRegistrySvc {
 
         private ServiceTopologyMap CreateTopologyMap() {
 
-            var dependencies = Service.GetTestRegistration().HostedServices.Select(
-                hs => hs.Clone()
-            ).ToList();
+            var dependencies = 
+                Service.GetTestRegistrations()
+                .Where(r => r.HostedServices != null)
+                .SelectMany(r => r.HostedServices)
+                .DistinctBy(s => Common.Utility.Identifiers.GetServiceFullRegistrationKey(s.Descriptor))
+                .Select(d => d.Clone())
+                .ToList();
 
             return new ServiceTopologyMap {
                 CacheExpiration = DateTime.MaxValue,

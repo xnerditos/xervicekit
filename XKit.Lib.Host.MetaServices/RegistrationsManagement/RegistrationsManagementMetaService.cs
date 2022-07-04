@@ -13,7 +13,7 @@ namespace XKit.Lib.Host.MetaServices.RegistrationsManagement {
         : MetaService<RegistrationsManagementOperation>, IRegistrationsManagementMetaService {
 
         public RegistrationManagementMetaService(
-            IHostManager localHost
+            IXkitHost localHost
         ) : base(
                 StandardCapabilityNames.LocalRegistrationsManagement,
                 localHost

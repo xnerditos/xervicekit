@@ -13,7 +13,7 @@ namespace XKit.Lib.Common.Client {
 
         TServiceClientInterface CreateServiceClient(
             ILogSession log,
-            IDependencyConnector connector,
+            IFabricConnector connector,
             ServiceCallTypeParameters defaultCallTypeParameters = null
         );
     }

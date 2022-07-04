@@ -4,7 +4,7 @@ using XKit.Lib.Common.Registration;
 
 namespace XKit.Lib.Common.Host {
     
-    public interface IHostEnvironment {
+    public interface IXkitHostEnvironment : IXkitEnvironment {
         
         string Address { get; }
         

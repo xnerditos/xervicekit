@@ -6,7 +6,7 @@ namespace XKit.Lib.Host.MetaServices.RegistrationsManagement {
 
     public interface IRegistrationsManagementMetaServiceFactory {
         IRegistrationsManagementMetaService Create(
-            IHostManager hostManager
+            IXkitHost xKitHost
         );
     }
 
@@ -20,9 +20,9 @@ namespace XKit.Lib.Host.MetaServices.RegistrationsManagement {
         // IRegistrationManagementMetaServiceFactory
         // =====================================================================
         IRegistrationsManagementMetaService IRegistrationsManagementMetaServiceFactory.Create(
-            IHostManager hostManager
+            IXkitHost xKitHost
         ) {
-            return new RegistrationManagementMetaService(hostManager);
+            return new RegistrationManagementMetaService(xKitHost);
         }
 
         // =====================================================================
@@ -30,8 +30,8 @@ namespace XKit.Lib.Host.MetaServices.RegistrationsManagement {
         // ===================================================================== 
 
         public static IRegistrationsManagementMetaService Create(
-            IHostManager hostManager
-        ) => Factory.Create(hostManager);
+            IXkitHost xKitHost
+        ) => Factory.Create(xKitHost);
 
         public static void InjectCustomFactory(IRegistrationsManagementMetaServiceFactory factory)
             => RegistrationsManagementMetaServiceFactory.factory = factory;

@@ -7,55 +7,66 @@ using XKit.Lib.Common.Client;
 using XKit.Lib.Testing;
 using XKit.Lib.Testing.TestMessageBrokerSvc;
 using TestServices.SvcListensForMessages;
+using System.Linq;
 
 namespace SystemTests.ServiceCalls.TestsCommon {
 
     public abstract class TestBase {
 
-        //private bool isInited = false;
-        private IDependencyConnector clientDependencyConnector;
+        private IFabricConnector clientFabricConnector;
         private TestHostHelper testHelper;
         public TestHostHelper TestHelper => testHelper;
         public HostEnvironmentHelper HostEnvironmentHelper => TestHelper.HostEnvironmentHelper;
-        public string FabricId => HostEnvironmentHelper.FabricConnector.FabricId;
+        public string FabricId => HostEnvironmentHelper.Connector.FabricId;
         public IMessageBrokerSvcService TestMessageBrokerService => TestHelper.TestMessageBrokerService;
-        public ISvcListensForMessagesService MessageListeningService { get; private set; }
-        public IHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
-        public ILocalEnvironment LocalEnvironment => HostEnvironmentHelper.Host;
+        //public ISvcListensForMessagesService MessageListeningService { get; private set; }
+        public IXkitHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
 
-        public void InitTests(TestHostHelper testHelper, IDependencyConnector clientDependencyConnector) {
+        public void InitTests(TestHostHelper testHelper) {
             
-            // if (isInited) { return; }
-            // isInited = true;
             this.testHelper = testHelper;
-            this.clientDependencyConnector = clientDependencyConnector;
 
-            TestHelper.AddService(
-                TestServices.SvcSimple.SvcSimpleServiceFactory.Create(LocalEnvironment)
-            );
-            
-            TestHelper.AddService(
-                TestServices.SvcWithDependency1.SvcWithDependency1ServiceFactory.Create(LocalEnvironment)
-            );
+            if (TestHelper.Host?.HostRunState != RunStateEnum.Active) { 
+                TestHelper.AddService(
+                    TestServices.SvcSimple.SvcSimpleServiceFactory.Create(HostEnvironment)
+                );
+                
+                TestHelper.AddService(
+                    TestServices.SvcWithDependency1.SvcWithDependency1ServiceFactory.Create(HostEnvironment)
+                );
 
-            TestHelper.AddService(
-                TestServices.SvcWithDependency2.SvcWithDependency2ServiceFactory.Create(LocalEnvironment)
-            );
+                TestHelper.AddService(
+                    TestServices.SvcWithDependency2.SvcWithDependency2ServiceFactory.Create(HostEnvironment)
+                );
 
-            TestHelper.AddCreateService(
-                TestServices.SvcGeneric.Constants.ServiceDescriptor,
-                typeof(TestServices.SvcGeneric.SvcGenericOperation)
-            );
+                TestHelper.AddCreateService(
+                    TestServices.SvcGeneric.Constants.ServiceDescriptor,
+                    typeof(TestServices.SvcGeneric.SvcGenericOperation)
+                );
 
-            TestHelper.AddService(
-                TestServices.SvcSendsMessages.SvcSendsMessagesServiceFactory.Create(LocalEnvironment)
-            );
+                TestHelper.AddService(
+                    TestServices.SvcSendsMessages.SvcSendsMessagesServiceFactory.Create(HostEnvironment)
+                );
 
-            MessageListeningService = (ISvcListensForMessagesService) TestHelper.AddService(
-                SvcListensForMessagesServiceFactory.Create(LocalEnvironment)
-            );
+                TestHelper.AddService(
+                    SvcListensForMessagesServiceFactory.Create(HostEnvironment)
+                );
 
-            TestHelper.StartHost();
+                TestHelper.StartHost();
+            }
+
+            clientFabricConnector = TestHelper.HostEnvironment.Connector;
+        }
+
+        public ISvcListensForMessagesService GetSvcListensForMessagesService() {
+            return HostEnvironment.GetManagedServices(
+                collectionName: "SystemTest.ServiceCalls",
+                serviceName: "SvcListensForMessages"
+            ).First() as ISvcListensForMessagesService;
+        }
+
+        public void SetConnectorForTestClients(IFabricConnector clientFabricConnector) {
+            this.clientFabricConnector = clientFabricConnector;
         }
 
         public void TeardownTests() {            
@@ -74,7 +85,7 @@ namespace SystemTests.ServiceCalls.TestsCommon {
         ) {
             return factory.CreateServiceClient(
                 log: TestHelper.Log,
-                clientDependencyConnector,
+                clientFabricConnector,
                 defaultCallTypeParameters: callTypeParameters ?? ServiceCallTypeParameters.SyncResult()
             );
         }

@@ -40,8 +40,8 @@ namespace XKit.Lib.Host.Services {
         protected override IReadOnlyDescriptor Descriptor => XKit.Lib.Common.Services.StandardConstants.Managed.StandardServices.MessageBroker.Descriptor;
 
         public BuiltinMessageBrokerService(
-            ILocalEnvironment localEnv
-        ) : base(localEnv) { }
+            IXkitHostEnvironment hostEnv
+        ) : base(hostEnv) { }
 
         // =====================================================================
         // IMessageBrokerSvcService
@@ -81,7 +81,7 @@ namespace XKit.Lib.Host.Services {
                     descriptor: subscription.Recipient,
                     operationInterfaceName: operationInterfaceName,
                     log: log,
-                    LocalEnvironment.DependencyConnector,
+                    HostEnvironment.Connector,
                     ServiceCallTypeParameters.SyncResult(),
                     errorHandling: subscription.ErrorHandling.GetValueOrDefault(ServiceClientErrorHandling.LogWarning),
                     targetHostId: subscription.RecipientHostId

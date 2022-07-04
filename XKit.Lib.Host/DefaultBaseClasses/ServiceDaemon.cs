@@ -57,7 +57,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             log.Value = LogSessionFactory.CreateLogSession(
                 originatorName: $"{Service.Descriptor.Collection}.{Service.Descriptor.Name}",
                 originatorVersion: Service.Descriptor.Version,
-                originatorFabricId: LocalEnvironment.FabricId,
+                originatorFabricId: HostEnvironment.FabricId,
                 originatorInstanceId: Service.InstanceId
             );
 
@@ -112,7 +112,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             var operation = CreateDaemonOperation(new ServiceDaemonOperationContext(
                 this,
                 this.Service,
-                this.LocalEnvironment,
+                this.HostEnvironment,
                 messageProcessingId
             ));
 
@@ -212,8 +212,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         // Other protected
         // =====================================================================
 
-        protected IHostEnvironment HostEnvironment => Service.HostEnvironment;
-        protected ILocalEnvironment LocalEnvironment => Service.LocalEnvironment;
+        protected IXkitHostEnvironment HostEnvironment => Service.HostEnvironment;
         protected IServiceBase Service { get; private set; }
 
         //protected IDaemonEngine Engine => this.engine;

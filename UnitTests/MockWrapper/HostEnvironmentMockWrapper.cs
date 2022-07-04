@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnitTests.Connector.FabricConnectorAssertions;
 using XKit.Lib.Common.Host;
 using XKit.Lib.Common.Registration;
+using XKit.Lib.Common.Utility;
 
 namespace UnitTests.MockWrapper {
 
-    public class HostEnvironmentMockWrapper : MockWrapperBase<IHostEnvironment>
+    public class HostEnvironmentMockWrapper : MockWrapperBase<IXkitHostEnvironment>
     {
         public HostEnvironmentMockWrapper() {
             Setup_HostRunState();
@@ -26,8 +28,10 @@ namespace UnitTests.MockWrapper {
         public void SetupAll(
             string hostAddress,
             HealthEnum health = HealthEnum.Healthy,
+            string fabricId = null,
             IEnumerable<IReadOnlyServiceRegistration> hostedServices = null,
-            IEnumerable<ServiceInstanceStatus> serviceStatuses = null
+            IEnumerable<ServiceInstanceStatus> serviceStatuses = null,
+            IEnumerable<IReadOnlyDescriptor> dependencies = null
         ) {
             hostedServices ??= System.Array.Empty<ServiceRegistration>();
             Setup_Address(hostAddress);
@@ -36,6 +40,8 @@ namespace UnitTests.MockWrapper {
             Setup_GetHostedServiceStatuses(serviceStatuses);
             Setup_HasHostedServices(hostedServices.Any());
             Setup_GetHostedServices(hostedServices);            
+            Setup_FabricId(fabricId ?? Identifiers.GenerateIdentifier());
+            Setup_Dependencies(dependencies ?? new[] { TestConstants.Dependency1 });
         }
 
         public void Setup_GetHealth(
@@ -71,6 +77,14 @@ namespace UnitTests.MockWrapper {
 
         public void Setup_HostRunState(RunStateEnum runState = RunStateEnum.Active) {
             Mock.SetupGet(x => x.HostRunState).Returns(runState);
+        }
+
+        public void Setup_FabricId(string hostId) {
+            Mock.SetupGet(x => x.FabricId).Returns(hostId);
+        }
+
+        public void Setup_Dependencies(IEnumerable<IReadOnlyDescriptor> dependencies) {
+            Mock.Setup(x => x.GetDependencies()).Returns(dependencies);
         }
     }
 }

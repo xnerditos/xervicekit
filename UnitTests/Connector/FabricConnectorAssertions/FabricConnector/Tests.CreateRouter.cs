@@ -7,10 +7,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using UnitTests.MockWrapper;
 
-namespace UnitTests.Connector.FabricConnectorAssertions.DependencyConnectorAssertions {
+namespace UnitTests.Connector.FabricConnectorAssertions.FabricConnector {
 
     [TestClass]
-    public class CreateRouter : DependencyConnectorTestsBase {
+    public class CreateRouter : FabricConnectorTestsCommon {
         
         [TestMethod]
         public async Task ObtainsRouterToManagedService() {

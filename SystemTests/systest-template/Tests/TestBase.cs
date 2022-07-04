@@ -9,25 +9,25 @@ using XKit.Lib.Common.Registration;
 namespace SystemTests._NAMESPACE.Tests {
 
     public class TestBase {
-        private IDependencyConnector clientDependencyConnector;
+        private IFabricConnector clientFabricConnector;
         private TestHostHelper testHelper;
         public TestHostHelper TestHelper => testHelper;
         public HostEnvironmentHelper HostEnvironmentHelper => TestHelper.HostEnvironmentHelper;
-        public string FabricId => HostEnvironmentHelper.FabricConnector.FabricId;
-        public IHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
-        public ILocalEnvironment LocalEnvironment => HostEnvironmentHelper.Host;
+        public string FabricId => HostEnvironmentHelper.Connector.FabricId;
+        public IXkitHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
+        public IXkitEnvironment XkitEnvironment => HostEnvironmentHelper.Host;
 
-        public void InitTests(TestHostHelper testHelper, IDependencyConnector clientDependencyConnector = null) {
+        public void InitTests(TestHostHelper testHelper, IFabricConnector clientFabricConnector = null) {
             
             this.testHelper = testHelper;
 
             // TODO:  Add test services here
             // TestHelper.AddService(
-            //     TestServices.SvcSendsMessages.SvcSendsMessagesServiceFactory.Create(LocalEnvironment)
+            //     TestServices.SvcSendsMessages.SvcSendsMessagesServiceFactory.Create(HostEnvironment)
             // );
 
             TestHelper.StartHost();
-            this.clientDependencyConnector = clientDependencyConnector ?? TestHelper.LocalEnvironment.DependencyConnector;
+            this.clientFabricConnector = clientFabricConnector ?? TestHelper.HostEnvironment.Connector;
         }
 
         public void TeardownTests() {            
@@ -46,7 +46,7 @@ namespace SystemTests._NAMESPACE.Tests {
         ) {
             return factory.CreateServiceClient(
                 log: TestHelper.Log,
-                clientDependencyConnector,
+                clientFabricConnector,
                 defaultCallTypeParameters: callTypeParameters ?? ServiceCallTypeParameters.SyncResult()
             );
         }
