@@ -6,7 +6,7 @@ using XKit.Lib.Common.Host;
 using System.IO;
 using XKit.Lib.Common.Utility.Extensions;
 
-namespace XKit.Lib.Host.Protocols.Http.Mvc.Helpers {
+namespace XKit.Lib.Host.Protocols.Http.Helpers {
 
     [Produces("application/json")]
     [ApiController]

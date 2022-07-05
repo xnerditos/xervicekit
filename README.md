@@ -8,14 +8,15 @@ Xervicekit is a framework intended to provide a backbone for implementation of m
 * Managed Service
 * Meta Service
 * Operation
-* Job
 * Host
 * Request
 * Response
 * Daemon
-* Message
+* Event
+* Command
 * Dependency
 * Service call routing
+* Service call protocols
 * Connector
 * Consumer
 
@@ -27,6 +28,16 @@ Xervicekit is a framework intended to provide a backbone for implementation of m
 
 ### Teardown
 
-### Service Call
+### Service Calls
+
+### Events and Commands
+
+### Daemons
 
 ### Testing services
+
+#### Testing service calls
+
+#### Testing daemons
+
+#### Testing events and commands

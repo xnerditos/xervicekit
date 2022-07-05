@@ -3,7 +3,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 
-namespace XKit.Lib.Host.Protocols.Http.Mvc.Helpers {
+namespace XKit.Lib.Host.Protocols.Http.Helpers {
     public class ServiceControllerWiringFeatureProvider : IApplicationFeatureProvider<ControllerFeature> {
 
         private static Assembly serviceControllerAssembly;        

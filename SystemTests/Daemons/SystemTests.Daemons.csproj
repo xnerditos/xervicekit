@@ -1,40 +1,39 @@
 <?xml version="1.0"?>
 <Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Description/>
-		<Version>1.1.10</Version>
-		<AssemblyVersion>1.1.10.0</AssemblyVersion>
-		<OutputType>Exe</OutputType>
-		<IsPackable>true</IsPackable>
-	</PropertyGroup>
-	<PropertyGroup>
-	<!-- <GenerateProgramFile>false</GenerateProgramFile>  -->
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<NoWarn>$(NoWarn);RAZORSDK1006</NoWarn>
-		<NoWarn>$(NoWarn);CS8034</NoWarn>
-		<NoWarn>$(NoWarn);CS1591</NoWarn>
-		<NoWarn>$(NoWarn);NU1603;NU5104;NU5100</NoWarn>
-	</PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0"/>
-		<PackageReference Include="System.Linq" Version="4.3.0"/>
-		<PackageReference Include="System.Linq.Expressions" Version="4.3.0"/>
-		<PackageReference Include="System.Text.Json" Version="6.0.5"/>
-		<PackageReference Include="FluentAssertions" Version="6.7.0"/>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0"/>
-		<PackageReference Include="Moq" Version="4.18.1"/>
-		<PackageReference Include="MSTest.TestAdapter" Version="2.2.10"/>
-		<PackageReference Include="MSTest.TestFramework" Version="2.2.10"/>
-	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="../../XKit.Lib.Host/XKit.Lib.Host.csproj"/>
-		<ProjectReference Include="../../XKit.Lib.Testing/XKit.Lib.Testing.csproj"/>
-		<ProjectReference Include="../../XKit.Lib.Connector.Protocols.Direct/XKit.Lib.Connector.Protocols.Direct.csproj"/>
-		<ProjectReference Include="../../XKit.Lib.Host.Helpers/XKit.Lib.Host.Helpers.csproj"/>
-		<ProjectReference Include="../../XKit.Lib.Log/XKit.Lib.Log.csproj"/>
-		<ProjectReference Include="../../XKit.Lib.Consumer/XKit.Lib.Consumer.csproj"/>
-		<ProjectReference Include="../TestServices/TestServices.csproj"/>
-	</ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>2.0.0</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <OutputType>Exe</OutputType>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!-- <GenerateProgramFile>false</GenerateProgramFile>  -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);RAZORSDK1006</NoWarn>
+    <NoWarn>$(NoWarn);CS8034</NoWarn>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <NoWarn>$(NoWarn);NU1603;NU5104;NU5100</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0"/>
+    <PackageReference Include="System.Linq" Version="4.3.0"/>
+    <PackageReference Include="System.Linq.Expressions" Version="4.3.0"/>
+    <PackageReference Include="System.Text.Json" Version="6.0.5"/>
+    <PackageReference Include="FluentAssertions" Version="6.7.0"/>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0"/>
+    <PackageReference Include="Moq" Version="4.18.1"/>
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.10"/>
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.10"/>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../XKit.Lib.Host/XKit.Lib.Host.csproj"/>
+    <ProjectReference Include="../../XKit.Lib.Testing/XKit.Lib.Testing.csproj"/>
+    <ProjectReference Include="../../XKit.Lib.Connector.Protocols.Direct/XKit.Lib.Connector.Protocols.Direct.csproj"/>
+    <ProjectReference Include="../../XKit.Lib.Host.Helpers/XKit.Lib.Host.Helpers.csproj"/>
+    <ProjectReference Include="../../XKit.Lib.Log/XKit.Lib.Log.csproj"/>
+    <ProjectReference Include="../../XKit.Lib.Consumer/XKit.Lib.Consumer.csproj"/>
+    <ProjectReference Include="../TestServices/TestServices.csproj"/>
+  </ItemGroup>
 </Project>

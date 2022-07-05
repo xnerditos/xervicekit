@@ -1,9 +1,7 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using XKit.Lib.Common.Host;
-using XKit.Lib.Host.Protocols.Http.Mvc.Helpers;
 
-namespace XKit.Lib.Host.Protocols.Http.Mvc {
+namespace XKit.Lib.Host.Protocols.Http {
     public static class AspExtensions {
 
         public static IMvcBuilder AddApplicationType<T>(this IMvcBuilder builder) 

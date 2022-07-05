@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/XKit.Lib.Host.Protocols.Http.Mvc.csproj"
+                "${workspaceFolder}/XKit.Lib.Host.Protocols.Http.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

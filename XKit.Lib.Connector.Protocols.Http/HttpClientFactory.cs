@@ -3,6 +3,7 @@ using XKit.Lib.Common.Fabric;
 using XKit.Lib.Common.Client;
 using RestSharp;
 using XKit.Lib.Common.Host;
+using System;
 
 namespace XKit.Lib.Connector.Protocols.Http {
 
@@ -18,6 +19,7 @@ namespace XKit.Lib.Connector.Protocols.Http {
             IXkitEnvironment localEnv
         ) { }
 
+        [Obsolete]
 		IInstanceClient IInstanceClientFactory.TryCreateClient(
 			IReadOnlyServiceInstance target
 		) {
@@ -35,7 +37,7 @@ namespace XKit.Lib.Connector.Protocols.Http {
 
         public static IInstanceClient TryCreateClient(
             IReadOnlyServiceInstance target
-        ) => HttpClientFactory.Factory.TryCreateClient(target);
+        ) => Factory.TryCreateClient(target);
 
         public static void InjectCustomFactory(IInstanceClientFactory factory) =>
             HttpClientFactory.factory = factory; 

@@ -11,8 +11,6 @@ namespace XKit.Lib.Host.Helpers {
     public sealed class DaemonEngine<TMessage> : IDaemonEngine<TMessage>
         where TMessage : class {
 
-        // FUTURE:  Add a feature for a "monitor thread" that runs whatever code continuously in order to 
-        //          monitor non-periodic resources for message generation. 
         private volatile DaemonRunStateEnum runState = DaemonRunStateEnum.Stopped;
         private System.Timers.Timer timer;
         private volatile uint defaultTimerPeriodMilliseconds = 60 * 1000; // default 1 one minute
@@ -209,10 +207,6 @@ namespace XKit.Lib.Host.Helpers {
         }
 
         private void StartOneBackgroundWorker() {
-            // FUTURE:  Keep track of task and abort using thread.abort as a cancellation mechanism
-            //          for cases of tasks timing out. 
-            // FUTURE:  Automatically calculate if we want to use longRunning or not based on the average execution time
-            //          of worker threads
 
             var workerId = Guid.NewGuid();
             var task = TaskUtil.RunSyncAsAsync(() => {

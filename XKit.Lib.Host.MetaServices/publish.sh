@@ -11,12 +11,12 @@ echo ====================================================================
 echo $projName 
 echo ====================================================================
 
-if [[ -e ~/nuget_apikey/master ]]; then
-    apikey=$(cat ~/nuget_apikey/master)
+if [[ -e ~/.nuget/api-keys/master ]]; then
+    apikey=$(cat ~/.nuget/api-keys/master)
 	echo Found master key!
 else 
-    if [[ -e ~/nuget_apikey/xkitlib ]]; then
-        apikey=$(cat ~/nuget_apikey/xkitlib)
+    if [[ -e ~/.nuget/api-keys/xkitlib ]]; then
+        apikey=$(cat ~/.nuget/api-keys/xkitlib)
         echo Found xkitlib key!
     else 
         echo No key found for pushing nuget packages! 

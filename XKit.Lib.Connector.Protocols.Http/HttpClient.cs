@@ -14,6 +14,7 @@ namespace XKit.Lib.Connector.Protocols.Http {
         private readonly ServiceInstance instanceInfo;
         private readonly SemaphoreSlim synchronizer = new(1, 1);
 
+        [Obsolete]
         public HttpClient(
             IReadOnlyServiceInstance instanceInfo,
             IRestClient client
@@ -21,14 +22,11 @@ namespace XKit.Lib.Connector.Protocols.Http {
             this.instanceInfo = instanceInfo.Clone();
             this.client = client;
 
-            #pragma warning disable CS0618
-            // TODO: Upgrade to non-obsolete pattern
             client.AddHandler("application/json", JsonSerializer.Default);
             client.AddHandler("text/json", JsonSerializer.Default);
             client.AddHandler("text/x-json", JsonSerializer.Default);
             client.AddHandler("text/javascript", JsonSerializer.Default);
             client.AddHandler("*+json", JsonSerializer.Default);
-            #pragma warning restore CS0618
         }
 
         // =====================================================================
@@ -37,6 +35,7 @@ namespace XKit.Lib.Connector.Protocols.Http {
 
         IReadOnlyServiceInstance IInstanceClient.Instance => this.instanceInfo;
 
+        [Obsolete]
         async Task<ServiceCallResult> IInstanceClient.ExecuteCall(
             ServiceCallRequest request
         ) {
