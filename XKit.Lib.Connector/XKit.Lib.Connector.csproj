@@ -1,32 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<LangVersion>10.0</LangVersion>
-		<Description/>
-		<Version>1.1.10</Version>
-		<AssemblyVersion>1.1.10.0</AssemblyVersion>
-		<PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
-		<Authors>xervicekit@x-nerds.com</Authors>
-		<Company>X-Nerds</Company>
-		<Description>Part of the XerviceKit framework for developing microservices.  See http://www.xervicekit.io for more information.</Description>
-	</PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="System.Linq" Version="4.3.0"/>
-		<PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0"/>
-	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="../XKit.Lib.Common/XKit.Lib.Common.csproj"/>
-	</ItemGroup>
-	<PropertyGroup>
-		<NoWarn>$(NoWarn);NU1603</NoWarn>
-	</PropertyGroup>
-	<PropertyGroup>
-		<IncludeDebugSymbolsProjectOutputGroup>true</IncludeDebugSymbolsProjectOutputGroup>
-		<IncludeSymbols>true</IncludeSymbols>
-		<IsPackable>true</IsPackable>
-		<IsPublishable>true</IsPublishable>
-		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-	</PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <LangVersion>10.0</LangVersion>
+    <Version>2.0.0</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
+    <Authors>toochevere@gmail.com</Authors>
+    <Company>X-Nerds</Company>
+    <Description>Part of the XerviceKit framework for developing microservices.  See http://www.xervicekit.io for more information.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Linq" Version="4.3.0"/>
+    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0"/>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../XKit.Lib.Common/XKit.Lib.Common.csproj"/>
+  </ItemGroup>
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);NU1603</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup>
+    <IncludeDebugSymbolsProjectOutputGroup>true</IncludeDebugSymbolsProjectOutputGroup>
+    <IncludeSymbols>true</IncludeSymbols>
+    <IsPackable>true</IsPackable>
+    <IsPublishable>true</IsPublishable>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
 </Project>

@@ -15,7 +15,6 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         where TDaemonOperation : IServiceDaemonOperation<TMessage> {
 
         public enum BaseLogCodes {
-            NullOperationFromMessage,
             ProcessingMessageStarted,
             MessageProcessResultedInError
         }
@@ -126,13 +125,12 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
                     messageSummary
                 ));
             } else {
-                Log.Warning(
+                Log.Erratum(
                     "Operation created in response to a message was NULL",
                     attributes : new {
                         Identifier = messageProcessingId,
                             Message = messageSummary
-                    },
-                    code : BaseLogCodes.NullOperationFromMessage
+                    }
                 );
             }
         }

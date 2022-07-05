@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using XKit.Lib.Common.Host;
 
-namespace XKit.Lib.Host.Protocols.Http.Mvc.Helpers {
+namespace XKit.Lib.Host.Protocols.Http.Helpers {
 
     [Route("testlive")]
     public class TestLiveController : ControllerBase {

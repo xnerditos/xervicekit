@@ -8,13 +8,13 @@ using XKit.Lib.Common.Registration;
 
 namespace XKit.Lib.Connector.Service {
 
-    public class ServiceClient : ServiceClientBase, IGenericServiceClient {
+    public class GenericClient : ServiceClientBase, IGenericServiceClient {
 
         // =====================================================================
         // construction
         // =====================================================================
 
-        public ServiceClient(
+        public GenericClient(
             IReadOnlyDescriptor descriptor,
             string operationInterfaceName,
             ILogSession log,

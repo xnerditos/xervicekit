@@ -64,7 +64,7 @@ namespace XKit.Lib.Connector.Service {
             ServiceCallTypeParameters defaultCallTypeParameters, 
             ServiceClientErrorHandling errorHandling, 
             string targetHostId
-        ) => new ServiceClient(
+        ) => new GenericClient(
             descriptor: descriptor,
             log: log,
             operationInterfaceName: operationInterfaceName,
@@ -81,7 +81,7 @@ namespace XKit.Lib.Connector.Service {
             ServiceCallTypeParameters defaultCallTypeParameters, 
             ServiceClientErrorHandling errorHandling, 
             string targetHostId
-        ) => new ServiceClient(
+        ) => new GenericClient(
             descriptor: descriptor,
             log: log,
             operationInterfaceName: typeof(TCallInterface).Name,

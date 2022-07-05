@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using XKit.Lib.Host.Protocols.Http.Mvc;
+using XKit.Lib.Host.Protocols.Http;
 
 namespace SystemTests.ServiceCalls.TestsRemote; 
 

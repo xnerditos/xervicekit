@@ -7,7 +7,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
 
     public abstract class ServiceDaemonOperation : Operation {
 
-        new protected ServiceDaemonOperationContext Context => base.Context as ServiceDaemonOperationContext;
+        protected new ServiceDaemonOperationContext Context => base.Context as ServiceDaemonOperationContext;
         protected IServiceBase Service => Context.Service;
         protected IServiceDaemon Daemon => Context.Daemon;
 
@@ -64,7 +64,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         /// this method _or_ DoOperationLogic().
         /// </summary>
         /// <param name="message"></param>
-        protected async virtual Task<OperationResult> DoOperationLogicWithResult(TMessage message) {
+        protected virtual async Task<OperationResult> DoOperationLogicWithResult(TMessage message) {
             await DoOperationLogic(message);
             return ResultSuccess();
         }
@@ -80,18 +80,9 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
                 runSynchronous: true,
                 operationAction: DoOperationLogicWithResult,                
                 workItemValidationAction: ValidateMessage,
-                initAction: null,
-                postOperationAction: (req, jr) => TeardownOperation()
+                initAction: null
             );
             return result;
-        }
-
-        private Task<bool> InitOperation() {
-            return Task.FromResult(true);
-        }
-
-        private Task TeardownOperation() {
-            return Task.CompletedTask;
         }
     }
 
@@ -99,7 +90,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         : ServiceDaemonOperation<TMessage>, IServiceDaemonOperation<TMessage> 
         where TMessage : class where TServiceBase : IServiceBase {
 
-        new protected TServiceBase Service => (TServiceBase) base.Service;
+        protected new TServiceBase Service => (TServiceBase) base.Service;
 
         protected ServiceDaemonOperation(
             ServiceDaemonOperationContext context

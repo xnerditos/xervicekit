@@ -1,18 +1,17 @@
+<?xml version="1.0"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
   </PropertyGroup>
-	<ItemGroup>
-		<ProjectReference Include="../../XKit.Lib.Host/XKit.Lib.Host.csproj"/>
-		<ProjectReference Include="../../XKit.Lib.Testing/XKit.Lib.Testing.csproj"/>
-		<ProjectReference Include="../../XKit.Lib.Connector.Protocols.Http/XKit.Lib.Connector.Protocols.Http.csproj"/>
-		<ProjectReference Include="../../XKit.Lib.Connector.Protocols.Direct/XKit.Lib.Connector.Protocols.Direct.csproj"/>
-		<ProjectReference Include="../../XKit.Lib.Host.Protocols.Http.Mvc/XKit.Lib.Host.Protocols.Http.Mvc.csproj"/>
-		<ProjectReference Include="../../XKit.Lib.Host.Helpers/XKit.Lib.Host.Helpers.csproj"/>
-		<ProjectReference Include="../../XKit.Lib.Log/XKit.Lib.Log.csproj"/>
-	</ItemGroup>
-
+  <ItemGroup>
+    <ProjectReference Include="../../XKit.Lib.Host/XKit.Lib.Host.csproj"/>
+    <ProjectReference Include="../../XKit.Lib.Testing/XKit.Lib.Testing.csproj"/>
+    <ProjectReference Include="../../XKit.Lib.Connector.Protocols.Http/XKit.Lib.Connector.Protocols.Http.csproj"/>
+    <ProjectReference Include="../../XKit.Lib.Connector.Protocols.Direct/XKit.Lib.Connector.Protocols.Direct.csproj"/>
+    <ProjectReference Include="../../XKit.Lib.Host.Protocols.Http/XKit.Lib.Host.Protocols.Http.csproj"/>
+    <ProjectReference Include="../../XKit.Lib.Host.Helpers/XKit.Lib.Host.Helpers.csproj"/>
+    <ProjectReference Include="../../XKit.Lib.Log/XKit.Lib.Log.csproj"/>
+  </ItemGroup>
 </Project>

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using XKit.Lib.Common.Host;
 using Microsoft.AspNetCore.Mvc;
 
-namespace XKit.Lib.Host.Protocols.Http.Mvc.Helpers {
+namespace XKit.Lib.Host.Protocols.Http.Helpers {
 
     [Route("managed")]
     public class ManagedServiceRouterController : ServiceControllerBase {
