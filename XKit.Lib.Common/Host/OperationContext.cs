@@ -10,7 +10,7 @@ namespace XKit.Lib.Common.Host {
     public class OperationContext {
 
         public OperationContext(
-            IXkitHostEnvironment hostEnv,
+            IXKitHostEnvironment hostEnv,
             string correlationId
         ) {
             this.HostEnv = hostEnv ?? throw new ArgumentNullException(nameof(hostEnv));
@@ -24,7 +24,7 @@ namespace XKit.Lib.Common.Host {
 
         public Guid OperationId { get; }
         public string CorrelationId { get; }
-        public IXkitHostEnvironment HostEnv { get; }
+        public IXKitHostEnvironment HostEnv { get; }
         public IFabricConnector Connector => HostEnv.Connector;
     }
 }

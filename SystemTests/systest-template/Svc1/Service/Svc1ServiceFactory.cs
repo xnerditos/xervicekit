@@ -18,7 +18,7 @@ namespace SystemTests._NAMESPACE.Svc1.Service {
         // =====================================================================
 
 		IManagedService ITestServiceFactory.Create(
-            IXkitHostEnvironment hostEnv
+            IXKitHostEnvironment hostEnv
         ) {
             if (hostEnv == null) { throw new ArgumentNullException(nameof(hostEnv)); }
             return new Svc1Service(hostEnv);
@@ -35,7 +35,7 @@ namespace SystemTests._NAMESPACE.Svc1.Service {
         // =====================================================================
 
         public static IManagedService Create(
-            IXkitHostEnvironment hostEnv
+            IXKitHostEnvironment hostEnv
         ) => Factory.Create(hostEnv);
 
         public static void InjectCustomFactory(ISvc1ServiceFactory factory) =>

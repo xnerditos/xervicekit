@@ -56,7 +56,7 @@ namespace UnitTests.Connector.FabricConnectorAssertions.FabricConnector {
             );
 
             var fabricId = target.Initialize();
-            XkitEnvironment.SetupAll(
+            XKitEnvironment.SetupAll(
                 fabricId
             );
 
@@ -66,7 +66,7 @@ namespace UnitTests.Connector.FabricConnectorAssertions.FabricConnector {
             await target.Register(
                 null,
                 new[] { TestConstants.FakeServiceHostAddress1, TestConstants.FakeServiceHostAddress2 },
-                XkitEnvironment.Object
+                XKitEnvironment.Object
             );
 
             // -----------------------------------------------------------------

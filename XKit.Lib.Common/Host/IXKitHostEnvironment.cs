@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 using XKit.Lib.Common.Config;
 using XKit.Lib.Common.Registration;
 
 namespace XKit.Lib.Common.Host {
     
-    public interface IXkitHostEnvironment : IXkitEnvironment {
+    public interface IXKitHostEnvironment : IXKitEnvironment {
         
         string Address { get; }
         
@@ -55,5 +56,28 @@ namespace XKit.Lib.Common.Host {
         /// Version of host
         /// </summary>
         int? VersionLevel { get; }
+
+        /// <summary>
+        /// Gets an object that has been previously registered for a type.  The type
+        /// must be interface.
+        /// </summary>
+        /// <typeparam name="TRegisteredInterface"></typeparam>
+        /// <returns>The corresponding object, either created or cached depending on the registration</returns>
+        TRegisteredInterface ObjectRepositoryGetObject<TRegisteredInterface>();
+
+        /// <summary>
+        /// Gets an object that has been previously registered for a type.  The type
+        /// must be interface.
+        /// </summary>
+        /// <returns>The corresponding object, either created or cached depending on the registration</returns>
+        object ObjectRepositoryGetObject(System.Type interfaceType);
+
+        /// <summary>
+        /// Indicates of the type has been registered
+        /// </summary>
+        /// <param name="interfaceType"></param>
+        /// <returns></returns>
+        bool ObjectRepositoryHasObject(System.Type interfaceType);
+
     }
 }

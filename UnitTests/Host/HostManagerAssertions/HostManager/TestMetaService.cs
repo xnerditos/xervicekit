@@ -84,9 +84,9 @@ namespace UnitTests.Host.XKitHostAssertions.XKitHost {
         RunStateEnum IServiceBase.ServiceState =>
             throw new NotImplementedException();
 
-        public IXkitHostEnvironment HostEnvironment => throw new NotImplementedException();
+        public IXKitHostEnvironment HostEnvironment => throw new NotImplementedException();
 
-        public IXkitEnvironment XkitEnvironment => throw new NotImplementedException();
+        public IXKitEnvironment XKitEnvironment => throw new NotImplementedException();
 
         Task<ServiceCallResult> IServiceBase.ExecuteCall(
             ServiceCallRequest request

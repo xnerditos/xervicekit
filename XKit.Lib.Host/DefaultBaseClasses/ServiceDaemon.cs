@@ -210,7 +210,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         // Other protected
         // =====================================================================
 
-        protected IXkitHostEnvironment HostEnvironment => Service.HostEnvironment;
+        protected IXKitHostEnvironment HostEnvironment => Service.HostEnvironment;
         protected IServiceBase Service { get; private set; }
 
         //protected IDaemonEngine Engine => this.engine;

@@ -18,7 +18,7 @@ namespace UnitTests.Connector.FabricConnectorAssertions {
         // =====================================================================
         protected ServiceCallFactoryMockWrapper ServiceCallRouterFactory { get; private set; } 
         protected InstanceClientFactoryMockWrapper InstanceClientFactory { get; private set; }
-        protected XkitEnvironmentMockWrapper XkitEnvironment { get; private set; }
+        protected XKitEnvironmentMockWrapper XKitEnvironment { get; private set; }
         protected HostEnvironmentMockWrapper HostEnvironment { get; private set; }
         protected RegistryClientMock RegistryClient { get; private set; }
 
@@ -29,7 +29,7 @@ namespace UnitTests.Connector.FabricConnectorAssertions {
         public FabricConnectorTestsBase() { 
             ServiceCallRouterFactory = Mocks.CreateWrapper<ServiceCallFactoryMockWrapper>();
             InstanceClientFactory = Mocks.CreateWrapper<InstanceClientFactoryMockWrapper>();
-            XkitEnvironment = Mocks.CreateWrapper<XkitEnvironmentMockWrapper>();
+            XKitEnvironment = Mocks.CreateWrapper<XKitEnvironmentMockWrapper>();
             HostEnvironment = Mocks.CreateWrapper<HostEnvironmentMockWrapper>();
             RegistryClient = new RegistryClientMock();
         }
@@ -224,12 +224,12 @@ namespace UnitTests.Connector.FabricConnectorAssertions {
         /// </summary>
         protected async Task PrepareTarget_InitializeAndRegister(IFabricConnector target) {
             var hostId = target.Initialize();
-            XkitEnvironment.Setup_FabricId(hostId);
-            XkitEnvironment.Setup_Dependencies();
+            XKitEnvironment.Setup_FabricId(hostId);
+            XKitEnvironment.Setup_Dependencies();
             await target.Register(
                 null,
                 new[] { TestConstants.FakeServiceHostAddress1 },
-                XkitEnvironment.Object
+                XKitEnvironment.Object
             );
         }
     }

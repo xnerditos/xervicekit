@@ -23,7 +23,7 @@ namespace TestServices.SvcWithGenericTimer {
 		// =====================================================================
 
 		public SvcWithGenericTimerService(
-            IXkitHostEnvironment hostEnv
+            IXKitHostEnvironment hostEnv
 		) : base(hostEnv) { 
             AddDaemon(
                 new GenericTimerDaemon<SvcWithGenericTimerDaemonOperation>(

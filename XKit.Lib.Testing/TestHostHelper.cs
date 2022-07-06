@@ -31,10 +31,10 @@ namespace XKit.Lib.Testing {
         private bool daemonDebugMode = true;
         public string LocalAddress { get; private set; }
         public string LocalDataPath { get; private set; }
-        public IXkitHost Host => HostEnvironmentHelper.Host;
+        public IXKitHost Host => HostEnvironmentHelper.Host;
         public ILogSessionFactory LogSessionFactory => HostEnvironmentHelper.LogSessionFactory;
         public IMessageBrokerSvcService TestMessageBrokerService { get; private set; }
-        public IXkitHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
+        public IXKitHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
         public ILogSession Log {
             get {
                 if (log == null) {

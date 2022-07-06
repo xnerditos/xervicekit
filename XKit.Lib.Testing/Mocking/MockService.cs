@@ -21,7 +21,7 @@ namespace XKit.Lib.Testing.Mocking {
         public MockService(
             IReadOnlyDescriptor descriptor,
             Mock<TCallInterface> apiMock,
-            IXkitHostEnvironment hostEnv
+            IXKitHostEnvironment hostEnv
         ) : base(
             hostEnv
             ) { 
@@ -31,7 +31,7 @@ namespace XKit.Lib.Testing.Mocking {
 
         public MockService(
             IReadOnlyDescriptor descriptor,
-            IXkitHostEnvironment hostEnv,
+            IXKitHostEnvironment hostEnv,
             MockBehavior mockBehavior = MockBehavior.Loose
         ) : this(
             descriptor,

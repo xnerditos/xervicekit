@@ -16,7 +16,7 @@ namespace XKit.Lib.Connector.Protocols.Http {
   		// ===========================================================================
 
         void IInstanceClientFactory.InitializeFactory(
-            IXkitEnvironment localEnv
+            IXKitEnvironment localEnv
         ) { }
 
         [Obsolete]

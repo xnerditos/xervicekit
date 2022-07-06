@@ -27,7 +27,7 @@ namespace XKit.Lib.Common.Fabric {
         Task<bool> Register(
             ILogSession log,
             IEnumerable<string> initialRegistryHostAddresses,
-            IXkitEnvironment xkitEnvironment,
+            IXKitEnvironment xkitEnvironment,
             bool failIfUnableToRegister = false
         );
 
@@ -41,7 +41,7 @@ namespace XKit.Lib.Common.Fabric {
         Task<bool> Register(
             ILogSession log,
             IEnumerable<string> initialRegistryHostAddresses,
-            IXkitHostEnvironment hostEnvironment,
+            IXKitHostEnvironment hostEnvironment,
             bool failIfUnableToRegister = false
         );
 

@@ -37,7 +37,7 @@ namespace SystemTests._NAMESPACE.Svc1.Service {
 		// =====================================================================
 
 		public Svc1Service(
-            IXkitHostEnvironment xkitEnvironment
+            IXKitHostEnvironment xkitEnvironment
 		) : base(xkitEnvironment) { }
 		// TODO:
         //     this.OnServiceStartEvent += this.OnServiceStart;

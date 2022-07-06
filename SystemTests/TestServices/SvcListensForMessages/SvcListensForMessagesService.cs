@@ -24,7 +24,7 @@ public class SvcListensForMessagesService
     // =====================================================================
 
     public SvcListensForMessagesService(
-        IXkitHostEnvironment localEnv
+        IXKitHostEnvironment localEnv
     ) : base(localEnv) { 
         AddEventSubscription<SvcSendsMessages.TestEvents>(x => x.Event1(null));
         AddCommandSubscription<SvcSendsMessages.TestCommands>(x => x.Command1(null));

@@ -66,7 +66,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         // protected
         // =====================================================================
                 
-        protected IXkitHostEnvironment HostEnvironment { get; }
+        protected IXKitHostEnvironment HostEnvironment { get; }
 
         protected IFabricConnector Connector => HostEnvironment.Connector;
 
@@ -300,7 +300,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         // =====================================================================
 
         public ServiceBase(
-            IXkitHostEnvironment hostEnvironment
+            IXKitHostEnvironment hostEnvironment
         ) {
             HostEnvironment = hostEnvironment ?? throw new ArgumentNullException(nameof(hostEnvironment));
             var serviceCallMethods = GetServiceCallMethodsInfo();
@@ -329,7 +329,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         IEnumerable<IReadOnlySubscription> IServiceBase.EventSubscriptions => EventSubscriptions;
         IEnumerable<IReadOnlySubscription> IServiceBase.CommandSubscriptions => CommandsSubscriptions;
         IReadOnlyServiceCallPolicy IServiceBase.CallPolicy => CallPolicy;        
-        IXkitHostEnvironment IServiceBase.HostEnvironment => HostEnvironment;
+        IXKitHostEnvironment IServiceBase.HostEnvironment => HostEnvironment;
 
         void IServiceBase.SignalEnvironmentChange()
             => SignalEnvironmentChange();        

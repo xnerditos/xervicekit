@@ -12,13 +12,13 @@ namespace XKit.Lib.Host.Protocols.Http.Helpers {
     [ApiController]
     public abstract class ServiceControllerBase : ControllerBase {
 
-        protected IXkitHostEnvironment HostEnvironment { get; private set; }
+        protected IXKitHostEnvironment HostEnvironment { get; private set; }
         protected ServiceOperationContext Context { get; private set; }
         protected IServiceBase ServiceCore { get; private set; } 
         protected IServiceOperation Operation { get; private set; }
 
         protected ServiceControllerBase(
-            IXkitHostEnvironment xkitEnvironment,
+            IXKitHostEnvironment xkitEnvironment,
             IServiceBase service
         ) {
             HostEnvironment = xkitEnvironment ?? throw new ArgumentNullException(nameof(xkitEnvironment));
@@ -26,7 +26,7 @@ namespace XKit.Lib.Host.Protocols.Http.Helpers {
         }
 
         protected ServiceControllerBase(
-            IXkitHostEnvironment hostEnvironment
+            IXKitHostEnvironment hostEnvironment
         ) {
             HostEnvironment = hostEnvironment ?? throw new ArgumentNullException(nameof(hostEnvironment));
         }

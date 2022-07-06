@@ -11,7 +11,7 @@ namespace XKit.Lib.Common.Host {
         public ServiceDaemonOperationContext(
             IServiceDaemon daemon,
             IServiceBase service,
-            IXkitHostEnvironment hostEnv,
+            IXKitHostEnvironment hostEnv,
             Guid messageProcessingId,
             string correlationId = null
         ) : base(

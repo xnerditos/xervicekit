@@ -35,7 +35,7 @@ namespace XKit.Lib.Common.Utility.ObjectRepository {
         /// </summary>
         /// <param name="obj">the one object instance that is associated with the type</param>
         /// <param name="forTypes">types for which this object is registered</param>
-        void RegisterSingleton<TConcreteType>(TConcreteType obj, params System.Type[] forTypes);
+        void RegisterObjectSingleton<TConcreteType>(TConcreteType obj, params System.Type[] forTypes);
 
         /// <summary>
         /// Registers a factory method for creating an object instance, associated with one or more types
@@ -43,7 +43,7 @@ namespace XKit.Lib.Common.Utility.ObjectRepository {
         /// <param name="factoryMethod">the factory method to create the object.  It will only be invoked for each call to 
         /// GetObject.</param>
         /// <param name="forTypes">types for which this factory is registered</param>
-        void RegisterFactory<TConcreteType>(Func<TConcreteType> createMethod, params System.Type[] forTypes);
+        void RegisterObjectFactory<TConcreteType>(Func<TConcreteType> createMethod, params System.Type[] forTypes);
 
         // Clears all existing registrations
         void Clear();

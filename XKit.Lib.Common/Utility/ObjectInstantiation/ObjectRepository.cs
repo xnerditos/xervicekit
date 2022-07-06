@@ -29,7 +29,7 @@ namespace XKit.Lib.Common.Utility.ObjectRepository {
         bool IObjectRepository.HasObject(Type interfaceType) 
             => factories.ContainsKey(interfaceType);
 
-        void IObjectRepository.RegisterFactory<TConcreteType>(Func<TConcreteType> createMethod, params Type[] forTypes) {
+        void IObjectRepository.RegisterObjectFactory<TConcreteType>(Func<TConcreteType> createMethod, params Type[] forTypes) {
             ValidateType(typeof(TConcreteType), forTypes);
 
             foreach (var t in forTypes) {
@@ -37,7 +37,7 @@ namespace XKit.Lib.Common.Utility.ObjectRepository {
             }
         }
 
-        void IObjectRepository.RegisterSingleton<TConcreteType>(TConcreteType obj, params Type[] forTypes) {
+        void IObjectRepository.RegisterObjectSingleton<TConcreteType>(TConcreteType obj, params Type[] forTypes) {
 
             ValidateType(typeof(TConcreteType), forTypes);
 

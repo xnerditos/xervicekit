@@ -16,7 +16,7 @@ public class SvcSendsMessagesServiceFactory : ISvcSendsMessagesServiceFactory {
     // =====================================================================
 
     IManagedService ITestServiceFactory.Create(
-        IXkitHostEnvironment xkitEnvironment
+        IXKitHostEnvironment xkitEnvironment
     ) {
         if (xkitEnvironment == null) { throw new ArgumentNullException(nameof(xkitEnvironment)); }
         return new SvcSendsMessagesService(xkitEnvironment);
@@ -29,7 +29,7 @@ public class SvcSendsMessagesServiceFactory : ISvcSendsMessagesServiceFactory {
     // =====================================================================
 
     public static IManagedService Create(
-        IXkitHostEnvironment xkitEnvironment
+        IXKitHostEnvironment xkitEnvironment
     ) => Factory.Create(xkitEnvironment);
 
     public static void InjectCustomFactory(ISvcSendsMessagesServiceFactory factory) =>

@@ -17,7 +17,7 @@ namespace TestServices.SvcWithAutoMessaging {
         // =====================================================================
 
 		IManagedService ITestServiceFactory.Create(
-            IXkitHostEnvironment xkitEnvironment
+            IXKitHostEnvironment xkitEnvironment
         ) {
             if (xkitEnvironment == null) { throw new ArgumentNullException(nameof(xkitEnvironment)); }
             return new SvcWithAutoMessagingService(xkitEnvironment);
@@ -34,7 +34,7 @@ namespace TestServices.SvcWithAutoMessaging {
         // =====================================================================
 
         public static IManagedService Create(
-            IXkitHostEnvironment xkitEnvironment
+            IXKitHostEnvironment xkitEnvironment
         ) => Factory.Create(xkitEnvironment);
 	}
 }

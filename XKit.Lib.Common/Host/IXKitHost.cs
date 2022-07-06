@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using XKit.Lib.Common.Registration;
 
 namespace XKit.Lib.Common.Host {
     
-    public interface IXkitHost : IXkitHostEnvironment {
+    public interface IXKitHost : IXKitHostEnvironment {
 
         string LocalDataFolderPath { get; }
 
@@ -115,7 +116,25 @@ namespace XKit.Lib.Common.Host {
         /// <summary>
         /// Called when the local environment has changed
         /// </summary>
-        void SignalXkitEnvironmentChange();
+        void SignalConfigurationChange();
+
+        /// <summary>
+        /// Registers an existing object for one or more types
+        /// </summary>
+        /// <param name="obj">the one object instance that is associated with the type</param>
+        /// <param name="forTypes">types for which this object is registered</param>
+        void ObjectRepositoryRegisterSingleton<TConcreteType>(TConcreteType obj, params System.Type[] forTypes);
+
+        /// <summary>
+        /// Registers a factory method for creating an object instance, associated with one or more types
+        /// </summary>
+        /// <param name="factoryMethod">the factory method to create the object.  It will only be invoked for each call to 
+        /// GetObject.</param>
+        /// <param name="forTypes">types for which this factory is registered</param>
+        void ObjectRepositoryRegisterFactory<TConcreteType>(Func<TConcreteType> createMethod, params System.Type[] forTypes);
+
+        // Clears all existing object registrations
+        void ClearObjectRepository();
 
     }
 }

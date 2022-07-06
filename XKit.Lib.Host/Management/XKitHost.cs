@@ -21,9 +21,10 @@ using System.Threading;
 using XKit.Lib.Common.Services.MessageBroker;
 using XKit.Lib.Connector.Fabric;
 using System.Runtime.CompilerServices;
+using XKit.Lib.Common.Utility.ObjectRepository;
 
 namespace XKit.Lib.Host.Management {
-    internal class XkitHost : IXkitHost, IXkitHostEnvironment, IXkitEnvironment {
+    internal class XKitHost : IXKitHost, IXKitHostEnvironment, IXKitEnvironment {
         private readonly int HostVersionLevel;
         #pragma warning disable IDE0052
         private readonly int HostUpdateLevel;
@@ -46,11 +47,12 @@ namespace XKit.Lib.Host.Management {
         private readonly Lazy<IMessageBrokerClient> messagingClientLazy;
         private readonly SemaphoreSlim hostActionSync = new(1, 1);
         private readonly SetOnceOrThrow<ILogSession> log = new();
+        private readonly SetOnceOrThrow<IObjectRepository> objectRepository = new();
         private ILogSession Log => log.Value;
         private IConfigClient ConfigClient => configClientLazy.Value;
         private IMessageBrokerClient MessagingClient => messagingClientLazy.Value;
 
-        public XkitHost(
+        public XKitHost(
             string hostAddress,
             IFabricConnector hostFabricConnector,
             ILogSessionFactory logSessionFactory,
@@ -73,6 +75,8 @@ namespace XKit.Lib.Host.Management {
             this.HostUpdateLevel = version.Minor;
             this.HostPatchLevel = version.Build;
             this.configDocumentIdentifier = Identifiers.GetHostVersionLevelKey(version.Major);
+            objectRepository.Value = ObjectRepositoryFactory.Create();
+
             this.configClientLazy = new(() => {
                 return configClient ?? 
                     new InternalConfigClient(Log, Connector);
@@ -85,17 +89,17 @@ namespace XKit.Lib.Host.Management {
 
 
         // =====================================================================
-        // IXkitHost
+        // IXKitHost
         // =====================================================================
 
-        void IXkitHost.KillHost() {
+        void IXKitHost.KillHost() {
             BeginHostAction();
             Log.Warning("Killing host!");
             System.Diagnostics.Process.GetCurrentProcess().Kill(); // kerblam!  Ouch!
             EndHostAction();    // We'll never get here, but let's keep it correct.
         }
 
-        void IXkitHost.ResumeHost() {
+        void IXKitHost.ResumeHost() {
             hostActionSync.Wait();
             try {
                 BeginHostAction();
@@ -118,7 +122,7 @@ namespace XKit.Lib.Host.Management {
             }
         }
 
-        void IXkitHost.PauseHost() {
+        void IXKitHost.PauseHost() {
             hostActionSync.Wait();
             try { 
                 BeginHostAction();
@@ -141,7 +145,7 @@ namespace XKit.Lib.Host.Management {
             }
         }
 
-        async Task IXkitHost.StopHostAsync() {
+        async Task IXKitHost.StopHostAsync() {
             await hostActionSync.WaitAsync();
             try { 
                 BeginHostAction();
@@ -160,7 +164,7 @@ namespace XKit.Lib.Host.Management {
             }
         }
 
-        void IXkitHost.StopHost() {
+        void IXKitHost.StopHost() {
             hostActionSync.Wait();
             try { 
                 BeginHostAction();
@@ -178,7 +182,7 @@ namespace XKit.Lib.Host.Management {
             }
         }
 
-        IGenericManagedService IXkitHost.AddCreateManagedService(
+        IGenericManagedService IXKitHost.AddCreateManagedService(
             IReadOnlyDescriptor serviceDescriptor,
             System.Type operationType
         ) {
@@ -199,26 +203,26 @@ namespace XKit.Lib.Host.Management {
             var serviceInstance = (IGenericManagedService)Activator.CreateInstance(
                 genericServiceType, 
                 serviceDescriptor.Clone(),
-                (IXkitEnvironment)this
+                (IXKitEnvironment)this
             );
 
             ManagedServices.Add(serviceInstance);
             return serviceInstance;
         } 
 
-        void IXkitHost.AddManagedService(
+        void IXKitHost.AddManagedService(
             IManagedService service
         ) {
             ManagedServices.Add(service);
         } 
 
-        void IXkitHost.AddMetaService(
+        void IXKitHost.AddMetaService(
             IMetaService service
         ) {
             MetaServices.Add(service);
         }
 
-        void IXkitHost.AddBuiltinService(
+        void IXKitHost.AddBuiltinService(
             BuiltinServices serviceType
         ) {
             IManagedService service = serviceType switch {
@@ -228,7 +232,7 @@ namespace XKit.Lib.Host.Management {
             ManagedServices.Add(service);
         } 
 
-        async Task IXkitHost.StartHostAsync(
+        async Task IXKitHost.StartHostAsync(
             IEnumerable<string> initialRegistryHostAddresses,
             object startupParameters, 
             bool failIfCannotRegister
@@ -249,7 +253,7 @@ namespace XKit.Lib.Host.Management {
             }
         }
 
-        async Task IXkitHost.StartHostAsync(
+        async Task IXKitHost.StartHostAsync(
             IEnumerable<string> initialRegistryHostAddresses,
             IDictionary<string, object> startupParameters, 
             bool failIfCannotRegister
@@ -270,7 +274,7 @@ namespace XKit.Lib.Host.Management {
             }
         }
 
-        void IXkitHost.StartHost(
+        void IXKitHost.StartHost(
             IEnumerable<string> initialRegistryHostAddresses,
             object startupParameters, 
             bool failIfCannotRegister
@@ -293,7 +297,7 @@ namespace XKit.Lib.Host.Management {
             }
         }
 
-        void IXkitHost.StartHost(
+        void IXKitHost.StartHost(
             IEnumerable<string> initialRegistryHostAddresses,
             IDictionary<string, object> startupParameters, 
             bool failIfCannotRegister
@@ -316,7 +320,7 @@ namespace XKit.Lib.Host.Management {
             }
         }
 
-        async Task IXkitHost.RefreshConfigurationFromSource() {
+        async Task IXKitHost.RefreshConfigurationFromSource() {
             hostActionSync.Wait();
             try { 
                 BeginHostAction();
@@ -330,7 +334,7 @@ namespace XKit.Lib.Host.Management {
                     fatalIfUnavailable: false
                 );
                 if (updatedConfigIdentifiers.Contains(this.configDocumentIdentifier)) {
-                    ActOnXkitEnvironmentChange();
+                    ActOnConfigurationChange();
                 }
 
                 foreach(var svc in this.MetaServices) {
@@ -352,62 +356,83 @@ namespace XKit.Lib.Host.Management {
             }
         }
  
-        string IXkitHost.LocalDataFolderPath => LocalDataFolderPath;
+        string IXKitHost.LocalDataFolderPath => LocalDataFolderPath;
 
-        string IXkitHost.MetaDataDbPath => LocalMetaDataDbPath;
+        string IXKitHost.MetaDataDbPath => LocalMetaDataDbPath;
 
-        void IXkitHost.SignalXkitEnvironmentChange()
-            => ActOnXkitEnvironmentChange();
+        void IXKitHost.SignalConfigurationChange()
+            => ActOnConfigurationChange();
             
+        void IXKitHost.ObjectRepositoryRegisterSingleton<TConcreteType>(
+            TConcreteType obj, 
+            params Type[] forTypes
+        ) => objectRepository.Value.RegisterObjectSingleton(obj, forTypes);
+
+        void IXKitHost.ObjectRepositoryRegisterFactory<TConcreteType>(
+            Func<TConcreteType> createMethod, 
+            params Type[] forTypes
+        ) => objectRepository.Value.RegisterObjectFactory(createMethod, forTypes);
+
+        void IXKitHost.ClearObjectRepository() => objectRepository.Value.Clear();
+
         // =====================================================================
-        // IXkitEnvironment
+        // IXKitEnvironment
         // =====================================================================
 
-        string IXkitEnvironment.FabricId => this.Connector.FabricId;
+        string IXKitEnvironment.FabricId => this.Connector.FabricId;
 
-        IEnumerable<IReadOnlyDescriptor> IXkitEnvironment.GetDependencies()
+        IEnumerable<IReadOnlyDescriptor> IXKitEnvironment.GetDependencies()
             => GetDependencies();
 
-        ILogSessionFactory IXkitEnvironment.LogSessionFactory => LogSessionFactory;
+        ILogSessionFactory IXKitEnvironment.LogSessionFactory => LogSessionFactory;
 
-        IFabricConnector IXkitEnvironment.Connector => Connector;
+        IFabricConnector IXKitEnvironment.Connector => Connector;
             
         // =====================================================================
-        // IXkitHostEnvironment
+        // IXKitHostEnvironment
         // =====================================================================
 
-        bool IXkitHostEnvironment.HasHostedServices 
+        TRegisteredInterface IXKitHostEnvironment.ObjectRepositoryGetObject<TRegisteredInterface>() 
+            => objectRepository.Value.GetObject<TRegisteredInterface>();
+
+        object IXKitHostEnvironment.ObjectRepositoryGetObject(Type interfaceType) 
+            => objectRepository.Value.GetObject(interfaceType);
+
+        bool IXKitHostEnvironment.ObjectRepositoryHasObject(Type interfaceType) 
+            => objectRepository.Value.HasObject(interfaceType);
+
+        bool IXKitHostEnvironment.HasHostedServices 
             => ManagedServices.Any();            
 
-        ILocalConfigSessionFactory IXkitHostEnvironment.LocalConfigSessionFactory 
+        ILocalConfigSessionFactory IXKitHostEnvironment.LocalConfigSessionFactory 
             => LocalConfigSessionFactory;
 
-        int? IXkitHostEnvironment.VersionLevel => HostVersionLevel;
+        int? IXKitHostEnvironment.VersionLevel => HostVersionLevel;
 
-        string IXkitHostEnvironment.ConfigurationDocumentIdentifier => this.configDocumentIdentifier;
+        string IXKitHostEnvironment.ConfigurationDocumentIdentifier => this.configDocumentIdentifier;
         
-        T IXkitHostEnvironment.GetStartupParameter<T>(string key, T defaultValue) 
+        T IXKitHostEnvironment.GetStartupParameter<T>(string key, T defaultValue) 
             => GetStartupParameter<T>(key, defaultValue);
 
-        string IXkitHostEnvironment.Address => this.HostAddress;
+        string IXKitHostEnvironment.Address => this.HostAddress;
 
-        string IXkitHostEnvironment.DataRootFolderPath => this.LocalDataFolderPath;
+        string IXKitHostEnvironment.DataRootFolderPath => this.LocalDataFolderPath;
 
-        RunStateEnum IXkitHostEnvironment.HostRunState => this.state;
+        RunStateEnum IXKitHostEnvironment.HostRunState => this.state;
 
-        HealthEnum IXkitHostEnvironment.GetHealth() 
+        HealthEnum IXKitHostEnvironment.GetHealth() 
             => GetHealth();
 
-        IEnumerable<ServiceInstanceStatus> IXkitHostEnvironment.GetHostedServiceStatuses() 
+        IEnumerable<ServiceInstanceStatus> IXKitHostEnvironment.GetHostedServiceStatuses() 
             => GetLocalInstanceStatuses();
 
-        IEnumerable<IReadOnlyServiceRegistration> IXkitHostEnvironment.GetHostedServices() 
+        IEnumerable<IReadOnlyServiceRegistration> IXKitHostEnvironment.GetHostedServices() 
             => GetLocalServiceRegistrations();
 
-        IEnumerable<string> IXkitHostEnvironment.GetCapabilities() 
+        IEnumerable<string> IXKitHostEnvironment.GetCapabilities() 
             => MetaServices.Select(svc => svc.CapabilityKeyName);
 
-        IEnumerable<IManagedService> IXkitHostEnvironment.GetManagedServices(
+        IEnumerable<IManagedService> IXKitHostEnvironment.GetManagedServices(
             string collectionName,
             string serviceName,
             int? serviceVersion
@@ -418,10 +443,10 @@ namespace XKit.Lib.Host.Management {
                      (serviceVersion == null || s.Descriptor.Version == serviceVersion) 
             ).ToArray();
 
-        IManagedService IXkitHostEnvironment.GetManagedService(IReadOnlyDescriptor descriptor)
+        IManagedService IXKitHostEnvironment.GetManagedService(IReadOnlyDescriptor descriptor)
             => ManagedServices.Where(s => s.Descriptor.IsSameService(descriptor)).FirstOrDefault();
             
-        IEnumerable<IMetaService> IXkitHostEnvironment.GetMetaServices(
+        IEnumerable<IMetaService> IXKitHostEnvironment.GetMetaServices(
             string serviceName
         ) => MetaServices
             .Where(
@@ -802,7 +827,7 @@ namespace XKit.Lib.Host.Management {
          private HealthEnum GetHealth()
             => HostHealthGetter != null ? HostHealthGetter() : HealthEnum.Unknown;
 
-        private void ActOnXkitEnvironmentChange()
+        private void ActOnConfigurationChange()
             => this.hostConfigReader.InvalidateCache();
         
         private void BeginHostAction(

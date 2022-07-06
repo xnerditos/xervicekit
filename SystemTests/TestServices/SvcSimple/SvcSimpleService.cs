@@ -23,6 +23,6 @@ public class SvcSimpleService
     // =====================================================================
 
     public SvcSimpleService(
-        IXkitHostEnvironment hostEnv
+        IXKitHostEnvironment hostEnv
     ) : base(hostEnv) { }
 }
