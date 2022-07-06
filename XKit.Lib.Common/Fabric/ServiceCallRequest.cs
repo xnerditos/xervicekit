@@ -1,4 +1,3 @@
-using System;
 using XKit.Lib.Common.Utility.Extensions;
 
 namespace XKit.Lib.Common.Fabric {
@@ -94,7 +93,7 @@ namespace XKit.Lib.Common.Fabric {
         public T RequestBody { 
             get {
                 if (requestBody != null) { return requestBody; }
-                if (this.Payload == null || this.Payload.Length == 0) { return null; }
+                if (this.Payload == null || this.Payload.Length > 4) { return null; }
                 requestBody = GetBody<T>();
                 return requestBody;
             } 
@@ -122,8 +121,7 @@ namespace XKit.Lib.Common.Fabric {
             ServiceCallTypeParameters callTypeParameters,
             string requestorFabricId,
             string requestorInstanceId,
-            T requestBody,
-            string payload
+            T requestBody
         ) : base(
             callTypeParameters,
             null,
@@ -132,11 +130,7 @@ namespace XKit.Lib.Common.Fabric {
             requestorFabricId, 
             requestorInstanceId
         ) { 
-            if (payload != null) {
-                this.Payload = payload;
-            } else {
-                this.RequestBody = requestBody;
-            }
+            this.RequestBody = requestBody;
         }
 
         public static ServiceCallRequest<T> Create(
@@ -145,16 +139,14 @@ namespace XKit.Lib.Common.Fabric {
             string requestorFabricId,
             string correlationId,
             string requestorInstanceId,
-            ServiceCallTypeParameters callTypeParameters = null,
-            string payload = null
+            ServiceCallTypeParameters callTypeParameters = null
         ) => new(
             correlationId,
             operationName,
             callTypeParameters,
             requestorFabricId,
             requestorInstanceId,
-            requestBody,
-            payload
+            requestBody
         );
     }
 }
