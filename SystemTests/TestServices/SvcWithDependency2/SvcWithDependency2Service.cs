@@ -29,7 +29,7 @@ namespace TestServices.SvcWithDependency2 {
 		// =====================================================================
 
 		public SvcWithDependency2Service(
-            IXkitHostEnvironment hostEnv
+            IXKitHostEnvironment hostEnv
 		) : base(hostEnv) { }
 	}
 }

@@ -8,7 +8,7 @@ namespace XKit.Lib.Host.Protocols.Http.Helpers {
     [Route("meta")]
     public class MetaServiceRouterController : ServiceControllerBase {
 
-        protected MetaServiceRouterController(IXkitHostEnvironment hostEnvironment) 
+        protected MetaServiceRouterController(IXKitHostEnvironment hostEnvironment) 
             : base(hostEnvironment) {
         }
 

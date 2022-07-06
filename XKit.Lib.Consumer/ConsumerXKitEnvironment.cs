@@ -9,22 +9,22 @@ using XKit.Lib.Log;
 
 namespace XKit.Lib.Consumer; 
 
-public class ConsumerXkitEnvironment : IXkitEnvironment {
+public class ConsumerXKitEnvironment : IXKitEnvironment {
     
     private readonly IFabricConnector connector; 
 
     private readonly Func<IEnumerable<IReadOnlyDescriptor>> getDependenciesSource;
 
-    string IXkitEnvironment.FabricId => connector.FabricId;
+    string IXKitEnvironment.FabricId => connector.FabricId;
 
-    ILogSessionFactory IXkitEnvironment.LogSessionFactory => LogSessionFactory.Factory;
+    ILogSessionFactory IXKitEnvironment.LogSessionFactory => LogSessionFactory.Factory;
 
-    IFabricConnector IXkitEnvironment.Connector => connector;
+    IFabricConnector IXKitEnvironment.Connector => connector;
 
-    IEnumerable<IReadOnlyDescriptor> IXkitEnvironment.GetDependencies() 
+    IEnumerable<IReadOnlyDescriptor> IXKitEnvironment.GetDependencies() 
         => getDependenciesSource?.Invoke()?.Select(d => d.Clone()).ToArray() ?? Array.Empty<Descriptor>();
 
-    public ConsumerXkitEnvironment(
+    public ConsumerXKitEnvironment(
         Func<IList<IReadOnlyDescriptor>> getDependenciesSource,
         IFabricConnector connector
     ) {

@@ -22,7 +22,7 @@ public class RemoteTestBase {
         }
     }
 
-    private static void InitAsp(IXkitHostEnvironment host) {
+    private static void InitAsp(IXKitHostEnvironment host) {
         var kestrelTask = WebHost
             .CreateDefaultBuilder()                    
             .UseKestrel(options => {                    

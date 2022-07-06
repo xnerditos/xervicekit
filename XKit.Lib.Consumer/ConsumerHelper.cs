@@ -71,7 +71,7 @@ public class ConsumerHelper {
                 () => connector.Register(
                     Log,
                     initialRegistryAddresses,
-                    new ConsumerXkitEnvironment(() => Dependencies, connector),
+                    new ConsumerXKitEnvironment(() => Dependencies, connector),
                     failIfUnableToRegister: fatalIfCannotRegister
                 )
             );

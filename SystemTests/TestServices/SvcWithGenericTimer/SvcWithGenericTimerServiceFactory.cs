@@ -18,7 +18,7 @@ namespace TestServices.SvcWithGenericTimer {
         // =====================================================================
 
 		IManagedService ITestServiceFactory.Create(
-            IXkitHostEnvironment hostEnv
+            IXKitHostEnvironment hostEnv
         ) {
             if (hostEnv == null) { throw new ArgumentNullException(nameof(hostEnv)); }
             return new SvcWithGenericTimerService(hostEnv);
@@ -35,7 +35,7 @@ namespace TestServices.SvcWithGenericTimer {
         // =====================================================================
 
         public static IManagedService Create(
-            IXkitHostEnvironment hostEnv
+            IXKitHostEnvironment hostEnv
         ) => Factory.Create(hostEnv);
 
         public static void InjectCustomFactory(ISvcWithGenericTimerServiceFactory factory) =>

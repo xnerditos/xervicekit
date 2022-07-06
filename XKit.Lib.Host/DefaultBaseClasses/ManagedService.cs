@@ -46,7 +46,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         // =====================================================================
 
         protected ManagedService(
-            IXkitHostEnvironment hostEnvironment
+            IXKitHostEnvironment hostEnvironment
         ) : base(hostEnvironment) { }
 
         // =====================================================================

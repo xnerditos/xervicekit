@@ -23,6 +23,6 @@ public class SvcSendsMessagesService
     // =====================================================================
 
     public SvcSendsMessagesService(
-        IXkitHostEnvironment hostEnv
+        IXKitHostEnvironment hostEnv
     ) : base(hostEnv) { }
 }

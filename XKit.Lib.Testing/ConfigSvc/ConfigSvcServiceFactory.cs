@@ -7,7 +7,7 @@ namespace XKit.Lib.Testing.TestConfigSvc {
 
     public interface IConfigSvcServiceFactory : IServiceFactory {
 		IManagedService Create(
-            IXkitHostEnvironment hostEnv
+            IXKitHostEnvironment hostEnv
         );
     }
 
@@ -24,7 +24,7 @@ namespace XKit.Lib.Testing.TestConfigSvc {
         // =====================================================================
 
 		IManagedService IConfigSvcServiceFactory.Create(
-            IXkitHostEnvironment hostEnv
+            IXKitHostEnvironment hostEnv
         ) {
             if (hostEnv == null) { throw new ArgumentNullException(nameof(hostEnv)); }
             return new ConfigSvcService(hostEnv);
@@ -35,7 +35,7 @@ namespace XKit.Lib.Testing.TestConfigSvc {
         // =====================================================================
 
         public static IManagedService Create(
-            IXkitHostEnvironment hostEnv
+            IXKitHostEnvironment hostEnv
         ) => Factory.Create(hostEnv);
 
         public static void InjectCustomFactory(IConfigSvcServiceFactory factory) =>

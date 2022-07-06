@@ -32,7 +32,7 @@ namespace XKit.Lib.Testing.TestRegistrySvc {
 		// =====================================================================
 
 		public RegistrySvcService(
-            IXkitHostEnvironment hostEnv
+            IXKitHostEnvironment hostEnv
 		) : base(hostEnv) { }
 
         protected override bool CanStartNewOperation() {

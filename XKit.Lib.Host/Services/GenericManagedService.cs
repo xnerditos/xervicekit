@@ -15,7 +15,7 @@ namespace XKit.Lib.Host.Services {
 
             public GenericManagedService(
                 Descriptor descriptor,
-                IXkitHostEnvironment hostEnv
+                IXKitHostEnvironment hostEnv
             ) : base(
                 hostEnv
             ) {

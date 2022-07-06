@@ -40,7 +40,7 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
         // =====================================================================
 
         public MessageBrokerSvcService(
-            IXkitHostEnvironment hostEnv
+            IXKitHostEnvironment hostEnv
         ) : base(hostEnv) { }
 
         // =====================================================================

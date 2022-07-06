@@ -4,7 +4,7 @@ using XKit.Lib.Common.Services;
 namespace SystemTests.Daemons {
     public interface ITestServiceFactory : IServiceFactory {
 		IManagedService Create(
-            IXkitHostEnvironment hostEnv
+            IXKitHostEnvironment hostEnv
         );
     }
 }

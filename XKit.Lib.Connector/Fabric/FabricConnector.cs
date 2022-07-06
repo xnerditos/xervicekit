@@ -44,10 +44,10 @@ namespace XKit.Lib.Connector.Fabric {
         private DateTime? cacheExpiration;
         private readonly SetOnceOrThrow<string> fabricId = new();
         private readonly IReadOnlyList<IInstanceClientFactory> instanceClientFactories;
-        private readonly SetOnceOrThrow<IXkitEnvironment> xkitEnvironment = new();
-        private readonly SetOnceOrThrow<IXkitHostEnvironment> hostEnvironment = new();
-        private IXkitEnvironment XkitEnvironment => xkitEnvironment.Value;
-        private IXkitHostEnvironment HostEnvironment => hostEnvironment.Value;
+        private readonly SetOnceOrThrow<IXKitEnvironment> xkitEnvironment = new();
+        private readonly SetOnceOrThrow<IXKitHostEnvironment> hostEnvironment = new();
+        private IXKitEnvironment XKitEnvironment => xkitEnvironment.Value;
+        private IXKitHostEnvironment HostEnvironment => hostEnvironment.Value;
         private string FabricId => fabricId.Value;
         private bool isRegisteredWithFabric = false;
         bool IsHost => this.HostEnvironment != null;
@@ -88,20 +88,20 @@ namespace XKit.Lib.Connector.Fabric {
         Task<bool> IFabricConnector.Register(
             ILogSession log,
             IEnumerable<string> initialRegistryHostAddresses,
-            IXkitEnvironment xkitEnvironment,
+            IXKitEnvironment xkitEnvironment,
             bool fatalIfUnableToRegister
         ) => Register(
             log,
             initialRegistryHostAddresses,
             xkitEnvironment,
-            xkitEnvironment as IXkitHostEnvironment,
+            xkitEnvironment as IXKitHostEnvironment,
             fatalIfUnableToRegister
         );
 
         Task<bool> IFabricConnector.Register(
             ILogSession log,
             IEnumerable<string> initialRegistryHostAddresses,
-            IXkitHostEnvironment hostEnvironment,
+            IXKitHostEnvironment hostEnvironment,
             bool fatalIfUnableToRegister
         ) => Register(
             log,
@@ -180,8 +180,8 @@ namespace XKit.Lib.Connector.Fabric {
         async Task<bool> Register(
             ILogSession log,
             IEnumerable<string> initialRegistryHostAddresses,
-            IXkitEnvironment xkitEnvironment,
-            IXkitHostEnvironment hostEnvironment,
+            IXKitEnvironment xkitEnvironment,
+            IXKitHostEnvironment hostEnvironment,
             bool fatalIfUnableToRegister
         ) {
             xkitEnvironment = xkitEnvironment ?? throw new ArgumentNullException(nameof(xkitEnvironment));
@@ -264,7 +264,7 @@ namespace XKit.Lib.Connector.Fabric {
             IEnumerable<string> initialRegistryHostAddresses
         ) {
             foreach(var instanceClientFactory in this.instanceClientFactories) {
-                instanceClientFactory.InitializeFactory(XkitEnvironment);
+                instanceClientFactory.InitializeFactory(XKitEnvironment);
             }
 
             // set up initial access to the registry service. 
@@ -309,19 +309,19 @@ namespace XKit.Lib.Connector.Fabric {
             bool fatalIfUnableToRegister
         ) {
             
-            dependencies = XkitEnvironment
+            dependencies = XKitEnvironment
                 .GetDependencies()
                 .Select(d => (IReadOnlyDescriptor) d.Clone())
                 .ToArray();
 
             var registration = new FabricRegistration {
-                FabricId = XkitEnvironment.FabricId,
+                FabricId = XKitEnvironment.FabricId,
                 Capabilities = HostEnvironment?.GetCapabilities()?.ToList(),
                 Address = HostEnvironment?.Address,
                 Dependencies = dependencies?.Select(d => d.Clone()).ToList(),
                 HostedServices = HostEnvironment?.GetHostedServices().Select(s => s.Clone()).ToList(),
                 Status = new FabricStatus {
-                    FabricId = XkitEnvironment.FabricId,
+                    FabricId = XKitEnvironment.FabricId,
                     Health = HostEnvironment?.GetHealth(),
                     RunState = HostEnvironment?.HostRunState
                 }

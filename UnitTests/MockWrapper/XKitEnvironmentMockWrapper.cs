@@ -7,7 +7,7 @@ using XKit.Lib.Common.Utility;
 
 namespace UnitTests.MockWrapper {
 
-    public class XkitEnvironmentMockWrapper : MockWrapperBase<IXkitEnvironment> {
+    public class XKitEnvironmentMockWrapper : MockWrapperBase<IXKitEnvironment> {
         
         // =====================================================================
         // overrides

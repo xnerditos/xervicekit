@@ -18,7 +18,7 @@ public class SvcListensForMessagesServiceFactory : ISvcListensForMessagesService
     // =====================================================================
 
     IManagedService ITestServiceFactory.Create(
-        IXkitHostEnvironment xkitEnvironment
+        IXKitHostEnvironment xkitEnvironment
     ) {
         if (xkitEnvironment == null) { throw new ArgumentNullException(nameof(xkitEnvironment)); }
         return new SvcListensForMessagesService(xkitEnvironment);
@@ -35,7 +35,7 @@ public class SvcListensForMessagesServiceFactory : ISvcListensForMessagesService
     // =====================================================================
 
     public static IManagedService Create(
-        IXkitHostEnvironment xkitEnvironment
+        IXKitHostEnvironment xkitEnvironment
     ) => Factory.Create(xkitEnvironment);
 
     public static void InjectCustomFactory(ISvcListensForMessagesServiceFactory factory) =>

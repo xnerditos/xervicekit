@@ -5,7 +5,7 @@ using XKit.Lib.Common.Registration;
 
 namespace XKit.Lib.Common.Host {
 
-    public interface IXkitEnvironment {
+    public interface IXKitEnvironment {
         string FabricId { get; }
         ILogSessionFactory LogSessionFactory { get; }
         IEnumerable<IReadOnlyDescriptor> GetDependencies();

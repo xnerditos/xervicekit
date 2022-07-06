@@ -15,7 +15,7 @@ namespace XKit.Lib.Common.Host {
         IEnumerable<IReadOnlyDescriptor> Dependencies { get; }
         IEnumerable<IReadOnlySubscription> EventSubscriptions { get; }
         IEnumerable<IReadOnlySubscription> CommandSubscriptions { get; }
-        IXkitHostEnvironment HostEnvironment { get; }
+        IXKitHostEnvironment HostEnvironment { get; }
         
         /// <summary>
         /// The key to identify the service's config document

@@ -11,7 +11,7 @@ namespace XKit.Lib.Common.Host {
 
         public ServiceOperationContext(
             IServiceOperationOwner service,
-            IXkitHostEnvironment hostEnv,
+            IXKitHostEnvironment hostEnv,
             ServiceCallTypeParameters callTypeParameters,
             string requestorInstanceId,
             string requestorFabricId,

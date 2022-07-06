@@ -25,8 +25,8 @@ namespace UnitTests.Host.XKitHostAssertions {
         // create
         // =====================================================================
 
-        protected IXkitHost CreateTarget(Func<HealthEnum> hostHealthGetter = null)  
-            => new XKit.Lib.Host.Management.XkitHost(
+        protected IXKitHost CreateTarget(Func<HealthEnum> hostHealthGetter = null)  
+            => new XKit.Lib.Host.Management.XKitHost(
                 Constants.HostAddress,
                 FabricConnectorMockWrapper.Object,
                 LogSessionFactoryMockWrapper.Object,

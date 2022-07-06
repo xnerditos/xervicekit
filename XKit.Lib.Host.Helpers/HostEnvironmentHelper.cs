@@ -22,15 +22,16 @@ namespace XKit.Lib.Host {
 
     public class HostEnvironmentHelper {
         
-        private IXkitHost xKitHost;
+        private IXKitHost xKitHost;
         private IFabricConnector connector;
         private ILogSessionFactory logSessionFactory;
-        public IXkitHost Host => xKitHost; 
+        public IXKitHost Host => xKitHost; 
         public IFabricConnector Connector => connector; 
         public ILogSessionFactory LogSessionFactory => logSessionFactory;
-        public IXkitHost CreateInitHost(
-            IList<IInstanceClientFactory> instanceClientFactories,
-            ILogSessionFactory logSessionFactory,
+        
+        public IXKitHost CreateInitHost(
+            IList<IInstanceClientFactory> instanceClientFactories = null,
+            ILogSessionFactory logSessionFactory = null,
             ILocalConfigSessionFactory localConfigSessionFactory = null,
             string hostAddress = null, 
             string localMetadataDbPath = null,
@@ -80,9 +81,9 @@ namespace XKit.Lib.Host {
 
             connector = FabricConnectorFactory.Create(instanceClientFactories);
 
-            XkitHostFactory.SetHealthChecker(healthChecker);
+            XKitHostFactory.SetHealthChecker(healthChecker);
 
-            xKitHost = XkitHostFactory.Create(
+            xKitHost = XKitHostFactory.Create(
                 hostAddress,
                 localMetadataDbPath,
                 localDataStorageFolderPath,

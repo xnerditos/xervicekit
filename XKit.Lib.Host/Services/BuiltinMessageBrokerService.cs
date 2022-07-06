@@ -40,7 +40,7 @@ namespace XKit.Lib.Host.Services {
         protected override IReadOnlyDescriptor Descriptor => XKit.Lib.Common.Services.StandardConstants.Managed.StandardServices.MessageBroker.Descriptor;
 
         public BuiltinMessageBrokerService(
-            IXkitHostEnvironment hostEnv
+            IXKitHostEnvironment hostEnv
         ) : base(hostEnv) { }
 
         // =====================================================================

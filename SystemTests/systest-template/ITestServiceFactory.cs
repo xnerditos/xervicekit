@@ -6,7 +6,7 @@ namespace SystemTests._NAMESPACE {
     public interface ITestServiceFactory : IServiceFactory {
 
 		IManagedService Create(
-            IXkitHostEnvironment hostEnv
+            IXKitHostEnvironment hostEnv
         );
     }
 }

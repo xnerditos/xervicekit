@@ -20,7 +20,7 @@ namespace SystemTests.ServiceCalls.TestsCommon {
         public string FabricId => HostEnvironmentHelper.Connector.FabricId;
         public IMessageBrokerSvcService TestMessageBrokerService => TestHelper.TestMessageBrokerService;
         //public ISvcListensForMessagesService MessageListeningService { get; private set; }
-        public IXkitHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
+        public IXKitHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
 
         public void InitTests(TestHostHelper testHelper) {
             

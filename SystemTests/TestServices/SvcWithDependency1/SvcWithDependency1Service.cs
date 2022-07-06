@@ -31,6 +31,6 @@ public class SvcWithDependency1Service
     // =====================================================================
 
     public SvcWithDependency1Service(
-        IXkitHostEnvironment hostEnv
+        IXKitHostEnvironment hostEnv
     ) : base(hostEnv) {}
 }

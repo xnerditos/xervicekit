@@ -14,8 +14,8 @@ namespace SystemTests._NAMESPACE.Tests {
         public TestHostHelper TestHelper => testHelper;
         public HostEnvironmentHelper HostEnvironmentHelper => TestHelper.HostEnvironmentHelper;
         public string FabricId => HostEnvironmentHelper.Connector.FabricId;
-        public IXkitHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
-        public IXkitEnvironment XkitEnvironment => HostEnvironmentHelper.Host;
+        public IXKitHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
+        public IXKitEnvironment XKitEnvironment => HostEnvironmentHelper.Host;
 
         public void InitTests(TestHostHelper testHelper, IFabricConnector clientFabricConnector = null) {
             

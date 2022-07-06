@@ -7,7 +7,7 @@ using XKit.Lib.Common.Utility;
 
 namespace UnitTests.MockWrapper {
 
-    public class HostEnvironmentMockWrapper : MockWrapperBase<IXkitHostEnvironment>
+    public class HostEnvironmentMockWrapper : MockWrapperBase<IXKitHostEnvironment>
     {
         public HostEnvironmentMockWrapper() {
             Setup_HostRunState();

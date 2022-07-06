@@ -12,7 +12,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
     public abstract partial class Operation : IOperation {
 
         private bool isActive;
-        protected IXkitHostEnvironment HostEnvironment => Context.HostEnv as IXkitHostEnvironment;
+        protected IXKitHostEnvironment HostEnvironment => Context.HostEnv as IXKitHostEnvironment;
         protected IFabricConnector Connector => Context.Connector;
         protected OperationContext Context { get; }
         protected ILogSession Log { get; private set; }

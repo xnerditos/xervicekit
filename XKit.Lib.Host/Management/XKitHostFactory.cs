@@ -10,7 +10,7 @@ using XKit.Lib.Connector.Fabric;
 namespace XKit.Lib.Host.Management {
 
     public interface IXkitHostFactory {
-        IXkitHost Create(
+        IXKitHost Create(
             string hostAddress,
             string localMetaDataDbPath,
             string localDataFolderPath,
@@ -23,9 +23,9 @@ namespace XKit.Lib.Host.Management {
         void SetHealthChecker(Func<HealthEnum> healthChecker);
     }
 
-    public class XkitHostFactory : IXkitHostFactory {
+    public class XKitHostFactory : IXkitHostFactory {
 
-        private static IXkitHostFactory factory = new XkitHostFactory(
+        private static IXkitHostFactory factory = new XKitHostFactory(
             () => HealthEnum.Unknown
         );
 
@@ -33,7 +33,7 @@ namespace XKit.Lib.Host.Management {
 
         private Func<HealthEnum> healthChecker;
 
-        public XkitHostFactory(Func<HealthEnum> defaultHealthChecker) {
+        public XKitHostFactory(Func<HealthEnum> defaultHealthChecker) {
             this.healthChecker = defaultHealthChecker;
         }
 
@@ -41,7 +41,7 @@ namespace XKit.Lib.Host.Management {
         // IXkitHostFactory
         // =====================================================================
 
-        IXkitHost IXkitHostFactory.Create(
+        IXKitHost IXkitHostFactory.Create(
             string hostAddress,
             string localMetaDataDbPath,
             string localDataFolderPath,
@@ -70,7 +70,7 @@ namespace XKit.Lib.Host.Management {
                 throw new ArgumentNullException("Must provide fabric connector");
             }
             
-            var xKitHost = new XkitHost(
+            var xKitHost = new XKitHost(
                 hostAddress,
                 connector,
                 logSessionFactory,
@@ -93,7 +93,7 @@ namespace XKit.Lib.Host.Management {
         // Static
         // =====================================================================
 
-        public static IXkitHost Create(
+        public static IXKitHost Create(
             string hostAddress,
             string localMetaDataDbPath,
             string localDataFolderPath,
@@ -112,7 +112,7 @@ namespace XKit.Lib.Host.Management {
         );
         
         public static void InjectCustomFactory(IXkitHostFactory factory)
-            => XkitHostFactory.factory = factory;
+            => XKitHostFactory.factory = factory;
 
          public static void SetHealthChecker(Func<HealthEnum> healthChecker)
             => Factory.SetHealthChecker(healthChecker);

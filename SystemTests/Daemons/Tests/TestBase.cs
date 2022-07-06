@@ -12,7 +12,7 @@ namespace SystemTests.Daemons.Tests {
         protected HostEnvironmentHelper HostEnvironmentHelper => TestHelper.HostEnvironmentHelper;
         protected IFabricConnector Connector => HostEnvironmentHelper.Connector;
         protected string FabricId => HostEnvironmentHelper.Connector.FabricId;
-        protected IXkitHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
+        protected IXKitHostEnvironment HostEnvironment => HostEnvironmentHelper.Host;
         protected IManagedService AutoMessagingService { get; private set; }
         protected static uint LastMessageTickValue => TestServices.SvcWithAutoMessaging.SvcWithAutoMessagingDaemonOperation.LastMessageTickValue;
 

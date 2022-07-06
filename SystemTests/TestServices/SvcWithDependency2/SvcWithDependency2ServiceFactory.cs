@@ -19,7 +19,7 @@ namespace TestServices.SvcWithDependency2 {
         // =====================================================================
 
 		IManagedService ITestServiceFactory.Create(
-            IXkitHostEnvironment xkitEnvironment
+            IXKitHostEnvironment xkitEnvironment
         ) {
             if (xkitEnvironment == null) { throw new ArgumentNullException(nameof(xkitEnvironment)); }
             return new SvcWithDependency2Service(xkitEnvironment);
@@ -32,7 +32,7 @@ namespace TestServices.SvcWithDependency2 {
         // =====================================================================
 
         public static IManagedService Create(
-            IXkitHostEnvironment xkitEnvironment
+            IXKitHostEnvironment xkitEnvironment
         ) => Factory.Create(xkitEnvironment);
 
         public static void InjectCustomFactory(ISvcWithDependency2ServiceFactory factory) =>

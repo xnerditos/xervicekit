@@ -9,7 +9,7 @@ namespace XKit.Lib.Host.Protocols.Http.Helpers {
     [Route("managed")]
     public class ManagedServiceRouterController : ServiceControllerBase {
 
-        public ManagedServiceRouterController(IXkitHostEnvironment hostEnvironment) : base(
+        public ManagedServiceRouterController(IXKitHostEnvironment hostEnvironment) : base(
             hostEnvironment
         ) { }
 

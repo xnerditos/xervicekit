@@ -25,7 +25,7 @@ namespace TestServices.SvcWithAutoMessaging {
 		// =====================================================================
 
 		public SvcWithAutoMessagingService(
-            IXkitHostEnvironment hostEnv
+            IXKitHostEnvironment hostEnv
 		) : base(hostEnv) { 
             AddDaemon(new SvcWithAutoMessagingDaemon());
 		}
