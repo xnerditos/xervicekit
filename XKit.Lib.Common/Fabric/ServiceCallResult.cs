@@ -64,7 +64,7 @@ namespace XKit.Lib.Common.Fabric {
         }
 
         public ServiceCallResult<T> ConvertTo<T>() where T : class
-            => new ServiceCallResult<T> {
+            => new() {
                 Code = this.Code,
                 CorrelationId = this.CorrelationId,
                 Message = this.Message,

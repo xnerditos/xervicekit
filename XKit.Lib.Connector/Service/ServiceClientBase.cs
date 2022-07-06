@@ -226,8 +226,7 @@ namespace XKit.Lib.Connector.Service {
             ILogSession log = null,
             IServiceCallRouter callRouter = null,
             ServiceClientErrorHandling? errorHandling = null,
-            ServiceCallPolicy policy = null,
-            string requestJsonPayload = null
+            ServiceCallPolicy policy = null
         ) where TRequestBody : class where TResponseBody : class {
 
             var router = await BeginCall(
@@ -255,8 +254,7 @@ namespace XKit.Lib.Connector.Service {
 
             var request = CreateRequest(
                 operationName: operationName,
-                requestBody: requestBody, 
-                jsonPayload: requestJsonPayload
+                requestBody: requestBody
             );
             return (await EndCall(
                 router.ExecuteCall(request, Log, Policy, TargetHostId)
@@ -312,8 +310,7 @@ namespace XKit.Lib.Connector.Service {
             ILogSession log = null,
             IServiceCallRouter callRouter = null,
             ServiceClientErrorHandling? errorHandling = null,
-            ServiceCallPolicy policy = null,
-            string requestJsonPayload = null
+            ServiceCallPolicy policy = null
         ) where TRequestBody : class {
 
             var router = await BeginCall(
@@ -342,8 +339,7 @@ namespace XKit.Lib.Connector.Service {
 
             var request = CreateRequest(
                 operationName: operationName,
-                requestBody: requestBody, 
-                jsonPayload: requestJsonPayload
+                requestBody: requestBody
             );
             return await EndCall(
                 router.ExecuteCall(request, Log, Policy, TargetHostId)
@@ -398,11 +394,9 @@ namespace XKit.Lib.Connector.Service {
 
         private ServiceCallRequest<TRequestBody> CreateRequest<TRequestBody>(
             string operationName,
-            TRequestBody requestBody,
-            string jsonPayload
+            TRequestBody requestBody
         ) where TRequestBody : class => ServiceCallRequest<TRequestBody>.Create(
             callTypeParameters: CallTypeParameters, 
-            payload: jsonPayload,
             correlationId: Log?.CorrelationId, 
             operationName: this.callInterfaceName == null || operationName.Contains('.') ? operationName : $"{this.callInterfaceName}.{operationName}", 
             requestBody: requestBody,
