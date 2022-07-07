@@ -210,16 +210,34 @@ namespace XKit.Lib.Host.Management {
             return serviceInstance;
         } 
 
-        void IXKitHost.AddManagedService(
+        IManagedService IXKitHost.AddManagedService(
             IManagedService service
         ) {
             ManagedServices.Add(service);
+            return service;
         } 
 
-        void IXKitHost.AddMetaService(
+        IManagedService IXKitHost.AddManagedService(
+            Func<IXKitHostEnvironment, IManagedService> factoryMethod
+        ) {
+            var service = factoryMethod(this);
+            ManagedServices.Add(service);
+            return service;
+        } 
+
+        IMetaService IXKitHost.AddMetaService(
             IMetaService service
         ) {
             MetaServices.Add(service);
+            return service;
+        }
+
+        IMetaService IXKitHost.AddMetaService(
+            Func<IXKitHostEnvironment, IMetaService> factoryMethod
+        ) {
+            var service = factoryMethod(this);
+            MetaServices.Add(service);
+            return service;
         }
 
         void IXKitHost.AddBuiltinService(

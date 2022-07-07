@@ -18,8 +18,11 @@ namespace XKit.Lib.Common.Host {
         /// as a "core" interface that the operation will use. 
         /// </summary>
         /// <param name="service">The service implementing object</param>
-        void AddManagedService(
+        IManagedService AddManagedService(
             IManagedService service
+        );
+        IManagedService AddManagedService(
+            Func<IXKitHostEnvironment, IManagedService> factoryMethod
         );
 
         /// <summary>
@@ -33,7 +36,7 @@ namespace XKit.Lib.Common.Host {
         /// associated concrete class must have a constructor that takes only IServiceCallContext</param>
         IGenericManagedService AddCreateManagedService(
             IReadOnlyDescriptor serviceDescriptor,
-            System.Type callHandlerImplementationType = null
+            Type callHandlerImplementationType = null
         );
 
         /// <summary>
@@ -43,8 +46,11 @@ namespace XKit.Lib.Common.Host {
         /// as a "core" interface that the operation will use. 
         /// </summary>
         /// <param name="service">The service implementing object</param>
-        void AddMetaService(
+        IMetaService AddMetaService(
             IMetaService service
+        );
+        IMetaService AddMetaService(
+            Func<IXKitHostEnvironment, IMetaService> factoryMethod
         );
 
         /// <summary>
