@@ -478,10 +478,25 @@ namespace XKit.Lib.Connector.Service {
             ServiceCallTypeParameters callTypeParameters, 
             ILogSession log, 
             IServiceCallRouter callRouter,
-            ServiceClientErrorHandling? errorHandling,
-            string requestJsonPayload
+            ServiceClientErrorHandling? errorHandling
         ) => ExecuteCallEx<TRequestBody, TResponseBody>(
                 operationName: ((MethodCallExpression)expression.Body).Method.Name,
+                requestBody: requestBody,
+                callTypeParameters: callTypeParameters,
+                log: log,
+                callRouter: callRouter,
+                errorHandling: errorHandling
+            );
+
+        Task<IReadOnlyList<ServiceCallResult<TResponseBody>>> IServiceClient<TCallInterface>.ExecuteWith<TRequestBody, TResponseBody>(
+            string operationName,
+            TRequestBody requestBody, 
+            ServiceCallTypeParameters callTypeParameters, 
+            ILogSession log, 
+            IServiceCallRouter callRouter,
+            ServiceClientErrorHandling? errorHandling
+        ) => ExecuteCallEx<TRequestBody, TResponseBody>(
+                operationName: operationName,
                 requestBody: requestBody,
                 callTypeParameters: callTypeParameters,
                 log: log,
@@ -495,10 +510,25 @@ namespace XKit.Lib.Connector.Service {
             ServiceCallTypeParameters callTypeParameters, 
             ILogSession log, 
             IServiceCallRouter callRouter,
-            ServiceClientErrorHandling? errorHandling,
-            string requestJsonPayload
-        ) => ExecuteCallEx<TRequestBody>(
+            ServiceClientErrorHandling? errorHandling
+        ) => ExecuteCallEx(
                 operationName: ((MethodCallExpression)expression.Body).Method.Name,
+                requestBody: requestBody,
+                callTypeParameters: callTypeParameters,
+                log: log,
+                callRouter: callRouter,
+                errorHandling: errorHandling
+            );
+
+        Task<IReadOnlyList<ServiceCallResult>> IServiceClient<TCallInterface>.ExecuteWith<TRequestBody>(
+            string operationName,
+            TRequestBody requestBody, 
+            ServiceCallTypeParameters callTypeParameters, 
+            ILogSession log, 
+            IServiceCallRouter callRouter,
+            ServiceClientErrorHandling? errorHandling
+        ) => ExecuteCallEx(
+                operationName: operationName,
                 requestBody: requestBody,
                 callTypeParameters: callTypeParameters,
                 log: log,
@@ -520,6 +550,22 @@ namespace XKit.Lib.Connector.Service {
                 errorHandling: errorHandling
             );
 
+        Task<IReadOnlyList<ServiceCallResult<TResponseBody>>> IServiceClient<TCallInterface>.ExecuteWith<TResponseBody>(
+            string operationName,
+            string requestJsonPayload,
+            ServiceCallTypeParameters callTypeParameters, 
+            ILogSession log, 
+            IServiceCallRouter callRouter,
+            ServiceClientErrorHandling? errorHandling
+        ) => ExecuteCallEx<TResponseBody>(
+                operationName: operationName,
+                callTypeParameters: callTypeParameters,
+                log: log,
+                callRouter: callRouter,
+                errorHandling: errorHandling,
+                requestJsonPayload: requestJsonPayload
+            );
+
         Task<IReadOnlyList<ServiceCallResult>> IServiceClient<TCallInterface>.ExecuteWith(
             Expression<Func<TCallInterface, Task<ServiceCallResult>>> expression,
             ServiceCallTypeParameters callTypeParameters, 
@@ -528,6 +574,22 @@ namespace XKit.Lib.Connector.Service {
             ServiceClientErrorHandling? errorHandling
         ) => ExecuteCallEx(
                 operationName: ((MethodCallExpression)expression.Body).Method.Name,
+                callTypeParameters: callTypeParameters,
+                log: log,
+                callRouter: callRouter,
+                errorHandling: errorHandling
+            );
+
+        Task<IReadOnlyList<ServiceCallResult>> IServiceClient<TCallInterface>.ExecuteWith(
+            string operationName,
+            string requestJsonPayload,
+            ServiceCallTypeParameters callTypeParameters, 
+            ILogSession log, 
+            IServiceCallRouter callRouter,
+            ServiceClientErrorHandling? errorHandling
+        ) => ExecuteCallEx(
+                operationName: operationName,
+                requestJsonPayload: requestJsonPayload,
                 callTypeParameters: callTypeParameters,
                 log: log,
                 callRouter: callRouter,
