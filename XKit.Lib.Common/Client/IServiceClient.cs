@@ -19,8 +19,7 @@ namespace XKit.Lib.Common.Client {
             ServiceCallTypeParameters callTypeParameters = null,
             ILogSession log = null,
             IServiceCallRouter callRouter = null,
-            ServiceClientErrorHandling? errorHandling = null,
-            string requestJsonPayload = null
+            ServiceClientErrorHandling? errorHandling = null
         ) where TRequestBody : class where TResponseBody : class;
 
         Task<IReadOnlyList<ServiceCallResult<TResponseBody>>> ExecuteWith<TResponseBody>(
@@ -37,12 +36,47 @@ namespace XKit.Lib.Common.Client {
             ServiceCallTypeParameters callTypeParameters = null,
             ILogSession log = null,
             IServiceCallRouter callRouter = null,
-            ServiceClientErrorHandling? errorHandling = null,
-            string requestJsonPayload = null
+            ServiceClientErrorHandling? errorHandling = null
         ) where TRequestBody : class;
 
         Task<IReadOnlyList<ServiceCallResult>> ExecuteWith(
             Expression<Func<TCallInterface, Task<ServiceCallResult>>> expression,
+            ServiceCallTypeParameters callTypeParameters = null,
+            ILogSession log = null,
+            IServiceCallRouter callRouter = null,
+            ServiceClientErrorHandling? errorHandling = null
+        );
+
+        Task<IReadOnlyList<ServiceCallResult<TResponseBody>>> ExecuteWith<TRequestBody, TResponseBody>(
+            string operationName,
+            TRequestBody requestBody,
+            ServiceCallTypeParameters callTypeParameters = null,
+            ILogSession log = null,
+            IServiceCallRouter callRouter = null,
+            ServiceClientErrorHandling? errorHandling = null
+        ) where TRequestBody : class where TResponseBody : class;
+
+        Task<IReadOnlyList<ServiceCallResult<TResponseBody>>> ExecuteWith<TResponseBody>(
+            string operationName,
+            string requestJsonPayload = null,      
+            ServiceCallTypeParameters callTypeParameters = null,
+            ILogSession log = null,
+            IServiceCallRouter callRouter = null,
+            ServiceClientErrorHandling? errorHandling = null
+        ) where TResponseBody : class;
+
+        Task<IReadOnlyList<ServiceCallResult>> ExecuteWith<TRequestBody>(
+            string operationName,
+            TRequestBody requestBody,
+            ServiceCallTypeParameters callTypeParameters = null,
+            ILogSession log = null,
+            IServiceCallRouter callRouter = null,
+            ServiceClientErrorHandling? errorHandling = null
+        ) where TRequestBody : class;
+
+        Task<IReadOnlyList<ServiceCallResult>> ExecuteWith(
+            string operationName,
+            string requestJsonPayload = null,      
             ServiceCallTypeParameters callTypeParameters = null,
             ILogSession log = null,
             IServiceCallRouter callRouter = null,
