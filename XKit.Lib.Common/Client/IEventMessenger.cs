@@ -16,11 +16,16 @@ namespace XKit.Lib.Common.Client {
         Task<Guid?> RaiseEvent<TPayload>(
             Expression<Func<TCallInterface, Task<ServiceCallResult>>> expression,
             TPayload payload
-        ) where TPayload : class;
+        ) where TPayload : class, new();
 
         Task<Guid?> RaiseEvent(
             string eventName,
             string payloadJson = null
         );
+
+        Task<Guid?> RaiseEvent<TPayload>(
+            string eventName,
+            TPayload payload
+        ) where TPayload : class;
     }
 }

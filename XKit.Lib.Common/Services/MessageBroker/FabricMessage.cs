@@ -1,4 +1,5 @@
 using System;
+using XKit.Lib.Common.Utility.Extensions;
 
 namespace XKit.Lib.Common.Services.MessageBroker {
 
@@ -18,5 +19,6 @@ namespace XKit.Lib.Common.Services.MessageBroker {
         public string OriginatorRequestorFabricId { get; set; }
         public string OriginatorRequestorInstanceId { get; set; }
         public string OriginatorCorrelationId { get; set; }
+        public T GetPayloadAs<T>() where T : class => JsonPayload?.FromJson<T>();
     }
 }

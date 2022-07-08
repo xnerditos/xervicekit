@@ -75,5 +75,19 @@ namespace XKit.Lib.Connector.Service {
                 }
             )).HasError ? (Guid?)null : id;
         } 
+
+        async Task<Guid?> IEventMessenger<TCallInterface>.RaiseEvent<TPayload>(
+            string eventName,
+            TPayload payload
+        ) {
+            var id = Guid.NewGuid();
+            return (await Broker.RaiseEvent(
+                new FabricMessage {
+                    MessageId = id,
+                    JsonPayload = Json.ToJson(payload),
+                    MessageTypeName = $"{typeof(TCallInterface).Name}.{eventName}"
+                }
+            )).HasError ? (Guid?)null : id;
+        } 
     }
 }
