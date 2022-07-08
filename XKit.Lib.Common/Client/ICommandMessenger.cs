@@ -19,9 +19,14 @@ namespace XKit.Lib.Common.Client {
         ) where TPayload : class, new();
 
 
+        Task<Guid?> IssueCommand<TPayload>(
+            string command,
+            TPayload payload
+        ) where TPayload : class, new();
+
         Task<Guid?> IssueCommand(
             string command,
-            string payloadJson
+            string payloadJson = null
         );
 
         Task<IReadOnlyList<ServiceCallResult>> GetResults(

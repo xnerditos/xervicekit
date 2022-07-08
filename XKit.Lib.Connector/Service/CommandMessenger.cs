@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using XKit.Lib.Common.Client;
@@ -88,6 +87,20 @@ namespace XKit.Lib.Connector.Service {
                     MessageId = id,
                     JsonPayload = Json.ToJson<TPayload>(payload),
                     MessageTypeName = $"{typeof(TCallInterface).Name}.{((MethodCallExpression)expression.Body).Method.Name}"
+                }
+            )).HasError ? (Guid?)null : id;
+        }        
+
+        async Task<Guid?> ICommandMessenger<TCallInterface>.IssueCommand<TPayload>(
+            string command,
+            TPayload payload
+        ) {
+            var id = Guid.NewGuid();
+            return (await Broker.IssueCommand(
+                new FabricMessage {
+                    MessageId = id,
+                    JsonPayload = Json.ToJson(payload),
+                    MessageTypeName = $"{typeof(TCallInterface).Name}.{command}",
                 }
             )).HasError ? (Guid?)null : id;
         }        
