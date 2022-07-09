@@ -89,11 +89,11 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             IServiceDaemon<TMessage> daemon
         ) where TMessage : class {
             this.daemons.Add(daemon);
-            this.OnServiceStartingEvent += () => daemon.Start();
-            this.OnServiceStoppingEvent += () => daemon.Stop();
-            this.OnServicePauseEvent += () => daemon.Pause();
-            this.OnServiceResumeEvent += () => daemon.Resume();
-            this.OnEnvironmentChangeEvent += () => daemon.SignalEnvironmentChange();
+            this.OnServiceStartingEvent += log => daemon.Start();
+            this.OnServiceStoppingEvent += log => daemon.Stop();
+            this.OnServicePauseEvent += log => daemon.Pause();
+            this.OnServiceResumeEvent += log => daemon.Resume();
+            this.OnEnvironmentChangeEvent += log => daemon.SignalEnvironmentChange();
             daemon.AddToService(this);
         }
 
@@ -225,29 +225,29 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             return result;
         }
 
-        protected virtual void StartService() {  
-            OnServiceStartingEvent?.Invoke();
+        protected virtual void StartService(ILogSession log) {  
+            OnServiceStartingEvent?.Invoke(log);
             SetRunStateActive();
         }
-        protected virtual void StopService() {
+        protected virtual void StopService(ILogSession log) {
             SetRunStateBeginShutdown();
-            OnServiceStoppingEvent?.Invoke();
+            OnServiceStoppingEvent?.Invoke(log);
             SetRunStateFinishShutdown();
         }
 
-        protected virtual void PauseService() {
+        protected virtual void PauseService(ILogSession log) {
             SetRunStatePaused();
-            OnServicePauseEvent?.Invoke();
+            OnServicePauseEvent?.Invoke(log);
         }
 
-        protected virtual void ResumeService() {
-            OnServiceResumeEvent?.Invoke();
+        protected virtual void ResumeService(ILogSession log) {
+            OnServiceResumeEvent?.Invoke(log);
             SetRunStateActive();
         }
 
-        protected virtual void SignalEnvironmentChange() {
-            OnEnvironmentBeforeChangeEvent?.Invoke();
-            OnEnvironmentChangeEvent?.Invoke(); 
+        protected virtual void SignalEnvironmentChange(ILogSession log) {
+            OnEnvironmentBeforeChangeEvent?.Invoke(log);
+            OnEnvironmentChangeEvent?.Invoke(log); 
         }
 
         protected virtual IReadOnlyList<MethodInfo> GetServiceCallMethodsInfo() {
@@ -331,26 +331,26 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         IReadOnlyServiceCallPolicy IServiceBase.CallPolicy => CallPolicy;        
         IXKitHostEnvironment IServiceBase.HostEnvironment => HostEnvironment;
 
-        void IServiceBase.SignalEnvironmentChange()
-            => SignalEnvironmentChange();        
-        protected void SignalHostStartupComplete() {
-            OnHostStartCompleteEvent?.Invoke();
+        void IServiceBase.SignalEnvironmentChange(ILogSession log)
+            => SignalEnvironmentChange(log);        
+        protected void SignalHostStartupComplete(ILogSession log) {
+            OnHostStartCompleteEvent?.Invoke(log);
         }
-        protected void SignalHostShutdownComplete() {
-            OnHostStartCompleteEvent?.Invoke();
+        protected void SignalHostShutdownComplete(ILogSession log) {
+            OnHostStartCompleteEvent?.Invoke(log);
         }
         
-        void IServiceBase.StartService() 
-            => StartService();
+        void IServiceBase.StartService(ILogSession log) 
+            => StartService(log);
 
-        void IServiceBase.StopService()
-            => StopService();
+        void IServiceBase.StopService(ILogSession log)
+            => StopService(log);
         
-        void IServiceBase.SignalHostStartupComplete() 
-            => SignalHostStartupComplete();
+        void IServiceBase.SignalHostStartupComplete(ILogSession log) 
+            => SignalHostStartupComplete(log);
 
-        void IServiceBase.SignalHostShutdownComplete() 
-            => SignalHostShutdownComplete();
+        void IServiceBase.SignalHostShutdownComplete(ILogSession log) 
+            => SignalHostShutdownComplete(log);
 
         bool IServiceBase.HasFeature(string featureName) 
             => features.Contains(featureName);
@@ -395,7 +395,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         /// <typeparam name="TConfigType"></typeparam>
         protected IConfigReader<TConfigType> AddFeatureConfigurable<TConfigType>() where TConfigType : class, new() {
             var configReader = ConfigReaderFactory.CreateForService<TConfigType>(Descriptor, HostEnvironment.LocalConfigSessionFactory);
-            this.OnEnvironmentBeforeChangeEvent += () => configReader.InvalidateCache();
+            this.OnEnvironmentBeforeChangeEvent += log => configReader.InvalidateCache();
             AddFeatureFlag(StandardServiceFeatures.Configurable);
             return configReader;
         }

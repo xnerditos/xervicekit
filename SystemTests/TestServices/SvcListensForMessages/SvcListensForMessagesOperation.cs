@@ -1,7 +1,6 @@
 using XKit.Lib.Common.Fabric;
 using XKit.Lib.Common.Host;
 using XKit.Lib.Host.DefaultBaseClasses;
-
 namespace TestServices.SvcListensForMessages; 
 
 public partial class SvcListensForMessagesOperation 

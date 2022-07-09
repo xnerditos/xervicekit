@@ -110,7 +110,7 @@ namespace XKit.Lib.Host.Management {
                 } 
                 Log?.Info("Host being resumed");
                 foreach(var svc in this.ManagedServices) {
-                    svc.ResumeService();
+                    svc.ResumeService(Log);
                 }            
                 this.state = RunStateEnum.Active;
                 EndHostAction();
@@ -133,7 +133,7 @@ namespace XKit.Lib.Host.Management {
                 } 
                 Log?.Info("Host being paused");
                 foreach(var svc in this.ManagedServices) {
-                    svc.PauseService();
+                    svc.PauseService(Log);
                 }
                 this.state = RunStateEnum.Paused;
                 EndHostAction();
@@ -357,12 +357,12 @@ namespace XKit.Lib.Host.Management {
 
                 foreach(var svc in this.MetaServices) {
                     if (updatedConfigIdentifiers.Contains(svc.ConfigurationDocumentIdentifier)) {
-                        svc.SignalEnvironmentChange();
+                        svc.SignalEnvironmentChange(Log);
                     }
                 }
                 foreach(var svc in this.ManagedServices) {
                     if (updatedConfigIdentifiers.Contains(svc.ConfigurationDocumentIdentifier)) {
-                        svc.SignalEnvironmentChange();
+                        svc.SignalEnvironmentChange(Log);
                     }
                 }
                 EndHostAction();
@@ -506,11 +506,11 @@ namespace XKit.Lib.Host.Management {
                 var correlationId = Identifiers.GenerateIdentifier();
                 
                 foreach(var svc in this.MetaServices) {
-                    svc.StartService();
+                    svc.StartService(Log);
                 }
 
                 foreach(var svc in platformServices) {
-                    svc.StartService();
+                    svc.StartService(Log);
                 }
 
                 await RegisterHostWithFabric(
@@ -528,12 +528,12 @@ namespace XKit.Lib.Host.Management {
 
                     foreach(var svc in this.MetaServices) {
                         if (updatedConfigIdentifiers.Contains(svc.ConfigurationDocumentIdentifier)) {
-                            svc.SignalEnvironmentChange();
+                            svc.SignalEnvironmentChange(Log);
                         }
                     }
                     foreach(var svc in platformServices) {
                         if (updatedConfigIdentifiers.Contains(svc.ConfigurationDocumentIdentifier)) {
-                            svc.SignalEnvironmentChange();
+                            svc.SignalEnvironmentChange(Log);
                         }
                     }
                 }
@@ -541,16 +541,16 @@ namespace XKit.Lib.Host.Management {
                 this.hostConfigReader = ConfigReaderFactory.CreateForHost<HostConfigDocument>(this.HostVersionLevel, LocalConfigSessionFactory);
 
                 foreach(var svc in nonPlatformServices) {
-                    svc.StartService();
+                    svc.StartService(Log);
                 }
 
                 this.state = RunStateEnum.Active;
 
                 foreach(var svc in platformServices) {
-                    svc.SignalHostStartupComplete();
+                    svc.SignalHostStartupComplete(Log);
                 }
                 foreach(var svc in nonPlatformServices) {
-                    svc.SignalHostStartupComplete();
+                    svc.SignalHostStartupComplete(Log);
                 }
 
                 if (GetStartupParameter<bool>(HostStartupParameterKeys.REGISTER_SUBSCRIPTIONS_ON_STARTUP, true)) {
@@ -639,15 +639,15 @@ namespace XKit.Lib.Host.Management {
                 var nonPlatformServices = this.ManagedServices.Where(svc => !isPlatformService(svc)).ToArray();
                 
                 foreach(var svc in nonPlatformServices) {
-                    svc.StopService();
+                    svc.StopService(Log);
                 }
 
                 foreach(var svc in platformServices) {
-                    svc.StopService();
+                    svc.StopService(Log);
                 }
 
                 foreach(var svc in this.MetaServices) {
-                    svc.StopService();
+                    svc.StopService(Log);
                 }
 
                 bool unRegisterSuccessful = await Connector.Unregister(Log);
@@ -657,10 +657,10 @@ namespace XKit.Lib.Host.Management {
                 }
 
                 foreach(var svc in nonPlatformServices) {
-                    svc.SignalHostShutdownComplete();
+                    svc.SignalHostShutdownComplete(Log);
                 }
                 foreach(var svc in platformServices) {
-                    svc.SignalHostShutdownComplete();
+                    svc.SignalHostShutdownComplete(Log);
                 }
 
                 this.state = RunStateEnum.Inactive;

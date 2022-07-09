@@ -1,5 +1,6 @@
 using XKit.Lib.Common.Registration;
 using XKit.Lib.Common.Host;
+using XKit.Lib.Common.Log;
 
 namespace XKit.Lib.Host.DefaultBaseClasses {
 
@@ -13,9 +14,9 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
                         
         protected string LocalDataFolderPath { get; private set; }
 
-        protected override void StartService() {
+        protected override void StartService(ILogSession log) {
             LocalDataFolderPath = $"{HostEnvironment.DataRootFolderPath}/{Descriptor.Collection}/{Descriptor.Name}/{Descriptor.Version}";
-            base.StartService();
+            base.StartService(log);
         }
         
         // =====================================================================
@@ -53,10 +54,10 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         // IManagedService
         // =====================================================================
 
-        void IManagedService.PauseService() 
-            => PauseService();
+        void IManagedService.PauseService(ILogSession log) 
+            => PauseService(log);
 
-        void IManagedService.ResumeService() 
-            => ResumeService();
+        void IManagedService.ResumeService(ILogSession log) 
+            => ResumeService(log);
     }
 }

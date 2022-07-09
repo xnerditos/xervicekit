@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using XKit.Lib.Common.Fabric;
 using XKit.Lib.Common.Services.MessageBroker;
+using XKit.Lib.Common.Log;
 
 namespace XKit.Lib.Common.Host {
 
@@ -32,12 +33,12 @@ namespace XKit.Lib.Common.Host {
 
         bool CanStartNewOperation();
         bool HasFeature(string featureName);
-        void SignalEnvironmentChange();
+        void SignalEnvironmentChange(ILogSession log);
         IServiceDaemon GetDaemon(string daemonName);
         IServiceDaemon[] GetDaemons();
-        void StartService();
-        void StopService();
-        void SignalHostStartupComplete();
-        void SignalHostShutdownComplete();
+        void StartService(ILogSession log);
+        void StopService(ILogSession log);
+        void SignalHostStartupComplete(ILogSession log);
+        void SignalHostShutdownComplete(ILogSession log);
     }
 }

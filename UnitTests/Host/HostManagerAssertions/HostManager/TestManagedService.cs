@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
 using XKit.Lib.Common.Fabric;
 using XKit.Lib.Common.Host;
+using XKit.Lib.Common.Log;
 using XKit.Lib.Common.MetaServices;
 using XKit.Lib.Common.Registration;
 using XKit.Lib.Common.Services.MessageBroker;
@@ -62,19 +62,19 @@ namespace UnitTests.Host.XKitHostAssertions.XKitHost {
 
         public bool CanStartNewOperation() => this.ServiceState == RunStateEnum.Active;
 
-        public void PauseService() => this.ServiceState = RunStateEnum.Paused;
+        public void PauseService(ILogSession _) => this.ServiceState = RunStateEnum.Paused;
 
-        public void ResumeService() => this.ServiceState = RunStateEnum.Active;
+        public void ResumeService(ILogSession _) => this.ServiceState = RunStateEnum.Active;
 
-        public void SignalEnvironmentChange() => HandleEnvironmentChange?.Invoke();
+        public void SignalEnvironmentChange(ILogSession _) => HandleEnvironmentChange?.Invoke();
 
-        public void SignalHostStartupComplete() => HandleHostStartupComplete?.Invoke();
+        public void SignalHostStartupComplete(ILogSession _) => HandleHostStartupComplete?.Invoke();
 
-        public void SignalHostShutdownComplete() => HandleHostShutdownComplete?.Invoke();
+        public void SignalHostShutdownComplete(ILogSession _) => HandleHostShutdownComplete?.Invoke();
 
-        public void StartService() => this.ServiceState = RunStateEnum.Active;
+        public void StartService(ILogSession _) => this.ServiceState = RunStateEnum.Active;
 
-        public void StopService() => this.ServiceState = RunStateEnum.Inactive;
+        public void StopService(ILogSession _) => this.ServiceState = RunStateEnum.Inactive;
 
         IReadOnlyDescriptor IServiceBase.Descriptor =>
             throw new NotImplementedException();
@@ -134,7 +134,7 @@ namespace UnitTests.Host.XKitHostAssertions.XKitHost {
             throw new NotImplementedException();
         }
 
-        void IServiceBase.SignalEnvironmentChange() {
+        void IServiceBase.SignalEnvironmentChange(ILogSession log) {
             throw new NotImplementedException();
         }
 

@@ -35,8 +35,7 @@ namespace UnitTests.MockWrapper {
             ServiceCallTypeParameters callTypeParameters, 
             ILogSession log, 
             IServiceCallRouter callRouter, 
-            ServiceClientErrorHandling? errorHandling, 
-            string payload
+            ServiceClientErrorHandling? errorHandling
         ) {
             throw new Exception("Mock not implemented");
         }
@@ -57,8 +56,7 @@ namespace UnitTests.MockWrapper {
             ServiceCallTypeParameters callTypeParameters, 
             ILogSession log, 
             IServiceCallRouter callRouter, 
-            ServiceClientErrorHandling? errorHandling, 
-            string payload
+            ServiceClientErrorHandling? errorHandling
         ) {
             throw new Exception("Mock not implemented");
         }
@@ -102,6 +100,22 @@ namespace UnitTests.MockWrapper {
                     OperationStatus = LogResultStatusEnum.Success,
                 }
             );
+        }
+
+        Task<IReadOnlyList<ServiceCallResult<TResponseBody>>> IServiceClient<IRegistryApi>.ExecuteWith<TRequestBody, TResponseBody>(string operationName, TRequestBody requestBody, ServiceCallTypeParameters callTypeParameters, ILogSession log, IServiceCallRouter callRouter, ServiceClientErrorHandling? errorHandling) {
+            throw new Exception("Mock not implemented");
+        }
+
+        Task<IReadOnlyList<ServiceCallResult<TResponseBody>>> IServiceClient<IRegistryApi>.ExecuteWith<TResponseBody>(string operationName, string requestJsonPayload, ServiceCallTypeParameters callTypeParameters, ILogSession log, IServiceCallRouter callRouter, ServiceClientErrorHandling? errorHandling) {
+            throw new Exception("Mock not implemented");
+        }
+
+        Task<IReadOnlyList<ServiceCallResult>> IServiceClient<IRegistryApi>.ExecuteWith<TRequestBody>(string operationName, TRequestBody requestBody, ServiceCallTypeParameters callTypeParameters, ILogSession log, IServiceCallRouter callRouter, ServiceClientErrorHandling? errorHandling) {
+            throw new Exception("Mock not implemented");
+        }
+
+        Task<IReadOnlyList<ServiceCallResult>> IServiceClient<IRegistryApi>.ExecuteWith(string operationName, string requestJsonPayload, ServiceCallTypeParameters callTypeParameters, ILogSession log, IServiceCallRouter callRouter, ServiceClientErrorHandling? errorHandling) {
+            throw new Exception("Mock not implemented");
         }
     }
 }

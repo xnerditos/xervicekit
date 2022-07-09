@@ -28,7 +28,7 @@ namespace SystemTests.Daemons.Tests {
             value = LastMessageTickValue;
             Yield();
             
-            AutoMessagingService.PauseService();
+            AutoMessagingService.PauseService(TestHelper.Log);
             LastMessageTickValue.Should().NotBe(value);
             value = LastMessageTickValue;
             Yield();
@@ -37,7 +37,7 @@ namespace SystemTests.Daemons.Tests {
             Yield();
             LastMessageTickValue.Should().Be(value);
             
-            AutoMessagingService.ResumeService();
+            AutoMessagingService.ResumeService(TestHelper.Log);
             Yield();
             LastMessageTickValue.Should().NotBe(value);
         });
