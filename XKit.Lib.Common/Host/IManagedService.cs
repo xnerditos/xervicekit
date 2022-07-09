@@ -10,7 +10,7 @@ namespace XKit.Lib.Common.Host {
     /// requests.
     /// </summary>
     public interface IManagedService : IServiceBase {
-        void PauseService();
-        void ResumeService();
+        void PauseService(ILogSession log);
+        void ResumeService(ILogSession log);
     }
 }

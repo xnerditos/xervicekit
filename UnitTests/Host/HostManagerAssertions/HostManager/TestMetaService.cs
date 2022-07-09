@@ -110,7 +110,7 @@ namespace UnitTests.Host.XKitHostAssertions.XKitHost {
             throw new NotImplementedException();
         }
 
-        void IServiceBase.SignalEnvironmentChange() {
+        void IServiceBase.SignalEnvironmentChange(ILogSession _) {
             throw new NotImplementedException();
         }
 
@@ -122,19 +122,19 @@ namespace UnitTests.Host.XKitHostAssertions.XKitHost {
             throw new NotImplementedException();
         }
 
-        void IServiceBase.StartService() {
+        void IServiceBase.StartService(ILogSession _) {
             throw new NotImplementedException();
         }
 
-        void IServiceBase.StopService() {
+        void IServiceBase.StopService(ILogSession _) {
             throw new NotImplementedException();
         }
 
-        void IServiceBase.SignalHostStartupComplete() {
+        void IServiceBase.SignalHostStartupComplete(ILogSession _) {
             throw new NotImplementedException();
         }
 
-        void IServiceBase.SignalHostShutdownComplete() {
+        void IServiceBase.SignalHostShutdownComplete(ILogSession _) {
             throw new NotImplementedException();
         }
     }
