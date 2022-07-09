@@ -58,26 +58,9 @@ namespace XKit.Lib.Connector.Dependency {
                 TargetService.CallPolicy?.CallPattern ?? 
                 ServiceCallPatternEnum.FirstChance;
 
-            if (
-                useCallPattern == ServiceCallPatternEnum.SpecificHost && 
-                string.IsNullOrEmpty(targetHostId)
-            ) {
-                var m = $"Inconsistent service call type.  {nameof(targetHostId)} must be specified if call pattern is {ServiceCallPatternEnum.SpecificHost.ToString()}";
-                log?.Erratum(m, new { useRequest });
-                throw new ArgumentException(m);
-            }
-            if (
-                useCallPattern != ServiceCallPatternEnum.SpecificHost && 
-                !string.IsNullOrEmpty(targetHostId)
-            ) {
-                var m = $"Inconsistent service call type.  {nameof(targetHostId)} can only be specified if call pattern is {ServiceCallPatternEnum.SpecificHost.ToString()}";
-                log?.Erratum(m, new { useRequest });
-                throw new ArgumentException(m);
-            }
-
             var results = new List<ServiceCallResult>();
 
-            var callQueue = CreateClientCallQueue(request.RequestorFabricId, targetHostId);
+            var callQueue = CreateClientCallQueue(log, request.RequestorFabricId, targetHostId, useCallPattern);
             while (callQueue.Count > 0) {
                 if (callQueue.TryDequeue(out var instClient)) {
                     var instResult = await instClient.ExecuteCall(useRequest);
@@ -132,16 +115,38 @@ namespace XKit.Lib.Connector.Dependency {
             return result;
         }
 
-        private Queue<IInstanceClient> CreateClientCallQueue(string requestingFabricId, string targetHostId) {
+        private Queue<IInstanceClient> CreateClientCallQueue(
+            ILogSession log,
+            string requestingFabricId, 
+            string targetHostId, 
+            ServiceCallPatternEnum callPattern
+        ) {
+
+            if (
+                callPattern == ServiceCallPatternEnum.SpecificHost && 
+                string.IsNullOrEmpty(targetHostId)
+            ) {
+                var m = $"Inconsistent service call type.  {nameof(targetHostId)} must be specified if call pattern is {ServiceCallPatternEnum.SpecificHost}";
+                log?.Erratum(m, new { requestor = requestingFabricId });
+                throw new ArgumentException(m);
+            }
+            if (
+                callPattern != ServiceCallPatternEnum.SpecificHost && 
+                !string.IsNullOrEmpty(targetHostId)
+            ) {
+                var m = $"Inconsistent service call type.  {nameof(targetHostId)} can only be specified if call pattern is {ServiceCallPatternEnum.SpecificHost}";
+                log?.Erratum(m, new { requestor = requestingFabricId });
+                throw new ArgumentException(m);
+            }
 
             // FUTURE:  Make these configurable
 
             // Note:  These are set up in an attempt to balance out the factors in relation
             // to each other and ensure "reachability" for any given service in the list.
             const int availabilityFactorWeight = 100;
-            const int healthFactorWeight = ((int)AvailabilityEnum.Serving5 * availabilityFactorWeight);
-            const int sameHostFactorWeight = ((int)AvailabilityEnum.Serving5 * availabilityFactorWeight);
-            const int randomFactorRange = ((int)AvailabilityEnum.Serving5 * availabilityFactorWeight);
+            const int healthFactorWeight = (int)AvailabilityEnum.Serving5 * availabilityFactorWeight;
+            const int sameHostFactorWeight = (int)AvailabilityEnum.Serving5 * availabilityFactorWeight;
+            const int randomFactorRange = (int)AvailabilityEnum.Serving5 * availabilityFactorWeight;
 
             HashSet<string> instanceIdsAdded = new HashSet<string>(this.InstanceClients.Count);
 
@@ -168,7 +173,7 @@ namespace XKit.Lib.Connector.Dependency {
 
             return new Queue<IInstanceClient>(
                 from 
-                    c in this.InstanceClients
+                    c in InstanceClients
                 where 
                     canAddClientToQueue(c.Instance) 
                 orderby 
