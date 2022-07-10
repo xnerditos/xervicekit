@@ -197,7 +197,7 @@ namespace XKit.Lib.Host.Management {
 
             var genericServiceType = typeof(GenericManagedService<>).MakeGenericType(
                 new[] { 
-                    operationType ?? typeof(BlankServiceOperation)
+                    operationType ?? typeof(NoOpServiceOperation)
                 });
 
             var serviceInstance = (IGenericManagedService)Activator.CreateInstance(
