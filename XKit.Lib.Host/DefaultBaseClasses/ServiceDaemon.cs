@@ -35,7 +35,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             this.engine = engine ?? new DaemonEngine<TMessage>();
             this.logSessionFactory.Value = logSessionFactory;
             this.engine.OnProcessMessage = this.OnProcessMessage;
-            this.engine.OnDetermineTimerPeriod = this.OnDetermineEnqueueEventPeriod;
+            this.engine.OnDetermineTimerPeriod = this.OnDetermineTimerEventPeriod;
             this.engine.OnTimerEvent = this.OnTimerEvent;
             this.engine.OnStartProcessMessageBatch = OnBeginProcessingMessages;
             this.engine.OnEndProcessMessageBatch = OnEndProcessingMessages;
@@ -142,7 +142,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         /// <returns></returns>
         protected virtual object GetMessageSummary(TMessage message) => message; // default is just to use the message itself
 
-        protected virtual uint? OnDetermineEnqueueEventPeriod() => null;
+        protected virtual uint? OnDetermineTimerEventPeriod() => null;
 
         protected virtual void OnTimerEvent() { }
         protected virtual void OnDaemonStarting() { }

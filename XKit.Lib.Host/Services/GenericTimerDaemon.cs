@@ -75,7 +75,7 @@ namespace XKit.Lib.Host.Services {
                 Log.Erratum("Exception thrown while posting messages", attributes);
             } 
         }
-        protected override uint? OnDetermineEnqueueEventPeriod() => this.nextEventDelay;
+        protected override uint? OnDetermineTimerEventPeriod() => this.nextEventDelay;
 
         void IGenericTimerDaemon.SetTimerDelay(uint milliseconds) => SetDefaultTimerDelay(milliseconds);
 
