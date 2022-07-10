@@ -12,7 +12,6 @@ namespace XKit.Lib.Common.Host {
             IServiceDaemon daemon,
             IServiceBase service,
             IXKitHostEnvironment hostEnv,
-            Guid messageProcessingId,
             string correlationId = null
         ) : base(
             hostEnv,
@@ -20,7 +19,6 @@ namespace XKit.Lib.Common.Host {
         ) {
             this.Service = service ?? throw new ArgumentNullException(nameof(service));
             this.Daemon = daemon ?? throw new ArgumentNullException(nameof(daemon));
-            this.MessageProcessingId = messageProcessingId;
         }
 
         // =====================================================================
@@ -29,6 +27,5 @@ namespace XKit.Lib.Common.Host {
 
         public IServiceBase Service { get; }
         public IServiceDaemon Daemon { get; }
-        public Guid MessageProcessingId { get; }
     }
 }

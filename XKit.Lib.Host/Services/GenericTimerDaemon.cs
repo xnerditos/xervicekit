@@ -5,8 +5,8 @@ using XKit.Lib.Host.DefaultBaseClasses;
 
 namespace XKit.Lib.Host.Services {
 
-    public class GenericTimerDaemon<TDaemonOperation> : ServiceDaemon<TDaemonOperation>, IGenericTimerDaemon 
-        where TDaemonOperation : IServiceDaemonOperation<object> {
+    public class GenericTimerDaemon<TDaemonTimerOperation> : ServiceDaemon<NoOpDaemonMessageOperation, object, TDaemonTimerOperation>, IGenericTimerDaemon 
+        where TDaemonTimerOperation : IServiceDaemonOperation {
         
         public const int DefaultTimerDelayMilliseconds = 1000 * 60;     // 1 minute
 
@@ -26,7 +26,7 @@ namespace XKit.Lib.Host.Services {
             string name = null,
             Action<IGenericTimerDaemon> onEnvironmentChangeHandler = null
         ) : base(logSessionFactory) {
-            this.name = name ?? $"GenericDaemonFor_{typeof(TDaemonOperation).Name}";
+            this.name = name ?? $"GenericDaemonFor_{typeof(TDaemonTimerOperation).Name}";
             this.onEnvironmentChangeHandler = onEnvironmentChangeHandler;
             this.onDetermineCanRunOperation = onDetermineCanRunOperation;
             this.onOperationFinished = onOperationFinished;

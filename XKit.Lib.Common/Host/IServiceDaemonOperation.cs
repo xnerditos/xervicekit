@@ -7,7 +7,9 @@ namespace XKit.Lib.Common.Host {
     /// Classes that implement the concrete operations of a service daemon operation
     /// implement this interface
     /// </summary>
-    public interface IServiceDaemonOperation : IOperation { }
+    public interface IServiceDaemonOperation : IOperation { 
+        Task<OperationResult> RunDaemonTimerOperation();
+    }
 
     /// <summary>
     /// Classes that implement the concrete operations of a service daemon operation
@@ -16,6 +18,6 @@ namespace XKit.Lib.Common.Host {
     public interface IServiceDaemonOperation<TMessage> : IServiceDaemonOperation
         where TMessage : class { 
 
-        Task<OperationResult> RunDaemonOperation(TMessage message);
+        Task<OperationResult> RunDaemonMessageOperation(TMessage message);
     }
 }
