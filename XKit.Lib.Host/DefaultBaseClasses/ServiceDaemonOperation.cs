@@ -122,15 +122,4 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             return result;
         }
     }
-
-    public abstract class ServiceDaemonOperation<TMessage, TServiceBase> 
-        : ServiceDaemonOperation<TMessage>, IServiceDaemonOperation<TMessage> 
-        where TMessage : class where TServiceBase : IServiceBase {
-
-        protected new TServiceBase Service => (TServiceBase) base.Service;
-
-        protected ServiceDaemonOperation(
-            ServiceDaemonOperationContext context
-        ) : base(context) { }
-    }
 }
