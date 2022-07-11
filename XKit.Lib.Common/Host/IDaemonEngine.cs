@@ -57,6 +57,12 @@ namespace XKit.Lib.Common.Host {
         bool ProcessOneMessageSync();
 
         /// <summary>
+        /// Manually fires the timer event.  Mostly used for debugging scenarios
+        /// </summary>
+        /// <returns></returns>
+        void ManualFireTimerEvent();
+
+        /// <summary>
         /// Controls maximum number of messages that will processed  
         /// to be processed concurrently if the daemon processes on the thread pool (async)
         /// </summary>
