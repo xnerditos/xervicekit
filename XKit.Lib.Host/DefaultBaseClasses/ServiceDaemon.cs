@@ -94,6 +94,9 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         void IServiceDaemon<TMessage>.PostMessages(TMessage[] messages, bool triggerProcessing) => PostMessages(messages, triggerProcessing);
 
         bool IServiceDaemon.DebugProcessOneMessage() => engine.ProcessOneMessageSync();
+
+        void IServiceDaemon.DebugFireTimerEvent() => engine.ManualFireTimerEvent();
+        
         void IServiceDaemon.SetDebugMode(bool debugModeOn) {
             engine.DebugMode = debugModeOn;
         }

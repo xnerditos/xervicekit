@@ -78,6 +78,12 @@ namespace XKit.Lib.Common.Host {
         bool DebugProcessOneMessage();
 
         /// <summary>
+        /// Processes one timer event synchronously for debugging scenarios.  Returns true of a message was processed. 
+        /// </summary>
+        /// <returns></returns>
+        void DebugFireTimerEvent();
+
+        /// <summary>
         /// Gets the number of messages currently being processed
         /// </summary>
         /// <returns></returns>

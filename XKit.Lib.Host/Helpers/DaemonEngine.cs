@@ -94,6 +94,10 @@ namespace XKit.Lib.Host.Helpers {
             return false;
         }
 
+        void IDaemonEngine.ManualFireTimerEvent() {
+            ElapsedTimerEventHandler(null, null);            
+        }
+
         int IDaemonEngine.MaxConcurrentMessages {
             get => this.maxConcurrentMessages;
             set => this.maxConcurrentMessages = value;
@@ -171,7 +175,9 @@ namespace XKit.Lib.Host.Helpers {
                     timer.Elapsed += ElapsedTimerEventHandler;
                 }
                 this.timer.Interval = this.onDetermineTimerPeriod?.Invoke() ?? this.defaultTimerPeriodMilliseconds;
-                timer.Start();
+                if (!debugMode) {
+                    timer.Start();
+                }
             }
         }
 
