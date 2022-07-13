@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using XKit.Lib.Common.Fabric;
 using XKit.Lib.Common.Log;
@@ -124,6 +123,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         ) where TWorkItem : class where TResultData : class {
             
             OperationResult<TResultData> opResult = null;
+            Exception operationException = null;
             try {
 
                 if (preOperationAction != null) {
@@ -131,13 +131,9 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
                 }
                 opResult = await operationAction(workItem);
 
-                return EndOperation(opResult);
-
             } catch (Exception ex) {
-
                 LogExceptionAsFatality(ex);
-                return EndOperation<TResultData>(fromResult: null, LogResultStatusEnum.Fault, ex.Message);
-
+                operationException = ex;
             } finally {
 
                 if (postOperationAction != null) {
@@ -150,6 +146,12 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
                     }
                 }
             }
+            
+            return EndOperation(
+                fromResult: opResult, 
+                operationStatus: operationException != null ? LogResultStatusEnum.Fault : null,
+                logMessage: operationException?.Message
+            );
         }
 
         // ---------------------------------------------------------------------
@@ -251,6 +253,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         ) where TResultData : class {
             
             OperationResult<TResultData> opResult = null;
+            Exception operationException = null;
             try {
 
                 if (preOperationAction != null) {
@@ -258,13 +261,9 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
                 }
                 opResult = await operationAction();
 
-                return EndOperation(opResult);
-
             } catch (Exception ex) {
-
                 LogExceptionAsFatality(ex);
-                return EndOperation<TResultData>(fromResult: null, LogResultStatusEnum.Fault, ex.Message);
-
+                operationException = ex;
             } finally {
 
                 if (postOperationAction != null) {
@@ -277,6 +276,12 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
                     }
                 }
             }
+            
+            return EndOperation(
+                fromResult: opResult, 
+                operationStatus: operationException != null ? LogResultStatusEnum.Fault : null,
+                logMessage: operationException?.Message
+            );
         }
 
         // ---------------------------------------------------------------------
@@ -397,6 +402,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         ) where TWorkItem : class {
             
             OperationResult opResult = null;
+            Exception operationException = null;
             try {
 
                 if (preOperationAction != null) {
@@ -404,13 +410,9 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
                 }
                 opResult = await operationAction(workItem);
 
-                return EndOperation(opResult);
-
             } catch (Exception ex) {
-
                 LogExceptionAsFatality(ex);
-                return EndOperation(fromResult: null, LogResultStatusEnum.Fault, ex.Message);
-
+                operationException = ex;
             } finally {
 
                 if (postOperationAction != null) {
@@ -423,6 +425,12 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
                     }
                 }
             }
+            
+            return EndOperation(
+                fromResult: opResult, 
+                operationStatus: operationException != null ? LogResultStatusEnum.Fault : null,
+                logMessage: operationException?.Message
+            );
         }
 
         // ---------------------------------------------------------------------
@@ -525,6 +533,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             Func<OperationResult, Task> postOperationAction
         ) {
             OperationResult opResult = null;
+            Exception operationException = null;
             try {
 
                 if (preOperationAction != null) {
@@ -532,13 +541,9 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
                 }
                 opResult = await operationAction();
 
-                return EndOperation(opResult);
-
             } catch (Exception ex) {
-
                 LogExceptionAsFatality(ex);
-                return EndOperation(fromResult: null, LogResultStatusEnum.Fault, ex.Message);
-
+                operationException = ex;
             } finally {
 
                 if (postOperationAction != null) {
@@ -551,6 +556,12 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
                     }
                 }
             }
+            
+            return EndOperation(
+                fromResult: opResult, 
+                operationStatus: operationException != null ? LogResultStatusEnum.Fault : null,
+                logMessage: operationException?.Message
+            );
         }
     }
 }
