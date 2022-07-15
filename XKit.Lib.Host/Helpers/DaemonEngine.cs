@@ -124,7 +124,14 @@ namespace XKit.Lib.Host.Helpers {
         int IDaemonEngine.WaitingMessageCount => this.waitingMessages.Count;
         bool IDaemonEngine.DebugMode {
             get => this.debugMode;
-            set => this.debugMode = value;
+            set {
+                this.debugMode = value;
+                if (value) {
+                    StartTimerIfEnabled();
+                } else {
+                    StopTimerIfEnabled();
+                }
+            }
         }
         
         bool IDaemonEngine.HasMessages => !waitingMessages.IsEmpty || !processingMessages.IsEmpty;
@@ -197,6 +204,9 @@ namespace XKit.Lib.Host.Helpers {
             !waitingMessages.IsEmpty;
 
         private bool ProcessMessageBatch(bool background) {
+            if (debugMode) {
+                return false;
+            }
 
             if (CanProcessMessages()) {
                 ProcessBatchBeginIfNeeded();
@@ -239,6 +249,10 @@ namespace XKit.Lib.Host.Helpers {
         }
 
         private void ProcessCheckAddBackgroundWorkers() {
+            if (debugMode) {
+                return;
+            }
+
             // to prevent multiple threads from trying to scale workers at once, 
             // lock on processingMessages.  Note that there is a reason we scale workers
             // inside of the workers.  If the max number of workers is running, and
