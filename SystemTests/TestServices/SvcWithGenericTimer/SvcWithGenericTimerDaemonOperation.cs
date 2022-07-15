@@ -1,14 +1,11 @@
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 using XKit.Lib.Common.Host;
-using XKit.Lib.Common.Log;
-using XKit.Lib.Host.DefaultBaseClasses;
+using XKit.Lib.Host.Services;
 
 namespace TestServices.SvcWithGenericTimer {
 
     public partial class SvcWithGenericTimerDaemonOperation 
-        : ServiceDaemonOperation<object> {
+        : GenericTimerDaemonOperation {
 
         public static volatile uint LastMessageTickValue = 0;
 
@@ -16,7 +13,7 @@ namespace TestServices.SvcWithGenericTimer {
             ServiceDaemonOperationContext context
         ) : base(context) { }
 
-        protected override async Task DoOperationLogic(object _) {
+        protected override async Task DoTimerOperation() {
             await Task.Delay(10);
             string name = nameof(SvcWithGenericTimerDaemonOperation);
             var threadId = Thread.CurrentThread.ManagedThreadId;

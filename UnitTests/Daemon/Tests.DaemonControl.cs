@@ -11,10 +11,10 @@ namespace UnitTests.Daemons;
 public class DaemonEngine : DaemonTestBase {
 
     [TestInitialize]
-    public void TestInitialize() => base.Init();
+    public void TestInitialize() => Init();
 
     [TestCleanup]
-    public void TestCleanup() => base.Teardown();
+    public void TestCleanup() => Teardown();
 
     [TestMethod]
     public void StartsAndStops() {
@@ -31,7 +31,7 @@ public class DaemonEngine : DaemonTestBase {
     public void TimerEventFiresPerDefaultTimeout() {
         var eventCount = 0;
         engine.EnableTimer = true;
-        engine.DefaultTimerPeriodMilliseconds = 70;
+        TimerPeriodMillisecondsFixed = 70;
         engine.OnTimerEvent = () => eventCount++;
         engine.Start();
         Yield();
@@ -69,7 +69,7 @@ public class DaemonEngine : DaemonTestBase {
     public void TimerEventFiresPerCalculatedTimeout() {
         var eventCount = 0;
         engine.EnableTimer = true;
-        engine.DefaultTimerPeriodMilliseconds = 500;
+        TimerPeriodMillisecondsFixed = 500;
         engine.OnDetermineTimerPeriod = () => 70;
         engine.OnTimerEvent = () => eventCount++;
         engine.Start();

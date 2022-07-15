@@ -63,6 +63,13 @@ namespace XKit.Lib.Common.Host {
         void ManualFireTimerEvent();
 
         /// <summary>
+        /// Sets when the next timer event will be.  Note that for the default implementation of 
+        /// the daemon engine, this will reset any value previously determined by OnDetermineTimerPeriod 
+        /// </summary>
+        /// <param name="delay"></param>
+        void SetTimerEvent(uint? delay);
+
+        /// <summary>
         /// Controls maximum number of messages that will processed  
         /// to be processed concurrently if the daemon processes on the thread pool (async)
         /// </summary>
@@ -70,18 +77,19 @@ namespace XKit.Lib.Common.Host {
         int MaxConcurrentMessages { get; set; }
 
         /// <summary>
-        /// If enabled, the daemon will fire the events OnDetermineEnqueueMessagesTimerPeriod and
+        /// If enabled, the daemon will fire the events OnDetermineTimerPeriod and
         /// OnEnqueueMessagesTimer
         /// </summary>
         /// <value></value>
         bool EnableTimer { get; set; }
 
         /// <summary>
-        /// The default period that the timer event is fired.  This value is only used if a value is not returned from
-        /// a call to OnDetermineTimerPeriod.
+        /// If true, when the daemon is started or resumed, the timer event will be 
+        /// manually fired once before determining the delay.  This is useful if the
+        /// timer event itself executes code that sets the next timer delay. 
         /// </summary>
         /// <value></value>
-        uint DefaultTimerPeriodMilliseconds { get; set; }
+        bool FireTimerEventOnStart { get; set; }
 
         bool DebugMode { get; set; }
 

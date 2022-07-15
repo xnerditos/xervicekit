@@ -55,6 +55,11 @@ namespace XKit.Lib.Common.Host {
         void SetDebugMode(bool debugModeOn = true);
 
         /// <summary>
+        /// True if the daemon is in debug mode
+        /// </summary>
+        bool DebugMode { get; }
+
+        /// <summary>
         /// Stops the daemon
         /// </summary>
         /// <returns></returns>

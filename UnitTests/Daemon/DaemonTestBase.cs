@@ -9,18 +9,17 @@ namespace UnitTests.Daemons;
 public class DaemonTestBase : TestBase {
 
     protected readonly IDaemonEngine<TestMessage> engine;
+    protected uint TimerPeriodMillisecondsFixed;
 
     public DaemonTestBase() {
+        TimerPeriodMillisecondsFixed = 70;
         engine = new DaemonEngine<TestMessage>();
-        engine.DefaultTimerPeriodMilliseconds = 70;
+        engine.OnDetermineTimerPeriod = () => TimerPeriodMillisecondsFixed;
     }
     protected static void Yield(int milliseconds = 100) {
         Thread.Sleep(milliseconds);
     }
 
-    protected void Init() {
-    }
-
-    protected void Teardown() {
-    }
+    protected static void Init() { }
+    protected static void Teardown() { }
 }

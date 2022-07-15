@@ -18,6 +18,7 @@ namespace XKit.Lib.Common.Host {
     public interface IServiceDaemonOperation<TMessage> : IServiceDaemonOperation
         where TMessage : class { 
 
-        Task<OperationResult> RunDaemonMessageOperation(TMessage message);
+        Task<OperationResult> RunDaemonMessageOperation(TMessage message) 
+            => Task.FromResult(new OperationResult { OperationStatus = Log.LogResultStatusEnum.Unknown });
     }
 }
