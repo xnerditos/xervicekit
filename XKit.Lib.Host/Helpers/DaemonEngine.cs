@@ -12,11 +12,12 @@ namespace XKit.Lib.Host.Helpers {
         where TMessage : class {
 
         private volatile DaemonRunStateEnum runState = DaemonRunStateEnum.Stopped;
-        private System.Timers.Timer timer;
-        private volatile uint defaultTimerPeriodMilliseconds = 60 * 1000; // default 1 one minute
+        private Timer timer;
         private volatile int maxConcurrentMessages = 4;
         private volatile bool debugMode = false;
+        private volatile bool fireTimerEventOnStart = false;
         private volatile bool enableTimer = false;
+
         // NOTE:  Really not loving the idea of using a boolean flag to indicate
         //        that a batch is running.  This approach makes for more complicated logic. 
         //        Revisit this in the future.
@@ -54,7 +55,7 @@ namespace XKit.Lib.Host.Helpers {
         void IDaemonEngine.Resume() {
             if (runState == DaemonRunStateEnum.Paused) {
                 runState = DaemonRunStateEnum.Running;
-                StartTimerIfEnabled();
+                StartTimerIfEnabled(fireTimerEventOnStart ? 0 : null);
             } 
         }
 
@@ -69,7 +70,7 @@ namespace XKit.Lib.Host.Helpers {
         void IDaemonEngine.Start() {
             if (runState == DaemonRunStateEnum.Stopped) {
                 runState = DaemonRunStateEnum.Running;
-                StartTimerIfEnabled();
+                StartTimerIfEnabled(fireTimerEventOnStart ? 0 : null);
             }
         }
 
@@ -95,17 +96,25 @@ namespace XKit.Lib.Host.Helpers {
         }
 
         void IDaemonEngine.ManualFireTimerEvent() {
-            ElapsedTimerEventHandler(null, null);            
+            FireTimerEventIfPossible();            
+        }
+
+        void IDaemonEngine.SetTimerEvent(uint? delay) { 
+            if (delay == null) {
+                StopTimerIfEnabled();
+            } else { 
+                StartTimerIfEnabled(delay);
+            }
+        }
+
+        bool IDaemonEngine.FireTimerEventOnStart {
+            get => fireTimerEventOnStart;
+            set => fireTimerEventOnStart = value;
         }
 
         int IDaemonEngine.MaxConcurrentMessages {
-            get => this.maxConcurrentMessages;
-            set => this.maxConcurrentMessages = value;
-        }
-
-        uint IDaemonEngine.DefaultTimerPeriodMilliseconds { 
-            get => this.defaultTimerPeriodMilliseconds;
-            set => this.defaultTimerPeriodMilliseconds = value;
+            get => maxConcurrentMessages;
+            set => maxConcurrentMessages = value;
         }
 
         bool IDaemonEngine.EnableTimer { 
@@ -113,7 +122,7 @@ namespace XKit.Lib.Host.Helpers {
             set {                
                 enableTimer = value; 
                 if (value) {
-                    StartTimerIfEnabled();
+                    StartTimerIfEnabled(fireTimerEventOnStart ? 0 : null);
                 } else {
                     StopTimerIfEnabled();
                 }
@@ -127,9 +136,9 @@ namespace XKit.Lib.Host.Helpers {
             set {
                 this.debugMode = value;
                 if (value) {
-                    StartTimerIfEnabled();
-                } else {
                     StopTimerIfEnabled();
+                } else {
+                    StartTimerIfEnabled(fireTimerEventOnStart ? 0 : null);
                 }
             }
         }
@@ -173,7 +182,7 @@ namespace XKit.Lib.Host.Helpers {
             }
         }
 
-        private void StartTimerIfEnabled() {
+        private void StartTimerIfEnabled(uint? timerInterval = null) {
             if (runState == DaemonRunStateEnum.Running && enableTimer && onTimerEvent != null) {
                 if (this.timer == null) {
                     timer = new() {
@@ -181,14 +190,31 @@ namespace XKit.Lib.Host.Helpers {
                     };
                     timer.Elapsed += ElapsedTimerEventHandler;
                 }
-                this.timer.Interval = this.onDetermineTimerPeriod?.Invoke() ?? this.defaultTimerPeriodMilliseconds;
-                if (!debugMode) {
-                    timer.Start();
+
+                var delay = 
+                    timerInterval ??
+                    onDetermineTimerPeriod?.Invoke();
+
+                switch(delay) {
+                case null: 
+                    break;
+                case 0: 
+                    FireTimerEventIfPossible(); 
+                    break;
+                default: 
+                    timer.Interval = (double)delay; 
+                    if (!debugMode) {
+                        timer.Start();
+                    }
+                    break;
                 }
             }
         }
 
-        private void ElapsedTimerEventHandler(object sender, ElapsedEventArgs e) {
+        private void ElapsedTimerEventHandler(object sender, ElapsedEventArgs e) 
+            => FireTimerEventIfPossible();
+
+        private void FireTimerEventIfPossible() {
             if (runState == DaemonRunStateEnum.Running) {
                 onTimerEvent?.Invoke();
                 StartTimerIfEnabled();

@@ -9,11 +9,10 @@ using XKit.Lib.Host.Helpers;
 
 namespace XKit.Lib.Host.DefaultBaseClasses {
 
-    public abstract class ServiceDaemon<TDaemonMessageOperation, TMessage, TDaemonTimerOperation>
+    public abstract class ServiceDaemon<TDaemonOperation, TMessage>
         : IServiceDaemon<TMessage>, IServiceDaemon
         where TMessage : class 
-        where TDaemonMessageOperation : IServiceDaemonOperation<TMessage> 
-        where TDaemonTimerOperation : IServiceDaemonOperation {
+        where TDaemonOperation : IServiceDaemonOperation<TMessage> {
 
         public enum BaseLogCodes {
             ProcessingMessageStarted,
@@ -29,8 +28,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         private readonly SetOnceOrThrow<Guid> messageThreadOperationId = new();
         protected Guid MessageThreadOperationId => messageThreadOperationId.Value;
         private readonly IDaemonEngine<TMessage> engine;
-        private Func<object[], object> messageOperationInstantiator;
-        private Func<object[], object> timerOperationInstantiator;
+        private Func<object[], object> operationInstantiator;
 
         public ServiceDaemon(
             ILogSessionFactory logSessionFactory, 
@@ -101,6 +99,8 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             engine.DebugMode = debugModeOn;
         }
 
+        bool IServiceDaemon.DebugMode => this.engine.DebugMode;
+
         DaemonRunStateEnum IServiceDaemon.RunState => engine.RunState;
 
         string IServiceDaemon.Name => this.Name;        
@@ -115,7 +115,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
 
         protected virtual void OnProcessMessage(Guid messageProcessingId, TMessage message) {
 
-            var operation = CreateMessageOperation(new ServiceDaemonOperationContext(
+            var operation = CreateOperation(new ServiceDaemonOperationContext(
                 this,
                 this.Service,
                 this.HostEnvironment
@@ -141,10 +141,10 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
 
         protected virtual void OnTimerEvent() { 
 
-            var operation = CreateTimerOperation(new ServiceDaemonOperationContext(
+            var operation = CreateOperation(new ServiceDaemonOperationContext(
                 this,
-                this.Service,
-                this.HostEnvironment
+                Service,
+                HostEnvironment
             ));
 
             if (operation != null) {
@@ -170,38 +170,22 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         protected abstract string Name { get; }
         protected virtual void OnEnvironmentChange() { }
 
-        protected virtual IServiceDaemonOperation<TMessage> CreateMessageOperation(
+        protected virtual IServiceDaemonOperation<TMessage> CreateOperation(
             ServiceDaemonOperationContext context
         ) {
-            if (messageOperationInstantiator == null) {
-                var constructor = typeof(TDaemonMessageOperation).GetConstructor(new[] { 
+            if (operationInstantiator == null) {
+                var constructor = typeof(TDaemonOperation).GetConstructor(new[] { 
                     typeof(ServiceDaemonOperationContext)
                 });
                 if (constructor == null) {
                     throw new Exception("Cannot instantiate daemon message operation");
                 }
-                messageOperationInstantiator = MethodInvokerFactory.ForConstructor(constructor);
-                if (messageOperationInstantiator == null) {
+                operationInstantiator = MethodInvokerFactory.ForConstructor(constructor);
+                if (operationInstantiator == null) {
                     throw new Exception("Operation Instantiator could not be created for message operation");
                 }
             }
-            return (IServiceDaemonOperation<TMessage>) messageOperationInstantiator(new object[] { context });
-        }
-
-        protected virtual IServiceDaemonOperation CreateTimerOperation(ServiceDaemonOperationContext context) {
-            if (timerOperationInstantiator == null) {
-                var constructor = typeof(TDaemonTimerOperation).GetConstructor(new[] { 
-                    typeof(ServiceDaemonOperationContext)
-                });
-                if (constructor == null) {
-                    throw new Exception("Cannot instantiate daemon timer operation");
-                }
-                timerOperationInstantiator = MethodInvokerFactory.ForConstructor(constructor);
-                if (messageOperationInstantiator == null) {
-                    throw new Exception("Operation Instantiator could not be created for timer operation");
-                }
-            }
-            return (IServiceDaemonOperation) messageOperationInstantiator(new[] { context });
+            return (IServiceDaemonOperation<TMessage>) operationInstantiator(new object[] { context });
         }
 
         // =====================================================================
@@ -249,10 +233,6 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
                     result.Message,
                     code : BaseLogCodes.TimerProcessResultedInError
                 );
-            } else if (result.IsPending) {
-                Log.Erratum(
-                    "Daemon timer operation result was pending.  Daemon operations should not return as pending but should complete synchronously."
-                );
             } 
         }
 
@@ -268,11 +248,6 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         protected int MaxConcurrentMessages {
             get => engine.MaxConcurrentMessages;
             set => engine.MaxConcurrentMessages = value;
-        }
-
-        protected uint DefaultTimerPeriodMilliseconds { 
-            get => engine.DefaultTimerPeriodMilliseconds;
-            set => engine.DefaultTimerPeriodMilliseconds = value;
         }
 
         protected bool EnableTimerEvent { 

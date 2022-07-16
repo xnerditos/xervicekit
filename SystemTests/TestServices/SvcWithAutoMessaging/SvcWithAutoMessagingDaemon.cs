@@ -1,6 +1,5 @@
-using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
+using XKit.Lib.Common.Fabric;
 using XKit.Lib.Common.Host;
 using XKit.Lib.Host.DefaultBaseClasses;
 
@@ -10,14 +9,15 @@ namespace TestServices.SvcWithAutoMessaging {
 
     public interface ISvcWithAutoMessagingDaemon : IServiceDaemon<DaemonMessage> { } 
 
-    public class SvcWithAutoMessagingDaemon : ServiceDaemon<SvcWithAutoMessagingDaemonOperation, DaemonMessage, SvcWithAutoMessagingDaemonTimerOperation>, ISvcWithAutoMessagingDaemon {
+    public class SvcWithAutoMessagingDaemon : ServiceDaemon<SvcWithAutoMessagingDaemonOperation, DaemonMessage>, ISvcWithAutoMessagingDaemon {
         protected override string Name => "AutoMessagingDaemon";
 
         public SvcWithAutoMessagingDaemon() 
             : base(XKit.Lib.Log.LogSessionFactory.Factory) {
-            this.DefaultTimerPeriodMilliseconds = 90;
-            this.EnableTimerEvent = true;
+            EnableTimerEvent = true;
         }
+
+        protected override uint? OnDetermineTimerEventPeriod() => 90;
 
         protected override void OnTimerEvent() {
             var nowTicks = (uint)(DateTime.Now.Ticks & 0xffffffff);
@@ -40,21 +40,16 @@ namespace TestServices.SvcWithAutoMessaging {
             ServiceDaemonOperationContext context
         ) : base(context) { }
 
-        protected override async Task DoOperationLogic(DaemonMessage message) {
+        protected override async Task<OperationResult> DoMessageOperation(DaemonMessage message) {
             await Task.Delay(10);
             lastMessageTickValue = message.Ticks;
             string name = nameof(SvcWithAutoMessagingDaemon);
             var threadId = System.Environment.CurrentManagedThreadId;
             Debug.WriteLine($"FromJson {name}.  Thread id {threadId}: {message.Message}");
+            return ResultSuccess();
         }
-    }
 
-    public class SvcWithAutoMessagingDaemonTimerOperation : ServiceDaemonOperation {
-        public SvcWithAutoMessagingDaemonTimerOperation(
-            ServiceDaemonOperationContext context
-        ) : base(context) { }
-
-        protected override Task DoOperationLogic() {
+        protected override Task DoTimerOperation() {
             var nowTicks = (uint)(DateTime.Now.Ticks & 0xffffffff);
 
             var threadId = System.Environment.CurrentManagedThreadId;

@@ -14,14 +14,11 @@ namespace XKit.Lib.Common.Host
         ) where TMessage : class;
 
         IGenericTimerDaemon AddGenericTimerDaemon<TDaemonOperation>(
-            ILogSessionFactory logSessionFactory, 
-            Func<bool> onDetermineCanRunOperation = null,
-            Func<IGenericTimerDaemon, bool> onOperationFinished = null,
             uint? timerDelayMilliseconds = null,
             bool timerEnabled = true,
-            string name = null,
-            Action<IGenericTimerDaemon> onEnvironmentChangeHandler = null
-        ) where TDaemonOperation : IServiceDaemonOperation<object>;
+            Action<IGenericTimerDaemon> onEnvironmentChangeHandler = null,
+            string name = null
+        ) where TDaemonOperation : IGenericTimerDaemonOperation;
     }
     
     public interface IGenericManagedService<TOperationConcrete> : IGenericManagedService {}

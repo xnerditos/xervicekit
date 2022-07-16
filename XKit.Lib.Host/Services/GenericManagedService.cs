@@ -1,6 +1,5 @@
 using System;
 using XKit.Lib.Common.Host;
-using XKit.Lib.Common.Log;
 using XKit.Lib.Common.Registration;
 using XKit.Lib.Host.DefaultBaseClasses;
 
@@ -35,22 +34,17 @@ namespace XKit.Lib.Host.Services {
             void IGenericManagedService.AddDaemon<TMessage>(IServiceDaemon<TMessage> daemon) => this.AddDaemon(daemon);
 
             IGenericTimerDaemon IGenericManagedService.AddGenericTimerDaemon<TDaemonOperation>(
-                ILogSessionFactory logSessionFactory, 
-                Func<bool> onDetermineCanRunOperation,
-                Func<IGenericTimerDaemon, bool> onOperationFinished,
                 uint? timerDelayMilliseconds,
                 bool timerEnabled,
-                string name,
-                Action<IGenericTimerDaemon> onEnvironmentChangeHandler
+                Action<IGenericTimerDaemon> onEnvironmentChangeHandler,
+                string name
             ) {
                 var daemon = new GenericTimerDaemon<TDaemonOperation>(
-                    logSessionFactory,
-                    onDetermineCanRunOperation,
-                    onOperationFinished,
+                    HostEnvironment.LogSessionFactory,
                     timerDelayMilliseconds,
                     timerEnabled,
-                    name,
-                    onEnvironmentChangeHandler: onEnvironmentChangeHandler
+                    onEnvironmentChangeHandler,
+                    name
                 );
                 this.AddDaemon(daemon);
                 return daemon;

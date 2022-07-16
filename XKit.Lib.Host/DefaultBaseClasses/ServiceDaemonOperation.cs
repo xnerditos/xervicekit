@@ -36,32 +36,25 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         // =====================================================================
 
         /// <summary>
-        /// Override to do the operation logic without providing an explicit result.  Override
-        /// this method _or_ DoOperationLogicWithResult().
+        /// Override to do the timer operation logic.
         /// </summary>
         /// <param name="message"></param>
-        protected virtual Task DoOperationLogic() => Task.CompletedTask; 
+        protected virtual Task DoTimerOperation() => Task.CompletedTask; 
 
-        /// <summary>
-        /// Override to do the operation logic with an explicit result.  Override
-        /// this method _or_ DoOperationLogic().
-        /// </summary>
-        /// <param name="message"></param>
-        protected virtual async Task<OperationResult> DoOperationLogicWithResult() {
-            await DoOperationLogic();
-            return ResultSuccess();
-        }
+        protected virtual Task DoPreOperation() => Task.CompletedTask;
+        protected virtual Task DoPostOperation() => Task.CompletedTask;
 
         // =====================================================================
         // IServiceDaemonOperation implementation
         // =====================================================================
 
         async Task<OperationResult> IServiceDaemonOperation.RunDaemonTimerOperation() {
-            var result = await base.RunOperation(
-                operationName: this.OriginatorName,
-                runSynchronous: true,
-                operationAction: DoOperationLogicWithResult,                
-                initAction: null
+            var result = await RunOperation(
+                operationName: OriginatorName,
+                runSynchronous: Daemon.DebugMode,  // when not in debug mode, run async
+                operationAction: DoTimerOperation,                
+                preOperationAction: DoPreOperation,
+                postOperationAction: (_) => DoPostOperation()
             );
             return result;
         }
@@ -90,34 +83,24 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         protected virtual bool ValidateMessage(TMessage message) => true;
 
         /// <summary>
-        /// Override to do the operation logic without providing an explicit result.  Override
-        /// this method _or_ DoOperationLogicWithResult().
+        /// Override to do the message processing operation
         /// </summary>
         /// <param name="message"></param>
-        protected virtual Task DoOperationLogic(TMessage message) => Task.CompletedTask; 
-
-        /// <summary>
-        /// Override to do the operation logic with an explicit result.  Override
-        /// this method _or_ DoOperationLogic().
-        /// </summary>
-        /// <param name="message"></param>
-        protected virtual async Task<OperationResult> DoOperationLogicWithResult(TMessage message) {
-            await DoOperationLogic(message);
-            return ResultSuccess();
-        }
+        protected virtual Task<OperationResult> DoMessageOperation(TMessage message) => Task.FromResult(ResultSuccess());
 
         // =====================================================================
         // IServiceDaemonOperation<TMessage> implementation
         // =====================================================================
 
         async Task<OperationResult> IServiceDaemonOperation<TMessage>.RunDaemonMessageOperation(TMessage message) {
-            var result = await base.RunOperation<TMessage>(
-                operationName: this.OriginatorName,
+            var result = await RunOperation(
+                operationName: OriginatorName,
                 workItem: message,
                 runSynchronous: true,
-                operationAction: DoOperationLogicWithResult,                
+                operationAction: DoMessageOperation,                
                 workItemValidationAction: ValidateMessage,
-                initAction: null
+                preOperationAction: (_) => DoPreOperation(),
+                postOperationAction: (_,_) => DoPostOperation()
             );
             return result;
         }

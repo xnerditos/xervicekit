@@ -5,41 +5,31 @@ using XKit.Lib.Host.DefaultBaseClasses;
 
 namespace XKit.Lib.Host.Services {
 
-    public class GenericTimerDaemon<TDaemonTimerOperation> : ServiceDaemon<NoOpDaemonMessageOperation, object, TDaemonTimerOperation>, IGenericTimerDaemon 
-        where TDaemonTimerOperation : IServiceDaemonOperation {
+    public class GenericTimerDaemon<TDaemonTimerOperation> : ServiceDaemon<TDaemonTimerOperation, object>, IGenericTimerDaemon 
+        where TDaemonTimerOperation : IGenericTimerDaemonOperation {
         
         public const int DefaultTimerDelayMilliseconds = 1000 * 60;     // 1 minute
 
         private readonly string name;
-        private readonly Action<IGenericTimerDaemon> onEnvironmentChangeHandler;
-        private readonly Func<bool> onDetermineCanRunOperation;
-        private readonly Func<IGenericTimerDaemon, bool> onOperationFinished;
         private uint? nextEventDelay = default;
         protected override string Name => name;
+        private readonly Action<IGenericTimerDaemon> onEnvironmentChangeHandler;
 
         public GenericTimerDaemon(
             ILogSessionFactory logSessionFactory, 
-            Func<bool> onDetermineCanRunOperation = null,
-            Func<IGenericTimerDaemon, bool> onOperationFinished = null,
             uint? timerDelayMilliseconds = null,
             bool timerEnabled = true,
-            string name = null,
-            Action<IGenericTimerDaemon> onEnvironmentChangeHandler = null
+            Action<IGenericTimerDaemon> onEnvironmentChangeHandler = null,
+            string name = null
         ) : base(logSessionFactory) {
             this.name = name ?? $"GenericDaemonFor_{typeof(TDaemonTimerOperation).Name}";
+            nextEventDelay = timerDelayMilliseconds.GetValueOrDefault(DefaultTimerDelayMilliseconds);
             this.onEnvironmentChangeHandler = onEnvironmentChangeHandler;
-            this.onDetermineCanRunOperation = onDetermineCanRunOperation;
-            this.onOperationFinished = onOperationFinished;
-            DefaultTimerPeriodMilliseconds = timerDelayMilliseconds.GetValueOrDefault(DefaultTimerDelayMilliseconds);
             MaxConcurrentMessages = 1;
             EnableTimerEvent = timerEnabled;
         }
 
-        public void SetDefaultTimerDelay(uint milliseconds) {
-            this.DefaultTimerPeriodMilliseconds = milliseconds;
-        }
-
-        public void SetNextEventReadyDelay(uint? milliseconds) {
+        public void SetTimerDelay(uint? milliseconds) {
             nextEventDelay = milliseconds;
         }
 
@@ -48,39 +38,13 @@ namespace XKit.Lib.Host.Services {
         }
 
         protected override void OnEnvironmentChange() {
-            if (this.onEnvironmentChangeHandler != null) {
-                onEnvironmentChangeHandler.Invoke(this);
-            }
+            onEnvironmentChangeHandler?.Invoke(this);
         }
 
-        protected override void OnTimerEvent() {
-            try {
-                if (onDetermineCanRunOperation?.Invoke() ?? true) {
-                    EnableTimerEvent = false;
-                    PostMessage(new());
-                }
-            } catch(Exception exception) {
-                var attributes = new { exception };
-                Log.Erratum("Exception thrown while posting messages", attributes);
-                Log.Fatality(exception.Message, attributes);
-            } 
-        }
-
-        protected override void OnEndProcessingMessages() {
-            try {
-                onOperationFinished?.Invoke(this);
-                EnableTimerEvent = true;
-            } catch(Exception exception) {
-                var attributes = new { exception };
-                Log.Erratum("Exception thrown while posting messages", attributes);
-            } 
-        }
-        protected override uint? OnDetermineTimerEventPeriod() => this.nextEventDelay;
-
-        void IGenericTimerDaemon.SetTimerDelay(uint milliseconds) => SetDefaultTimerDelay(milliseconds);
+        protected override uint? OnDetermineTimerEventPeriod() => nextEventDelay;
 
         void IGenericTimerDaemon.SetTimerEnabled(bool enabled) => SetTimerEnabled(enabled);
 
-        void IGenericTimerDaemon.SetNextEventReadyDelay(uint? milliseconds) => SetNextEventReadyDelay(milliseconds);
+        void IGenericTimerDaemon.SetTimerDelay(uint? milliseconds) => SetTimerDelay(milliseconds);
     }
 }
