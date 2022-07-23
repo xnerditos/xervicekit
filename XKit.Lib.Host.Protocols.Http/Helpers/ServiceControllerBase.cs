@@ -47,7 +47,7 @@ namespace XKit.Lib.Host.Protocols.Http.Helpers {
 
             using var reader = new StreamReader(Request.Body);
             string content = await reader.ReadToEndAsync();
-            ServiceCallRequest request = Json.FromJson<ServiceCallRequest>(content);                        
+            HttpServiceCallRequest request = Json.FromJson<HttpServiceCallRequest>(content);                        
 
             ServiceCallResult result = null;
             Exception operationException = null;
@@ -57,7 +57,11 @@ namespace XKit.Lib.Host.Protocols.Http.Helpers {
                 operationException = ex; 
             }
             
-            return Ok(result);
+            if (request.UsesPayloadObj) {
+                return Ok(HttpServiceCallResultUsingPayloadObj.CreateFrom(result));
+            } else {
+                return Ok(result);
+            }
         }
     }
 }
