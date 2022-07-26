@@ -15,7 +15,7 @@ shift
 
 cd $rootDir
 
-switch to master
+#switch to master
 currentBranch=$(git rev-parse --abbrev-ref HEAD)
 git checkout master &>/dev/null
 if [[ "$?" -ne 0 ]]; then 
@@ -77,6 +77,7 @@ do
   cd $proj
   echo Publishing $proj
   ./publish.sh
+  cd $rootDir
 done
 
 git checkout "$currentBranch" &>/dev/null
