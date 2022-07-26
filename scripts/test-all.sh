@@ -1,9 +1,10 @@
 #!/bin/bash
 
-currFolder="$(pwd)"  # Absolute path to this script, e.g. /home/user/bin/foo.sh
-scriptPath=$(readlink -f "$0")  # Absolute path this script is in
+currFolder="$(pwd)"  
+scriptPath=$(readlink -f "$0")  
 scriptDir=$(dirname "$scriptPath")
-cd $scriptDir
+rootDir=$(dirname "$scriptDir")
+cd $rootDir
 
 function dotest() {
     cd "$projdir"

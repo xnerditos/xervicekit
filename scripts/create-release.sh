@@ -1,4 +1,8 @@
-#! /bin/bash
+#!/bin/bash
+
+currFolder="$(pwd)"  
+scriptPath=$(readlink -f "$0")  
+scriptDir=$(dirname "$scriptPath")
 
 # push the tag
 currentBranch=$(git rev-parse --abbrev-ref HEAD)
@@ -24,4 +28,4 @@ fi
 git checkout "$currentBranch" &>/dev/null
 echo "Done! :-0"
 
-./publish-all.sh
+$scriptDir/publish-all.sh

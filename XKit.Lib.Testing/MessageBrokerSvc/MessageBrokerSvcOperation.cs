@@ -49,6 +49,16 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
                 }
             );
 
+        Task<ServiceCallResult> IMessageBrokerApi.Unsubscribe(
+            UnsubscribeRequest request
+        ) => RunServiceCall(
+                request,
+                operationAction: (r) => {
+                    request.Subscriptions.ForEach(s => Service.RemoveSubscription(s));
+                    return Task.CompletedTask;
+                }
+            );
+
         Task<ServiceCallResult<WaitOnMessageResponse>> IMessageBrokerApi.WaitOnMessage(
             WaitOnMessageRequest request
         ) => RunServiceCall(
