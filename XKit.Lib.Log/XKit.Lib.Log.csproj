@@ -5,8 +5,8 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Part of the XerviceKit framework for developing microservices.  See http://www.xervicekit.io for more information.</Description>
     <LangVersion>10.0</LangVersion>
-    <Version>2.9.0</Version>
-    <AssemblyVersion>2.9.0.0</AssemblyVersion>
+    <Version>2.9.1</Version>
+    <AssemblyVersion>2.9.1.0</AssemblyVersion>
     <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
     <Authors>toochevere@gmail.com</Authors>
     <Company>X-Nerds</Company>
