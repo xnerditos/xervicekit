@@ -1,0 +1,8 @@
+
+Typically in a Service things happen in response to other things.  A Service API method gets called for example, or an Event is raised which triggers code in the subscribing service.  But sometimes you need the Service to do something without being prompted.  Perhaps the Service itself should occasionally look for certain conditions that indicate something needs to be done.  For example, maybe the Service needs to check an external resource such as a file folder, and when it finds something there, process that file in some way. 
+
+This is where the concept of a _Daemon_ comes in.  A Daemon is a process that runs "in the background", typically idle until it is needed.  A daemon in a traditional context and a daemon in XerviceKit are not _quite_ the same thing conceptually.  
+
+In the context of an operating system, a daemon (or background process) is not managed.  The conditions for it to stay idle or to do something are a black box and depend entirely on how the code was written.  A daemon in XerviceKit however has only two contexts in which it will do something.  A "timer" event that runs at some point based on a delay, and a "message queue" of things that need to be processed.  
+
+Why is the architecture set up this way?  XerviceKit tries to put all significant work into discreet chunks, represented by Operations.  This helps avoid keeping state when unnecessary, and provides a common paradigm and context in which all work is done.  Let's look a bit closer at each one. 

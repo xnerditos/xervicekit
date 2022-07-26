@@ -1,0 +1,7 @@
+# Events and Commands
+
+One problem that presents itself with the approach of highly focused _services_ is that sometimes one _service_ needs to maintain consistency with another, without creating a _dependency_.  
+
+For example suppose (using the example given previously) you have two services, User and Session.  The Session service has a dependency on the User service because it needs to call the User service to obtain information about user names and passwords.  The Session service uses this to track who has logged in successfully and when their session (and therefore their access) should expire.  But what happens if the User service deletes a user?  If the user is active at the time that they are deleted, the Session service needs to immediately expire their session.  Otherwise, they would continue to have access (their session would continue to be valid) until it perhaps timed out.  Additionally, the user is deleted but their session does not expire immediately, they might try to carry out some action that requires user information, which would suddenly not be available.  
+
+How can this problem be solved?  In naive way to try to solve this would be to have the User service call the Session service when a user is deleted and tell it to expire the session. (perhaps via a method called `ExpireUserSession()` or something like that).  This extremely problematic for a number of reasons.  First of all, that would create a cyclical dependency.  Session has User as a dependency, but User has Session as a dependency.  

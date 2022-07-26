@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="XKit.Lib.Host" Version="*"/>
+    <PackageReference Include="XKit.Lib.Host.Helpers" Version="*"/>
+    <PackageReference Include="XKit.Lib.Host.Protocols.Http" Version="*"/>
+    <ProjectReference Include="../Tutorial.Session.Common/Tutorial.Session.Common.csproj"/>
+    <ProjectReference Include="../Tutorial.User.Client/Tutorial.User.Client.csproj"/>
+    <ProjectReference Include="../Tutorial.User.Common/Tutorial.User.Common.csproj"/>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);CS8034</NoWarn>
+  </PropertyGroup>
+
+</Project>

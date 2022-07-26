@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <LangVersion>10.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Linq" Version="4.3.0" />
+    <PackageReference Include="XKit.Lib.Common" Version="*" />
+    <PackageReference Include="XKit.Lib.Connector" Version="*" />
+    <ProjectReference Include="../Common/Samples.MessageBroker.Common.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);NU1603;NU5104</NoWarn>
+  </PropertyGroup>
+</Project>
