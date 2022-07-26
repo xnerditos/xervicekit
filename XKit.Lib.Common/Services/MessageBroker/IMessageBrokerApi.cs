@@ -12,5 +12,6 @@ namespace XKit.Lib.Common.Services.MessageBroker {
         Task<ServiceCallResult<WaitOnMessageResponse>> WaitOnMessage(WaitOnMessageRequest request);
 
         Task<ServiceCallResult> Subscribe(SubscribeRequest request);
+        Task<ServiceCallResult> Unsubscribe(UnsubscribeRequest request);
     }
 }

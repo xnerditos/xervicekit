@@ -1,11 +1,9 @@
-using System.Collections.Generic;
 using XKit.Lib.Common.Registration;
 using XKit.Lib.Host.DefaultBaseClasses;
 using XKit.Lib.Common.Host;
-using XKit.Lib.Common.Fabric;
 using XKit.Lib.Common.Utility;
 
-namespace TestServices.SvcWithDependency1; 
+namespace TestServices.SvcWithDependency1;
 
 public class SvcWithDependency1Service 
     : ManagedService<SvcWithDependency1Operation>, ISvcWithDependency1Service {

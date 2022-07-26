@@ -25,6 +25,10 @@ namespace XKit.Lib.Host.Services {
             Subscription subscription
         );
 
+        void RemoveSubscription(
+            Subscription subscription
+        );
+
         Task<IReadOnlyList<ServiceCallResult>> SendMessage(
             FabricMessage message,
             ILogSession log
@@ -63,6 +67,17 @@ namespace XKit.Lib.Host.Services {
         ) {
             lock(subscriptions) {
                 subscriptions.Add(subscription);
+            }
+        }
+
+        void IBuiltinMessageBrokerService.RemoveSubscription(
+            Subscription subscription
+        ) {
+            lock(subscriptions) {
+                var toRemove = subscriptions.Where(
+                    s => s.MessageTypeName == subscription.MessageTypeName && s.Recipient.IsSameService(subscription.Recipient)
+                );
+                toRemove.ForEach(tr => subscriptions.Remove(tr));
             }
         }
 
@@ -156,6 +171,16 @@ namespace XKit.Lib.Host.Services {
                 request,
                 operationAction: (r) => {
                     request.Subscriptions.ForEach(s => Service.AddSubscription(s));
+                    return Task.CompletedTask;
+                }
+            );
+
+        Task<ServiceCallResult> IMessageBrokerApi.Unsubscribe(
+            UnsubscribeRequest request
+        ) => RunServiceCall(
+                request,
+                operationAction: (r) => {
+                    request.Subscriptions.ForEach(s => Service.RemoveSubscription(s));
                     return Task.CompletedTask;
                 }
             );

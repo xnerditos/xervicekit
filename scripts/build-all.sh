@@ -1,9 +1,10 @@
 #!/bin/bash
 
-currFolder="$(pwd)"  # Absolute path to this script, e.g. /home/user/bin/foo.sh
-scriptPath=$(readlink -f "$0")  # Absolute path this script is in
+currFolder="$(pwd)"  
+scriptPath=$(readlink -f "$0")  
 scriptDir=$(dirname "$scriptPath")
-cd $scriptDir
+rootDir=$(dirname "$scriptDir")
+cd $rootDir
 
 function dobuild() {
     cd "$projdir"
@@ -28,7 +29,21 @@ projdir=UnitTests
 dobuild
 
 # Build complex tests
-cd $scriptDir/SystemTests
+cd $rootDir/SystemTests
+ls -d */ | while read -r projdir
+do
+    dobuild
+done
+
+# Build tutorials
+cd $rootDir/tutorials
+ls -d */ | while read -r projdir
+do
+    dobuild
+done
+
+# Build samples
+cd $rootDir/samples
 ls -d */ | while read -r projdir
 do
     dobuild

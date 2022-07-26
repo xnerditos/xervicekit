@@ -26,15 +26,18 @@ namespace XKit.Lib.Connector.Fabric {
         ) { }
 
         Task<ServiceCallResult> IMessageBrokerApi.RaiseEvent(FabricMessage request)
-            => ExecuteCall<FabricMessage>(request);
+            => ExecuteCall(request);
         
         Task<ServiceCallResult> IMessageBrokerApi.IssueCommand(FabricMessage request)
-            => ExecuteCall<FabricMessage>(request);
+            => ExecuteCall(request);
 
         Task<ServiceCallResult<WaitOnMessageResponse>> IMessageBrokerApi.WaitOnMessage(WaitOnMessageRequest request)
             => ExecuteCall<WaitOnMessageRequest, WaitOnMessageResponse>(request);
 
         Task<ServiceCallResult> IMessageBrokerApi.Subscribe(SubscribeRequest request)
-            => ExecuteCall<SubscribeRequest>(request);
+            => ExecuteCall(request);
+
+        Task<ServiceCallResult> IMessageBrokerApi.Unsubscribe(UnsubscribeRequest request)
+            => ExecuteCall(request);
     }
 }

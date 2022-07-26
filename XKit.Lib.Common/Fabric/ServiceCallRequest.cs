@@ -4,12 +4,21 @@ namespace XKit.Lib.Common.Fabric {
 
     public class ServiceCallRequest {
 
+        private string payload; 
+
         public ServiceCallTypeParameters CallTypeParameters { get; set; }
         public string OperationName { get; set; }
         public string RequestorInstanceId { get; set; }
         public string RequestorFabricId { get; set; }
         public string CorrelationId { get; set; }
-        public string Payload { get; set; }
+        public string Payload { 
+            get => payload; 
+            set {
+                if (value != null) {
+                    payload = value;
+                }
+            } 
+        }
 
         public T GetBody<T>() where T : class {
             return Json.FromJson<T>(this.Payload);
@@ -24,11 +33,11 @@ namespace XKit.Lib.Common.Fabric {
         }
 
         public void SetBody(object body) {
-            this.Payload = Json.ToJson(body);
+            payload = Json.ToJson(body);
         }
 
         public void SetBody<T>(T body) {
-            this.Payload = Json.ToJson<T>(body);
+            payload = Json.ToJson<T>(body);
         }
 
         public ServiceCallRequest() { }
