@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.10" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="XKit.Lib.Testing" Version="*" />
+    <ProjectReference Include="../Tutorial.Session.Common/Tutorial.Session.Common.csproj" />
+    <ProjectReference Include="../Tutorial.Session.Client/Tutorial.Session.Client.csproj" />
+    <ProjectReference Include="../Tutorial.Session/Tutorial.Session.csproj" />
+    <ProjectReference Include="../Tutorial.User.Common/Tutorial.User.Common.csproj" />
+  </ItemGroup>
+
+</Project>

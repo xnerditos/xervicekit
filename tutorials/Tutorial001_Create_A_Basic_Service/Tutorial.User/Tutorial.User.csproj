@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>10.0</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="XKit.Lib.Host" Version="*"/>
+    <PackageReference Include="XKit.Lib.Host.Helpers" Version="*"/>
+    <PackageReference Include="XKit.Lib.Host.Protocols.Http" Version="*"/>
+  </ItemGroup>
+
+</Project>

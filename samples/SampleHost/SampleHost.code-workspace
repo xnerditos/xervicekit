@@ -1,0 +1,40 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+    "settings": {
+        "omnisharp.enableEditorConfigSupport": true,
+        "omnisharp.enableRoslynAnalyzers": true,
+        "editor.insertSpaces": true,
+        "csharp.format.enable": true,
+        "dotnet-test-explorer.testProjectPath": "./Tests/*.csproj",
+        "dotnet-test-explorer.autoExpandTree": true,
+        "csharp.unitTestDebuggingOptions": {
+            "stopAtEntry": false,
+            "logging": {
+                "engineLogging": false,
+                "exceptions": true,
+                "programOutput": true,
+                "moduleLoad": false
+            },
+            "justMyCode": false,
+            "requireExactSource": false,
+            "suppressJITOptimizations": true,
+            "symbolOptions": {
+                "searchMicrosoftSymbolServer": true,
+                "moduleFilter": {
+                    "mode": "loadOnlyIncluded",
+                    "includeSymbolsNextToModules": true,
+                    "includedModules": [
+                        "XKit.Lib.*.dll"
+                    ]
+                },
+                "searchPaths": [
+                    "${env:XERVICEKIT_REPO}"
+                ]
+            }
+        }   
+    }
+}

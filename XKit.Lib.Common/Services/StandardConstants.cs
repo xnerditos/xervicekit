@@ -15,7 +15,7 @@ namespace XKit.Lib.Common.Services {
 
                 public static class Registry {
 
-                    public const int Version = 1;
+                    public const int Version = 2;
                     public const string ServiceName = "Registry";
 
                     public static readonly IReadOnlyDescriptor Descriptor = new Descriptor {
@@ -45,7 +45,7 @@ namespace XKit.Lib.Common.Services {
 
                 public static class Config {
 
-                    public const int Version = 1;
+                    public const int Version = 2;
                     public const string ServiceName = "Configuration";
 
                     public static readonly IReadOnlyDescriptor Descriptor = new Descriptor {
@@ -61,7 +61,7 @@ namespace XKit.Lib.Common.Services {
 
                 public static class MessageBroker {
 
-                    public const int Version = 1;
+                    public const int Version = 2;
                     public const string ServiceName = "MessageBroker";
 
                     public static readonly IReadOnlyDescriptor Descriptor = new Descriptor {
