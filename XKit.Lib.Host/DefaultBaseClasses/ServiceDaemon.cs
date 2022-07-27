@@ -67,6 +67,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
                 this.Name + ".Main",
                 contextId: MessageThreadOperationId
             );
+
             OnDaemonStarting();
             engine.Start();
         }
@@ -108,7 +109,8 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         int IServiceDaemon.GetWaitingMessageCount() => this.WaitingMessageCount;
         int IServiceDaemon.GetTotalMessageCount() => this.ActiveMessageCount + this.WaitingMessageCount;
         void IServiceDaemon.ProcessMessages(bool background) => ProcessMessages(background);
-        
+        void IServiceDaemon.SetTimerDelay(uint? delay) => engine.SetTimerDelay(delay);
+
         // =====================================================================
         // Daemon engine events
         // =====================================================================

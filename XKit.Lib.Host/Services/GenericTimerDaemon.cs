@@ -29,7 +29,7 @@ namespace XKit.Lib.Host.Services {
             EnableTimerEvent = timerEnabled;
         }
 
-        public void SetTimerDelay(uint? milliseconds) {
+        public void SetTimerInterval(uint? milliseconds) {
             nextEventDelay = milliseconds;
         }
 
@@ -45,6 +45,6 @@ namespace XKit.Lib.Host.Services {
 
         void IGenericTimerDaemon.SetTimerEnabled(bool enabled) => SetTimerEnabled(enabled);
 
-        void IGenericTimerDaemon.SetTimerDelay(uint? milliseconds) => SetTimerDelay(milliseconds);
+        void IGenericTimerDaemon.SetTimerInterval(uint? milliseconds) => SetTimerInterval(milliseconds);
     }
 }

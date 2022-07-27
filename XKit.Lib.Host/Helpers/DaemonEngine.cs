@@ -15,7 +15,6 @@ namespace XKit.Lib.Host.Helpers {
         private Timer timer;
         private volatile int maxConcurrentMessages = 4;
         private volatile bool debugMode = false;
-        private volatile bool fireTimerEventOnStart = false;
         private volatile bool enableTimer = false;
 
         // NOTE:  Really not loving the idea of using a boolean flag to indicate
@@ -55,7 +54,7 @@ namespace XKit.Lib.Host.Helpers {
         void IDaemonEngine.Resume() {
             if (runState == DaemonRunStateEnum.Paused) {
                 runState = DaemonRunStateEnum.Running;
-                StartTimerIfEnabled(fireTimerEventOnStart ? 0 : null);
+                StartTimerIfEnabled(stateChange: true);
             } 
         }
 
@@ -70,7 +69,7 @@ namespace XKit.Lib.Host.Helpers {
         void IDaemonEngine.Start() {
             if (runState == DaemonRunStateEnum.Stopped) {
                 runState = DaemonRunStateEnum.Running;
-                StartTimerIfEnabled(fireTimerEventOnStart ? 0 : null);
+                StartTimerIfEnabled(stateChange: true);
             }
         }
 
@@ -99,17 +98,12 @@ namespace XKit.Lib.Host.Helpers {
             FireTimerEventIfPossible();            
         }
 
-        void IDaemonEngine.SetTimerEvent(uint? delay) { 
+        void IDaemonEngine.SetTimerDelay(uint? delay) { 
             if (delay == null) {
                 StopTimerIfEnabled();
             } else { 
-                StartTimerIfEnabled(delay);
+                StartTimerIfEnabled(stateChange: false, delay);
             }
-        }
-
-        bool IDaemonEngine.FireTimerEventOnStart {
-            get => fireTimerEventOnStart;
-            set => fireTimerEventOnStart = value;
         }
 
         int IDaemonEngine.MaxConcurrentMessages {
@@ -121,10 +115,12 @@ namespace XKit.Lib.Host.Helpers {
             get => enableTimer; 
             set {                
                 enableTimer = value; 
-                if (value) {
-                    StartTimerIfEnabled(fireTimerEventOnStart ? 0 : null);
-                } else {
-                    StopTimerIfEnabled();
+                if (this.runState == DaemonRunStateEnum.Running) {
+                    if (value) {
+                        StartTimerIfEnabled(stateChange: true);
+                    } else {
+                        StopTimerIfEnabled();
+                    }
                 }
             }
         }
@@ -138,7 +134,7 @@ namespace XKit.Lib.Host.Helpers {
                 if (value) {
                     StopTimerIfEnabled();
                 } else {
-                    StartTimerIfEnabled(fireTimerEventOnStart ? 0 : null);
+                    StartTimerIfEnabled(stateChange: true);
                 }
             }
         }
@@ -182,7 +178,7 @@ namespace XKit.Lib.Host.Helpers {
             }
         }
 
-        private void StartTimerIfEnabled(uint? timerInterval = null) {
+        private void StartTimerIfEnabled(bool stateChange, uint? timerInterval = null) {
             if (runState == DaemonRunStateEnum.Running && enableTimer && onTimerEvent != null) {
                 if (this.timer == null) {
                     timer = new() {
@@ -191,9 +187,18 @@ namespace XKit.Lib.Host.Helpers {
                     timer.Elapsed += ElapsedTimerEventHandler;
                 }
 
+                // If timerInterval is passed, use it.
+                // Otherwise if we are in a state change and onDetermineTimerPeriod
+                // is null, then fire the timer event.  Otherwise, let onDetermineTimerPeriod
+                // determine the delay.  
+                // This is done because sometimes a timer might use it's own event to call
+                // SetEventDelay.  If we don't guarantee that the event fires at least once 
+                // on state change, we could have a situation where the timer never gets a chance
+                // to set it's delay for the next firing.
                 var delay = 
                     timerInterval ??
-                    onDetermineTimerPeriod?.Invoke();
+                    (stateChange && onDetermineTimerPeriod == null ? 
+                        0 : onDetermineTimerPeriod?.Invoke());
 
                 switch(delay) {
                 case null: 
@@ -202,6 +207,11 @@ namespace XKit.Lib.Host.Helpers {
                     FireTimerEventIfPossible(); 
                     break;
                 default: 
+                    if (!debugMode) {
+                        if (timer.Enabled) {
+                            timer.Stop();
+                        }
+                    }
                     timer.Interval = (double)delay; 
                     if (!debugMode) {
                         timer.Start();
@@ -217,7 +227,7 @@ namespace XKit.Lib.Host.Helpers {
         private void FireTimerEventIfPossible() {
             if (runState == DaemonRunStateEnum.Running) {
                 onTimerEvent?.Invoke();
-                StartTimerIfEnabled();
+                StartTimerIfEnabled(stateChange: false);
             }
         }
 

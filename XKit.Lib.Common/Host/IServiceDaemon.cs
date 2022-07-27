@@ -105,6 +105,13 @@ namespace XKit.Lib.Common.Host {
         /// </summary>
         /// <returns></returns>
         int GetTotalMessageCount();
+
+        /// <summary>
+        /// Specifies the timer delay specifically.  null will cause the timer 
+        /// not to fire again until something else sets the delay.
+        /// </summary>
+        /// <returns></returns>
+        void SetTimerDelay(uint? delay);
     }
 
     public interface IServiceDaemon<TMessage> : IServiceDaemon 

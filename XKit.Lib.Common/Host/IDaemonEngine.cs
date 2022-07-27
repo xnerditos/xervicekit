@@ -67,7 +67,7 @@ namespace XKit.Lib.Common.Host {
         /// the daemon engine, this will reset any value previously determined by OnDetermineTimerPeriod 
         /// </summary>
         /// <param name="delay"></param>
-        void SetTimerEvent(uint? delay);
+        void SetTimerDelay(uint? delay);
 
         /// <summary>
         /// Controls maximum number of messages that will processed  
@@ -82,14 +82,6 @@ namespace XKit.Lib.Common.Host {
         /// </summary>
         /// <value></value>
         bool EnableTimer { get; set; }
-
-        /// <summary>
-        /// If true, when the daemon is started or resumed, the timer event will be 
-        /// manually fired once before determining the delay.  This is useful if the
-        /// timer event itself executes code that sets the next timer delay. 
-        /// </summary>
-        /// <value></value>
-        bool FireTimerEventOnStart { get; set; }
 
         bool DebugMode { get; set; }
 
