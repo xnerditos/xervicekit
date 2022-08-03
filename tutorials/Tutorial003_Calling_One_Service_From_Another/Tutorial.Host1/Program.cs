@@ -1,40 +1,26 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using XKit.Lib.Common.Registration;
-using XKit.Lib.Host;
 using Tutorial.User;
-using Tutorial.Session;
+using XKit.Lib.Common.Host;
+using XKit.Lib.Host;
+using XKit.Lib.Host.Protocols.Http;
 
-namespace Tutorial.Host1;
+var builder = WebApplication.CreateBuilder(args);
 
-public class Program
-{
-    private static readonly HostEnvironmentHelper hostHelper = new();
+HostEnvironmentHelper hostHelper = new();
+var host = hostHelper.CreateInitHost(hostAddress: "localhost");
 
-    public static void Main(string[] args)
-    {
-        var host = hostHelper.CreateInitHost(hostAddress: "localhost");
-        host.AddCreateManagedService(
-            serviceDescriptor: new Descriptor {
-                Collection = "Tutorial",
-                Name = "User",
-                Version = 1
-            },
-            typeof(User.ApiOperation)
-        );
-        host.AddManagedService(new SessionService(host));
-        hostHelper.StartHost();
-        CreateHostBuilder(args).Build().Run();
-    }
+host.AddCreateManagedService(
+    Constants.ServiceDescriptor,
+    typeof(ApiOperation)
+);
+host.AddManagedService(new Tutorial.Session.SessionService(host));
+builder.Services.AddScoped<IXKitHostEnvironment>(_ => hostHelper.Host);
+builder.Services.AddMvcCore().AddXKitHostMvc();
+builder.Services.AddControllers();
 
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.UseStartup<Startup>();
-            })
-            .ConfigureServices(services => {
-                services.AddScoped<XKit.Lib.Common.Host.IXKitHostEnvironment>(_ => hostHelper.Host);
-            });
-}
+var app = builder.Build();
+app.UseRouting();
+app.UseEndpoints(endpoints => endpoints.MapControllers());
+
+hostHelper.StartHost();
+app.Run();
+hostHelper.StopAndDestroyHost();

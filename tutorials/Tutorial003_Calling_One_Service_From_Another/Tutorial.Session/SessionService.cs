@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Concurrent;
-using System.Threading.Tasks;
-using XKit.Lib.Common.Fabric;
+using System.Collections.Generic;
 using XKit.Lib.Common.Host;
 using XKit.Lib.Common.Registration;
 using XKit.Lib.Host.DefaultBaseClasses;
@@ -19,6 +18,10 @@ public class SessionService : ManagedService<ApiOperation>, ISessionService
 
     protected override IReadOnlyDescriptor Descriptor => Constants.ServiceDescriptor;
 
+    protected override IEnumerable<IReadOnlyDescriptor> Dependencies => new[] {
+        User.Constants.ServiceDescriptor
+    };
+    
     public ConcurrentDictionary<string, DateTime> GetSessions() {
         return sessions;
     }
