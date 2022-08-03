@@ -15,19 +15,32 @@ public class LoginTests
     [ClassInitialize]
     public static void ClassInit(TestContext context) {
         testHelper.InitializeLocalTestHost();
-        testHelper.AddCreateService(
-            Constants.ServiceDescriptor,
-            typeof(ApiOperation)
-        );
+        testHelper.AddService(new SessionService(testHelper.HostEnvironment));
+        // testHelper.AddCreateService(
+        //     User.Constants.ServiceDescriptor,
+        //     typeof(MockUserOperation)
+        // );
         var userMock = testHelper.AddMockService<IUserApi>(User.Constants.ServiceDescriptor);
+        // success case
         userMock.ApiMock
-            .Setup(x => x.GetUser(It.IsAny<Tutorial.User.User>()))
+            .Setup(x => x.GetUser(It.Is<Tutorial.User.User>(x => x.Username == "alice")))
             .ReturnsAsync(new ServiceCallResult<Tutorial.User.User> { 
                 OperationStatus = XKit.Lib.Common.Log.LogResultStatusEnum.Success,
                 ServiceCallStatus = ServiceCallStatusEnum.Completed,
                 ResponseBody = new Tutorial.User.User {
-                    Password = "ribbot!"
+                    Email = "alice@tutorial.com",
+                    Username = "alice",
+                    FullName = "Alice TheUser",
+                    Password = "pwd"
                 }
+            });
+        // failure case
+        userMock.ApiMock
+            .Setup(x => x.GetUser(It.Is<Tutorial.User.User>(x => x.Username != "alice")))
+            .ReturnsAsync(new ServiceCallResult<Tutorial.User.User> { 
+                OperationStatus = XKit.Lib.Common.Log.LogResultStatusEnum.NonRetriableError,
+                Message = "User not found",
+                ServiceCallStatus = ServiceCallStatusEnum.Completed,
             });
         testHelper.StartHost();
     }

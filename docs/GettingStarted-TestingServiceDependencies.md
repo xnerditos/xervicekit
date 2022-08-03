@@ -40,7 +40,7 @@ theDependencyMock.ApiMock
 
 Obviously, you can mock as many methods as you need to.  Any functionality provided by Moq can be used. 
 
-### Mocking with a "real" service
+### Mocking with a "fake" service
 
 The other approach to mocking a dependency is to simply write a version of the service for the purpose of testing.  
 
