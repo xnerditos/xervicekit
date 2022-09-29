@@ -23,10 +23,6 @@ namespace XKit.Lib.Log {
             get { 
                 lock (stateStack) {
                     if (stateStack.Count == 0) {
-                        WriteEvent(
-                            eventType: LogEventTypeEnum.Erratum,
-                            message: "Attempt to access log without Begin call."
-                        );
                         return null;
                     }
                     return stateStack.Peek();
