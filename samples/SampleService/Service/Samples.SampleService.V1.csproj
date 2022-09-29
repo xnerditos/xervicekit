@@ -4,8 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <LangVersion>10.0</LangVersion>
-    <Version>2.10.1</Version>
-    <AssemblyVersion>2.10.1.0</AssemblyVersion>
+    <Version>2.10.2</Version>
+    <AssemblyVersion>2.10.2.0</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup>
     <NoWarn>$(NoWarn);NU1603;NU5104</NoWarn>
