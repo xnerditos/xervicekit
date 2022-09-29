@@ -1,5 +1,6 @@
 namespace XKit.Lib.Common.Log {
 
+    [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
     public enum LogEventTypeEnum {
 
         // =====================================================================
@@ -116,6 +117,7 @@ namespace XKit.Lib.Common.Log {
         All = 0xffff
     }
 
+    [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
     public enum LogResultStatusEnum {
         /// <summary>
         /// No status determined
