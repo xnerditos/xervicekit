@@ -5,7 +5,9 @@ using XKit.Lib.Common.Log;
 namespace XKit.Lib.Log.Entities {
 
     public class LogEventEntry : IReadOnlyLogEventEntry {
+        private string eventTypeName = null;
         private DateTime timestamp = DateTime.UtcNow;
+
         public DateTime Timestamp { 
             get => timestamp; 
             set => timestamp = value.ToUniversalTime();
@@ -24,10 +26,16 @@ namespace XKit.Lib.Log.Entities {
             }
         }
 
-        public string EventTypeName { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("type")]
+        public string EventTypeName { 
+            get => eventTypeName; 
+            set => eventTypeName = eventTypeName == null ? value : eventTypeName; 
+        }
+
         public object Code { get; set; }
         public string Message { get; set; }
 
+        [System.Text.Json.Serialization.JsonIgnore]
         public LogEventTypeEnum? EventType {
             get {
                 switch(EventTypeName) {

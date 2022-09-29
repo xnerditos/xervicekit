@@ -680,7 +680,9 @@ namespace XKit.Lib.Log {
             string callerMemberName = null, 
             int? callerLineNumber = null
         ) {
-            logWriter?.WriteEvent(new LogEventEntry {
+            if (logWriter == null) { return; }
+
+            var e = new LogEventEntry {
                 OriginatorFabricId = this.originatorFabricId,
                 OriginatorInstanceId = this.originatorInstanceId,
                 OriginatorName = this.originatorName,
@@ -700,7 +702,9 @@ namespace XKit.Lib.Log {
                 CallerFilePath = callerFilePath,
                 CallerMemberName = callerMemberName,
                 CallerLineNumber = callerLineNumber
-            });
+            };
+
+            logWriter.WriteEvent(e);
         }        
     }
 }

@@ -4,8 +4,13 @@ using System.Collections.Generic;
 namespace XKit.Lib.Common.Log {
 
     public interface IReadOnlyLogEventEntry {
+
+        [System.Text.Json.Serialization.JsonIgnore]
         LogEventTypeEnum? EventType { get; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("type")]
         string EventTypeName { get; }
+
         string OriginatorName { get; } 
         int? OriginatorVersion { get; } 
         string OriginatorFabricId { get; } 
