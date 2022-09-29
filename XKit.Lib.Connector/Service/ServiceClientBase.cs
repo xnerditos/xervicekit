@@ -22,6 +22,7 @@ namespace XKit.Lib.Connector.Service {
 
     public class ServiceClientBase {
 
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
         public enum LogCodes {
             ServiceCallFailed,
             OperationFailed

@@ -1,25 +1,29 @@
 
 using System;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace XKit.Lib.Common.Utility.Extensions {
 
     public static class Json {
 
-        private static JsonSerializerOptions baseOptions = new() {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            PropertyNameCaseInsensitive = true,
-            IgnoreReadOnlyProperties = true
-        };
+        private static readonly JsonSerializerOptions baseOptions;
 
-        private static JsonSerializerOptions baseOptionsPretty = new() {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            PropertyNameCaseInsensitive = true,
-            IgnoreReadOnlyProperties = true
-        };
+        private static readonly JsonSerializerOptions baseOptionsPretty;
+
+        static Json() {
+            baseOptions = new(JsonSerializerDefaults.Web) {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            };
+
+            baseOptionsPretty = new(baseOptions) {
+                WriteIndented = true
+            };
+        }
 
         public static string ToJson<T>(T obj, bool pretty = false) {
             if (obj == null) { return null; }
+            
             return JsonSerializer.Serialize(obj, pretty ? baseOptionsPretty : baseOptions);
         }
 

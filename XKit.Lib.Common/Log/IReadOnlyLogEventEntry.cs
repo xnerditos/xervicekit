@@ -14,7 +14,6 @@ namespace XKit.Lib.Common.Log {
         LogContextTypeEnum? ContextType { get; }
         Guid ContextId { get; }
         string OperationName { get; }
-        //object WorkItem { get; }
         string Message { get; }
         object Data { get; }
         IReadOnlyDictionary<string, object> Attributes { get; }
