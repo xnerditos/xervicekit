@@ -4,8 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <LangVersion>10.0</LangVersion>
-    <Version>2.10.2</Version>
-    <AssemblyVersion>2.10.2.0</AssemblyVersion>
+    <Version>2.10.3</Version>
+    <AssemblyVersion>2.10.3.0</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.Linq" Version="4.3.0"/>
