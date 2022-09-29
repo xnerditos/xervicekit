@@ -1,9 +1,8 @@
+<?xml version="1.0"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="XKit.Lib.Common" Version="*"/>
     <PackageReference Include="XKit.Lib.Connector" Version="*"/>
@@ -11,5 +10,4 @@
     <PackageReference Include="XKit.Lib.Connector.Protocols.Http" Version="*"/>
     <ProjectReference Include="../Tutorial.User.Common/Tutorial.User.Common.csproj"/>
   </ItemGroup>
-
 </Project>

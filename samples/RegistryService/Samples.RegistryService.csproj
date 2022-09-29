@@ -1,19 +1,15 @@
+<?xml version="1.0"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
-
-
   <ItemGroup>
     <PackageReference Include="XKit.Lib.Host" Version="*"/>
     <PackageReference Include="XKit.Lib.Common" Version="*"/>
     <PackageReference Include="XKit.Lib.Host.Helpers" Version="*"/>
     <PackageReference Include="XKit.Lib.Host.Protocols.Http" Version="*"/>
   </ItemGroup>
-
   <PropertyGroup>
     <NoWarn>$(NoWarn);CS8034</NoWarn>
   </PropertyGroup>
-
 </Project>

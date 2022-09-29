@@ -1,18 +1,15 @@
+<?xml version="1.0"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
-
   <ItemGroup>
     <PackageReference Include="XKit.Lib.Common" Version="*"/>
     <PackageReference Include="XKit.Lib.Consumer" Version="*"/>
     <PackageReference Include="XKit.Lib.Connector.Protocols.Http" Version="*"/>
     <!-- Add references to services that will be hosted.  This could be packages or projects -->
-    <ProjectReference Include="../SampleService/Common/Samples.SampleService.V1.Common.csproj" />
-    <ProjectReference Include="../SampleService/Client/Samples.SampleService.V1.Client.csproj" />
+    <ProjectReference Include="../SampleService/Common/Samples.SampleService.V1.Common.csproj"/>
+    <ProjectReference Include="../SampleService/Client/Samples.SampleService.V1.Client.csproj"/>
   </ItemGroup>
-
 </Project>

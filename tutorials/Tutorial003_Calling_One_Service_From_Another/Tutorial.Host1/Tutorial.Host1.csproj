@@ -1,19 +1,17 @@
+<?xml version="1.0"?>
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <LangVersion>10.0</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="XKit.Lib.Host" Version="*"/>
     <PackageReference Include="XKit.Lib.Host.Helpers" Version="*"/>
     <PackageReference Include="XKit.Lib.Host.Protocols.Http" Version="*"/>
-    <ProjectReference Include="../Tutorial.User.Common/Tutorial.User.Common.csproj" />
-    <ProjectReference Include="../Tutorial.User/Tutorial.User.csproj" />
-    <ProjectReference Include="../Tutorial.Session.Common/Tutorial.Session.Common.csproj" />
-    <ProjectReference Include="../Tutorial.Session/Tutorial.Session.csproj" />
+    <ProjectReference Include="../Tutorial.User.Common/Tutorial.User.Common.csproj"/>
+    <ProjectReference Include="../Tutorial.User/Tutorial.User.csproj"/>
+    <ProjectReference Include="../Tutorial.Session.Common/Tutorial.Session.Common.csproj"/>
+    <ProjectReference Include="../Tutorial.Session/Tutorial.Session.csproj"/>
   </ItemGroup>
-
 </Project>
