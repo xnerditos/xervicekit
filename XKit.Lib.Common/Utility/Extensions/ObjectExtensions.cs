@@ -36,7 +36,7 @@ namespace XKit.Lib.Common.Utility.Extensions {
         }
 
         public static string ToJson<T>(this T obj, bool pretty = false) {
-            return Json.ToJson<T>(obj, pretty);
+            return Json.ToJson(obj, pretty);
         }
 
         public static T FromJson<T>(this string s) {
