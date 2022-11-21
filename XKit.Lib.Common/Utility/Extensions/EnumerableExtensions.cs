@@ -17,7 +17,7 @@ namespace XKit.Lib.Common.Utility.Extensions {
             return source;
         }
 
-        public async static Task<IEnumerable<T>> ForEach<T>(
+        public static async Task<IEnumerable<T>> ForEach<T>(
             this IEnumerable<T> source,
             Func<T, Task> action
         ) {
@@ -27,9 +27,21 @@ namespace XKit.Lib.Common.Utility.Extensions {
             return source;
         }
 
+        public static async Task<IEnumerable<T>> ForEachParallel<T>(
+            this IEnumerable<T> source,
+            Func<T, Task> action
+        ) {
+            List<Task> tasks = new();
+            foreach (T element in source) {
+                tasks.Add(action(element));
+            }
+            await Task.WhenAll(tasks);
+            return source;
+        }
+
         public static SynchronizedList<T> ToSynchronizedList<T>(
             this IEnumerable<T> source
-        ) => new SynchronizedList<T>(source);
+        ) => new(source);
 
         public static (IEnumerable<T>, IEnumerable<T>) Split<T>(
             this IEnumerable<T> source, 

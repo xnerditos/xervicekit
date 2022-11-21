@@ -5,7 +5,7 @@ using XKit.Lib.Common.Utility.Extensions;
 namespace UnitTests.UtilityAssertions {
 
     [TestClass]
-    public class EnumerableExtentionTests {
+    public class EnumerableExtensionTests {
 
         [TestMethod]
         public void Split_Succeeds() {
@@ -23,7 +23,7 @@ namespace UnitTests.UtilityAssertions {
             split.Should().BeEquivalentTo(new[] { 
                 new string[] { "0" },
                 new string[] { "1" },
-                new string[0],
+                System.Array.Empty<string>(),
                 new string[] { "3" },
                 new string[] { "4" },
                 new string[] { "5" }
