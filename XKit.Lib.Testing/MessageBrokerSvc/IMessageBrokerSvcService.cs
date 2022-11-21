@@ -39,7 +39,7 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
 
         void ClearSentMessages();
         
-        IReadOnlyList<Subscription> GetSubscriptions(); 
+        IReadOnlyList<Subscription> GetSubscriptions(string messageTypeName); 
 
         void AddSubscription(
             Subscription subscription

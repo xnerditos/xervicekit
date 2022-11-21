@@ -73,7 +73,6 @@ namespace XKit.Lib.Connector.Service {
 
         protected virtual IReadOnlyDescriptor ServiceDescriptor => this.Descriptor; 
         protected ServiceClientErrorHandling ErrorHandling => currentErrorHandling ?? DefaultErrorHandling; 
-        //protected string CorrelationId => currentCorrelationId ?? ClientParameters.DefaultCorrelationId;
         protected ServiceCallTypeParameters CallTypeParameters => currentCallTypeParameters ?? DefaultCallTypeParameters;
         protected ServiceCallPolicy Policy => currentPolicy;
         protected ILogSession Log => currentLog ?? defaultLog;
@@ -398,7 +397,7 @@ namespace XKit.Lib.Connector.Service {
             TRequestBody requestBody
         ) where TRequestBody : class => ServiceCallRequest<TRequestBody>.Create(
             callTypeParameters: CallTypeParameters, 
-            correlationId: Log?.CorrelationId, 
+            correlationId: Log?.CorrelationId ?? Common.Utility.Identifiers.GenerateIdentifier(), 
             operationName: this.callInterfaceName == null || operationName.Contains('.') ? operationName : $"{this.callInterfaceName}.{operationName}", 
             requestBody: requestBody,
             requestorFabricId: Log?.OriginatorFabricId,
@@ -411,7 +410,7 @@ namespace XKit.Lib.Connector.Service {
         ) => ServiceCallRequest.Create(
             payload: jsonPayload,
             callTypeParameters: CallTypeParameters, 
-            correlationId: Log?.CorrelationId, 
+            correlationId: Log?.CorrelationId ?? Common.Utility.Identifiers.GenerateIdentifier(), 
             operationName: this.callInterfaceName == null || operationName.Contains('.') ? operationName : $"{this.callInterfaceName}.{operationName}",
             requestorFabricId: Log?.OriginatorFabricId,
             requestorInstanceId: Log?.OriginatorInstanceId

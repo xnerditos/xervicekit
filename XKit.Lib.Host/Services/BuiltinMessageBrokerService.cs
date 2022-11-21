@@ -111,7 +111,7 @@ namespace XKit.Lib.Host.Services {
                 allResults.AddRange(results);
             }
 
-            lock(this.messageResults) {
+            lock(messageResults) {
                 messageResults[message.MessageTypeName] = allResults;
                 messageResults[message.MessageId.ToString()] = allResults;
             }
@@ -121,13 +121,13 @@ namespace XKit.Lib.Host.Services {
         private bool WasMessageSent(
             Guid messageId
         ) {
-            lock(this.messageResults) {
-                return this.messageResults.ContainsKey(messageId.ToString());
+            lock(messageResults) {
+                return messageResults.ContainsKey(messageId.ToString());
             }
         }
 
         private IReadOnlyList<Subscription> GetSubscriptions(string messageTypeName) {
-            lock(this.subscriptions) {
+            lock(subscriptions) {
                 return 
                     subscriptions
                     .Where(s => s.MessageTypeName == messageTypeName)
