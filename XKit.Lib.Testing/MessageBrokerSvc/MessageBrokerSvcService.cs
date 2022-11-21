@@ -78,16 +78,16 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
         public bool WasMessageSent(
             string messageName
         ) {
-            lock(this.messageResults) {
-                return this.messageResults.ContainsKey(messageName);
+            lock(messageResults) {
+                return messageResults.ContainsKey(messageName);
             }
         }
 
         public bool WasMessageSent(
             Guid messageId
         ) {
-            lock(this.messageResults) {
-                return this.messageResults.ContainsKey(messageId.ToString());
+            lock(messageResults) {
+                return messageResults.ContainsKey(messageId.ToString());
             }
         }
 
@@ -97,8 +97,8 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
             => WasMessageSent(typeof(TCallInterface).Name + "." + methodName);
 
         public void ClearSentMessages() {
-            lock(this.messageResults) {
-                this.messageResults.Clear();
+            lock(messageResults) {
+                messageResults.Clear();
             }
         }
 
@@ -111,9 +111,12 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
             }
         }
 
-        public IReadOnlyList<Subscription> GetSubscriptions() {
-            lock(this.subscriptions) {
-                return subscriptions.ToArray();
+        public IReadOnlyList<Subscription> GetSubscriptions(string messageTypeName) {
+            lock(subscriptions) {
+                return 
+                    subscriptions
+                    .Where(s => s.MessageTypeName == messageTypeName)
+                    .ToArray();
             }
         }
 
@@ -144,7 +147,7 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
         ) {
             var allResults = new List<ServiceCallResult>();
 
-            foreach(var subscription in GetSubscriptions()) {
+            foreach(var subscription in GetSubscriptions(message.MessageTypeName)) {
                 var messageNameParsed = message.MessageTypeName.Split('.');
 
                 var client = ClientFactory.Factory.CreateGenericServiceClient(
@@ -166,12 +169,12 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
                 allResults.AddRange(results);
             }
 
-            lock(this.messageResults) {
+            lock(messageResults) {
                 messageResults[message.MessageTypeName] = allResults;
                 messageResults[message.MessageId.ToString()] = allResults;
             }
 
-            lock(this.messageInterceptors) {
+            lock(messageInterceptors) {
                 messageInterceptors.TryGetValue(message.MessageTypeName, out var action);
                 action?.Invoke(message, allResults);
             }
@@ -193,8 +196,8 @@ namespace XKit.Lib.Testing.TestMessageBrokerSvc {
         );
 
         public Dictionary<string, IReadOnlyList<ServiceCallResult>> GetSentMessagesResults() {
-            lock (this.messageResults) {
-                return new Dictionary<string, IReadOnlyList<ServiceCallResult>>(this.messageResults);
+            lock (messageResults) {
+                return new Dictionary<string, IReadOnlyList<ServiceCallResult>>(messageResults);
             }
         }
     }
