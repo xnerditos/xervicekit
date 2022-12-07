@@ -35,15 +35,15 @@ public class SvcWithAutoMessagingDaemonOperation
         await Task.Delay(10);
         lastMessageTickValue = message.Ticks;
         string name = nameof(SvcWithAutoMessagingDaemon);
-        var threadId = System.Environment.CurrentManagedThreadId;
+        var threadId = Environment.CurrentManagedThreadId;
         Debug.WriteLine($"FromJson {name}.  Thread id {threadId}: {message.Message}");
-        return ResultSuccess();
+        return CreateResultSuccess();
     }
 
     protected override Task DoTimerOperation() {
         var nowTicks = (uint)(DateTime.Now.Ticks & 0xffffffff);
 
-        var threadId = System.Environment.CurrentManagedThreadId;
+        var threadId = Environment.CurrentManagedThreadId;
         ((ISvcWithAutoMessagingDaemon) Daemon).PostMessage(new DaemonMessage {
             Ticks = nowTicks,
             Message = $"Clock ticks are currently {nowTicks}.  Main thread is {threadId}"

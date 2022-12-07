@@ -7,6 +7,7 @@ namespace XKit.Lib.Common.Log {
     public interface ILogSession {
         bool IsInErrorState { get; }
         string ErrorMessage { get; }
+        object ErrorCode { get; }
         string OriginatorName { get; }
         int? OriginatorVersion { get; }
         string OriginatorFabricId { get; }

@@ -18,8 +18,9 @@ namespace XKit.Lib.Log {
         private readonly Stack<LogSessionState> stateStack = new();
         private bool isInErrorState = false;
         private string errorMessage = "";
+        private object errorCode = null;
 
-        private LogSessionState State {
+        private LogSessionState State { 
             get { 
                 lock (stateStack) {
                     if (stateStack.Count == 0) {
@@ -51,6 +52,8 @@ namespace XKit.Lib.Log {
         bool ILogSession.IsInErrorState => isInErrorState;
 
         string ILogSession.ErrorMessage => isInErrorState ? errorMessage : "";
+
+        object ILogSession.ErrorCode => errorCode;
 
         string ILogSession.OriginatorName => originatorName;
 
@@ -219,6 +222,7 @@ namespace XKit.Lib.Log {
         ) {
             errorMessage = message;
             isInErrorState = true;
+            errorCode = code;
             WriteEvent(
                 eventType: LogEventTypeEnum.Error,
                 message: message,
@@ -241,6 +245,7 @@ namespace XKit.Lib.Log {
             int callerLineNumber
         ) {
             errorMessage = message;
+            errorCode = code;
             isInErrorState = true;
             WriteEvent(
                 eventType: LogEventTypeEnum.Error,
@@ -264,6 +269,7 @@ namespace XKit.Lib.Log {
             int lineNumber
         ) {
             errorMessage = message;
+            errorCode = code;
             isInErrorState = true;
             WriteEvent(
                 eventType: LogEventTypeEnum.Error,
@@ -285,7 +291,7 @@ namespace XKit.Lib.Log {
             string callerMemberName, 
             int callerLineNumber
         ) {
-            errorMessage = message;
+            errorMessage ??= message;
             isInErrorState = true;
             WriteEvent(
                 eventType: LogEventTypeEnum.Fatality,
@@ -306,7 +312,7 @@ namespace XKit.Lib.Log {
             string callerMemberName, 
             int callerLineNumber
         ) {
-            errorMessage = message;
+            errorMessage ??= message;
             isInErrorState = true;
             WriteEvent(
                 eventType: LogEventTypeEnum.Fatality,
@@ -327,7 +333,7 @@ namespace XKit.Lib.Log {
             string callerMemberName, 
             int callerLineNumber
         ) {
-            errorMessage = message;
+            errorMessage ??= message;
             isInErrorState = true;
             WriteEvent(
                 eventType: LogEventTypeEnum.Fatality,
@@ -347,8 +353,6 @@ namespace XKit.Lib.Log {
             object code, 
             IEnumerable<string> tags
         ) {
-            errorMessage = "";
-            isInErrorState = false;
             WriteEvent(
                 eventType: LogEventTypeEnum.Info,
                 message: message,
@@ -366,8 +370,6 @@ namespace XKit.Lib.Log {
             object code, 
             IEnumerable<string> tags
         ) {
-            errorMessage = "";
-            isInErrorState = false;
             WriteEvent(
                 eventType: LogEventTypeEnum.Info,
                 message: message,
@@ -389,6 +391,11 @@ namespace XKit.Lib.Log {
             string callerMemberName, 
             int callerLineNumber
         ) {
+            if (eventType == LogEventTypeEnum.Error) {
+                errorMessage = message;
+                errorCode = code;
+                isInErrorState = true;                
+            }
             WriteEvent(
                 eventType: eventType,
                 message: message,
@@ -413,6 +420,11 @@ namespace XKit.Lib.Log {
             string callerMemberName, 
             int callerLineNumber
         ) {
+            if (eventTypeName == LogEventTypeEnum.Error.ToString()) {
+                errorMessage = message;
+                errorCode = code;
+                isInErrorState = true;                
+            }
             WriteEvent(
                 eventTypeName: eventTypeName,
                 message: message,
@@ -447,8 +459,6 @@ namespace XKit.Lib.Log {
             object code, 
             IEnumerable<string> tags
         ) {
-            errorMessage = "";
-            isInErrorState = false;
             WriteEvent(
                 eventType: LogEventTypeEnum.Status,
                 message: message,
@@ -464,8 +474,6 @@ namespace XKit.Lib.Log {
             object code, 
             IEnumerable<string> tags
         ) {
-            errorMessage = "";
-            isInErrorState = false;
             WriteEvent(
                 eventType: LogEventTypeEnum.Status,
                 message: message,

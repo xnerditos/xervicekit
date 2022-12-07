@@ -86,7 +86,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         /// Override to do the message processing operation
         /// </summary>
         /// <param name="message"></param>
-        protected virtual Task<OperationResult> DoMessageOperation(TMessage message) => Task.FromResult(ResultSuccess());
+        protected virtual Task<OperationResult> DoMessageOperation(TMessage message) => Task.FromResult(CreateResultSuccess());
 
         // =====================================================================
         // IServiceDaemonOperation<TMessage> implementation

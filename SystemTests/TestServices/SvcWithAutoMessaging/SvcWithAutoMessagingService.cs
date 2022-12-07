@@ -26,6 +26,6 @@ public class SvcWithAutoMessagingService
     public SvcWithAutoMessagingService(
     IXKitHostEnvironment hostEnv
     ) : base(hostEnv) { 
-    AddDaemon(new SvcWithAutoMessagingDaemon());
+        AddDaemon(new SvcWithAutoMessagingDaemon());
     }
 }

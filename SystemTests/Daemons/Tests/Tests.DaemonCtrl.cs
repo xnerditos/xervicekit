@@ -23,22 +23,22 @@ namespace SystemTests.Daemons.Tests {
         [TestMethod]
         public void PausesAndResumesWithService() => TestHelper.RunTest(() => {
             var value = LastMessageTickValue;
-            Yield();
+            Yield(1100);
             LastMessageTickValue.Should().NotBe(value);
             value = LastMessageTickValue;
-            Yield();
+            Yield(1100);
             
             AutoMessagingService.PauseService(TestHelper.Log);
             LastMessageTickValue.Should().NotBe(value);
             value = LastMessageTickValue;
-            Yield();
+            Yield(1100);
             
             LastMessageTickValue.Should().Be(value);
-            Yield();
+            Yield(1100);
             LastMessageTickValue.Should().Be(value);
             
             AutoMessagingService.ResumeService(TestHelper.Log);
-            Yield();
+            Yield(1100);
             LastMessageTickValue.Should().NotBe(value);
         });
     }
