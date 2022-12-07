@@ -33,7 +33,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         ) where TWorkItem : class where TResultData : class {
 
             if (!BeginOperation(workItem, operationName, additionalLogAttributes, loggingOptions: loggingOptions)) 
-            { return ResultCallInvalidServiceUnavailable<TResultData>(); }
+            { return CreateResultCallInvalidServiceUnavailable<TResultData>(); }
             
             var workItemCopy = workItem?.DeepCopy();
 
@@ -177,7 +177,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         ) where TResultData : class {
 
             if (!BeginOperation<object>(null, operationName, additionalLogAttributes, loggingOptions: loggingOptions)) 
-            { return ResultCallInvalidServiceUnavailable<TResultData>(); }
+            { return CreateResultCallInvalidServiceUnavailable<TResultData>(); }
             
             try {
                 if (initAction != null) {
@@ -309,7 +309,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         ) where TWorkItem : class {
 
             if (!BeginOperation(workItem, operationName, additionalLogAttributes, loggingOptions: loggingOptions)) 
-            { return ResultCallInvalidServiceUnavailable(); }
+            { return CreateResultCallInvalidServiceUnavailable(); }
             
             var workItemCopy = workItem?.DeepCopy();
 
@@ -455,7 +455,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         ) {
 
             if (!BeginOperation<object>(null, operationName, additionalLogAttributes, loggingOptions: loggingOptions)) 
-            { return ResultCallInvalidServiceUnavailable(); }
+            { return CreateResultCallInvalidServiceUnavailable(); }
             
             try {
                 if (initAction != null) {

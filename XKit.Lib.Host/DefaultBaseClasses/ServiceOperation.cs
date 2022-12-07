@@ -22,16 +22,16 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         // protected utility 
         // =====================================================================
 
-        protected new ServiceCallResult ResultCallInvalidServiceUnavailable(
+        protected new ServiceCallResult CreateResultCallInvalidServiceUnavailable(
             string operationMessage = null
         ) => CreateServiceCallResult(
-                Operation.ResultCallInvalidServiceUnavailable(operationMessage)
+                Operation.CreateResultCallInvalidServiceUnavailable(operationMessage)
             );
 
-        protected new ServiceCallResult<TResponseBody> ResultCallInvalidServiceUnavailable<TResponseBody>(
+        protected new ServiceCallResult<TResponseBody> CreateResultCallInvalidServiceUnavailable<TResponseBody>(
             string operationMessage = null
         ) where TResponseBody : class => CreateServiceCallResult<TResponseBody>(
-            Operation.ResultCallInvalidServiceUnavailable<TResponseBody>(operationMessage)
+            Operation.CreateResultCallInvalidServiceUnavailable<TResponseBody>(operationMessage)
         );
 
         protected new ServiceCallResult ResultAndLogCallPending(
@@ -91,13 +91,10 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
 
         protected bool IsOperationSynchronous { 
             get {
-                switch ((CallTypeParameters?.CallType).GetValueOrDefault(ServiceCallTypeEnum.SyncResult)) {
-                case ServiceCallTypeEnum.FireAndForget:
-                    return false;
-                case ServiceCallTypeEnum.SyncResult:
-                default:
-                    return true;
-                }
+                return (CallTypeParameters?.CallType).GetValueOrDefault(ServiceCallTypeEnum.SyncResult) switch {
+                    ServiceCallTypeEnum.FireAndForget => false,
+                    _ => true,
+                };
             }
         }
 

@@ -16,7 +16,7 @@ namespace SystemTests.Daemons.Tests {
         protected IManagedService AutoMessagingService { get; private set; }
         protected static uint LastMessageTickValue => TestServices.SvcWithAutoMessaging.SvcWithAutoMessagingDaemonOperation.LastMessageTickValue;
 
-        protected static void Yield(int milliseconds = 200) {
+        protected static void Yield(int milliseconds = 400) {
             Thread.Sleep(milliseconds);
         }
 

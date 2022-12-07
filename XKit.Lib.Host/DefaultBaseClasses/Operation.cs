@@ -2,26 +2,26 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using XKit.Lib.Common.Fabric;
+using XKit.Lib.Common.Host;
 using XKit.Lib.Common.Log;
 using XKit.Lib.Common.Registration;
 using XKit.Lib.Common.Utility.Extensions;
-using XKit.Lib.Common.Host;
 
 namespace XKit.Lib.Host.DefaultBaseClasses {
 
     public abstract partial class Operation : IOperation {
 
         private bool isActive;
+        protected object specifiedResultCode;
         protected IXKitHostEnvironment HostEnvironment => Context.HostEnv as IXKitHostEnvironment;
         protected IFabricConnector Connector => Context.Connector;
         protected OperationContext Context { get; }
         protected ILogSession Log { get; private set; }
         protected string OperationName { get; private set; }
-        
         public Operation(
             OperationContext context
         ) {
-            this.Context = context ?? throw new ArgumentNullException(nameof(context));
+            Context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         // =====================================================================
@@ -57,7 +57,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         ) where TWorkItem : class => BeginOperation(
             workItem,
             operationName,
-            additionalLogAttributes?.FieldsToDictionary(), 
+            additionalLogAttributes?.FieldsToDictionary(),
             loggingOptions
         );
 
@@ -100,7 +100,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
 
                 isActive = true;
                 return true;
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 isActive = false;
                 Log.Erratum("Exception unexpected");
                 Log.Fatality(ex.Message);
@@ -171,7 +171,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         /// </summary>
         /// <param name="message">accompanying result message</param>
         /// <returns>Operation result for immediate return</returns>
-        protected static OperationResult ResultCallInvalidServiceUnavailable(
+        protected static OperationResult CreateResultCallInvalidServiceUnavailable(
             string message = null
         ) => Result(
                 LogResultStatusEnum.NoAction_ServiceUnavailable,
@@ -183,7 +183,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         /// </summary>
         /// <param name="message">accompanying result message</param>
         /// <returns>Operation result for immediate return</returns>
-        protected static OperationResult<TResponseBody> ResultCallInvalidServiceUnavailable<TResponseBody>(
+        protected static OperationResult<TResponseBody> CreateResultCallInvalidServiceUnavailable<TResponseBody>(
             string message = null
         ) where TResponseBody : class => Result<TResponseBody>(
                 LogResultStatusEnum.NoAction_ServiceUnavailable,
@@ -196,7 +196,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         /// </summary>
         /// <param name="operationMessage">accompanying result message</param>
         /// <returns>Operation result for immediate return</returns>
-        protected static OperationResult ResultSuccess(
+        protected static OperationResult CreateResultSuccess(
             string operationMessage = null,
             string logMessage = null
         ) => Result(
@@ -210,7 +210,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         /// </summary>
         /// <param name="operationMessage">accompanying result message</param>
         /// <returns>Operation result for immediate return</returns>
-        protected static OperationResult<TResultData> ResultSuccess<TResultData>(
+        protected static OperationResult<TResultData> CreateResultSuccess<TResultData>(
             TResultData resultData,
             string operationMessage = null,
             string logMessage = null,
@@ -220,7 +220,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
                 resultData: resultData,
                 message: operationMessage,
                 logMessage: logMessage,
-                logData: logData 
+                logData: logData
             );
 
         /// <summary>
@@ -228,13 +228,13 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         /// </summary>
         /// <param name="operationMessage">accompanying result message</param>
         /// <returns>Operation result for immediate return</returns>
-        protected static OperationResult PartialResultSuccess(
+        protected static OperationResult CreateResultPartialSuccess(
             string operationMessage = null,
             string logMessage = null
         ) => Result(
                 LogResultStatusEnum.PartialSuccess,
                 message: operationMessage,
-                logMessage: logMessage 
+                logMessage: logMessage
             );
 
         /// <summary>
@@ -242,7 +242,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         /// </summary>
         /// <param name="operationMessage">accompanying result message</param>
         /// <returns>Operation result for immediate return</returns>
-        protected static OperationResult<TResultData> PartialResultSuccess<TResultData>(
+        protected static OperationResult<TResultData> CreateResultPartialSuccess<TResultData>(
             TResultData resultData,
             string operationMessage = null,
             string logMessage = null,
@@ -252,7 +252,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
                 resultData: resultData,
                 message: operationMessage,
                 logMessage: logMessage,
-                logData: logData 
+                logData: logData
             );
 
         /// <summary>
@@ -260,13 +260,13 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         /// </summary>
         /// <param name="operationMessage">accompanying result message</param>
         /// <returns>Operation result for immediate return</returns>
-        protected static OperationResult ResultRetriableError(
+        protected static OperationResult CreateResultRetriableError(
             string operationMessage = null,
             string logMessage = null
         ) => Result(
                 operationStatus: LogResultStatusEnum.RetriableError,
                 message: operationMessage,
-                logMessage: logMessage 
+                logMessage: logMessage
             );
 
         /// <summary>
@@ -274,7 +274,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         /// </summary>
         /// <param name="operationMessage">accompanying result message</param>
         /// <returns>Operation result for immediate return</returns>
-        protected static OperationResult<TResultData> ResultRetriableError<TResultData>(
+        protected static OperationResult<TResultData> CreateResultRetriableError<TResultData>(
             string operationMessage,
             string logMessage = null,
             TResultData resultData = null,
@@ -284,7 +284,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
                 resultData: resultData,
                 message: operationMessage,
                 logMessage: logMessage,
-                logData: logData 
+                logData: logData
             );
 
         /// <summary>
@@ -292,13 +292,13 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         /// </summary>
         /// <param name="operationMessage">accompanying result message</param>
         /// <returns>Operation result for immediate return</returns>
-        protected static OperationResult ResultNonRetriableError(
+        protected static OperationResult CreateResultNonRetriableError(
             string operationMessage = null,
             string logMessage = null
         ) => Result(
                 operationStatus: LogResultStatusEnum.NonRetriableError,
                 message: operationMessage,
-                logMessage: logMessage 
+                logMessage: logMessage
             );
 
         /// <summary>
@@ -306,7 +306,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         /// </summary>
         /// <param name="operationMessage">accompanying result message</param>
         /// <returns>Operation result for immediate return</returns>
-        protected static OperationResult<TResultData> ResultNonRetriableError<TResultData>(
+        protected static OperationResult<TResultData> CreateResultNonRetriableError<TResultData>(
             string operationMessage,
             string logMessage = null,
             TResultData resultData = null,
@@ -316,8 +316,12 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
                 resultData: resultData,
                 message: operationMessage,
                 logMessage: logMessage,
-                logData: logData 
+                logData: logData
             );
+
+        void SetResultCode(object resultCode) {
+            specifiedResultCode = resultCode;
+        }
 
         /// <summary>
         /// Performs logic to end processing an operation.  The OperationResult from EndOperation is ready
@@ -345,15 +349,21 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             string logMessage = null,
             object logResultData = null
         ) where TResultData : class {
-            
-            LogResultStatusEnum useStatus = 
-                operationStatus ?? fromResult?.OperationStatus ??             
-                    (Log.IsInErrorState ? LogResultStatusEnum.NonRetriableError : LogResultStatusEnum.Success);
-            string useMessage = 
-                operationMessage ?? fromResult?.Message ?? 
-                    (Log.IsInErrorState ? Log.ErrorMessage : null);
-            object useCode = 
-                operationCode ?? fromResult?.Code;
+
+            LogResultStatusEnum useStatus =
+                operationStatus ??
+                fromResult?.OperationStatus ??
+                (Log.IsInErrorState ? LogResultStatusEnum.NonRetriableError : LogResultStatusEnum.Success);
+            string useMessage =
+                operationMessage ??
+                fromResult?.Message ??
+                (Log.IsInErrorState ? Log.ErrorMessage : null);
+            object useCode =
+                operationCode ??
+                fromResult?.Code ??
+                specifiedResultCode ??
+                (Log.IsInErrorState ? Log.ErrorCode : null);
+
             TResultData useResultData = resultData ?? fromResult?.ResultData;
 
             Log.End(
@@ -399,14 +409,19 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             string operationCode = null,
             string logMessage = null
         ) {
-            LogResultStatusEnum useStatus = 
-                operationStatus ?? fromResult?.OperationStatus ??             
-                    (Log.IsInErrorState ? LogResultStatusEnum.NonRetriableError : LogResultStatusEnum.Success);
-            string useMessage = 
-                operationMessage ?? fromResult?.Message ?? 
-                    (Log.IsInErrorState ? Log.ErrorMessage : null);
-            object useCode = 
-                operationCode ?? fromResult?.Code;
+            LogResultStatusEnum useStatus =
+                operationStatus ??
+                fromResult?.OperationStatus ??
+                (Log.IsInErrorState ? LogResultStatusEnum.NonRetriableError : LogResultStatusEnum.Success);
+            string useMessage =
+                operationMessage ??
+                fromResult?.Message ??
+                (Log.IsInErrorState ? Log.ErrorMessage : null);
+            object useCode =
+                operationCode ??
+                fromResult?.Code ??
+                specifiedResultCode ??
+                (Log.IsInErrorState ? Log.ErrorCode : null);
 
             Log.End(
                 useStatus,
@@ -437,7 +452,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             LogResultStatusEnum? operationStatus,
             TResultData resultData,
             string message = null,
-            object code = null,            
+            object code = null,
             string logMessage = null,
             TResultData logData = null
         ) where TResultData : class => new() {
@@ -459,7 +474,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         protected static OperationResult Result(
             LogResultStatusEnum? operationStatus,
             string message = null,
-            object code = null,            
+            object code = null,
             string logMessage = null
         ) => new() {
             Message = message,
@@ -472,13 +487,13 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         // Monitoring and Log
         // =====================================================================
 
-        protected static object FormatExceptionForLog(Exception ex) 
+        protected static object FormatExceptionForLog(Exception ex)
             => new {
-                    ExceptionMessage = ex.Message,
-                    ExceptionStack = ex.StackTrace,
-                    ExceptionTarget = ex.TargetSite,
-                    ExceptionSource = ex.Source
-                };
+                ExceptionMessage = ex.Message,
+                ExceptionStack = ex.StackTrace,
+                ExceptionTarget = ex.TargetSite,
+                ExceptionSource = ex.Source
+            };
 
         protected void LogExceptionAsErratum(
             Exception ex,
@@ -488,7 +503,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             [CallerLineNumber] int callerLineNumber = 0
         ) {
             Log.ErratumAs(
-                message: message ?? ex.Message, 
+                message: message ?? ex.Message,
                 attributes: FormatExceptionForLog(ex).FieldsToDictionary(),
                 filePath: callerFilePath,
                 memberName: callerMemberName,
@@ -503,13 +518,15 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             [CallerMemberName] string callerMemberName = "",
             [CallerLineNumber] int callerLineNumber = 0
         ) {
-            Log.FatalityAs(
-                message: message ?? ex.Message, 
-                attributes: FormatExceptionForLog(ex).FieldsToDictionary(),
-                filePath: callerFilePath,
-                memberName: callerMemberName,
-                lineNumber: callerLineNumber
-            );
+            if (!Log.IsInErrorState) {
+                Log.FatalityAs(
+                    message: message ?? ex.Message,
+                    attributes: FormatExceptionForLog(ex).FieldsToDictionary(),
+                    filePath: callerFilePath,
+                    memberName: callerMemberName,
+                    lineNumber: callerLineNumber
+                );
+            }
         }
 
         protected void LogExceptionAsError(
@@ -520,7 +537,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             [CallerLineNumber] int callerLineNumber = 0
         ) {
             Log.ErrorAs(
-                message: message ?? ex.Message, 
+                message: message ?? ex.Message,
                 attributes: FormatExceptionForLog(ex).FieldsToDictionary(),
                 filePath: callerFilePath,
                 memberName: callerMemberName,
@@ -536,7 +553,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             [CallerLineNumber] int callerLineNumber = 0
         ) {
             Log.ErrorAs(
-                message: message ?? ex.Message, 
+                message: message ?? ex.Message,
                 attributes: FormatExceptionForLog(ex).FieldsToDictionary(),
                 filePath: callerFilePath,
                 memberName: callerMemberName,
@@ -551,9 +568,9 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             string message = null,
             IReadOnlyDictionary<string, object> attributes = null,
             IEnumerable<string> tags = null,
-			[CallerFilePath] string callerFilePath = "",
-			[CallerMemberName] string callerMemberName = "",
-			[CallerLineNumber] int callerLineNumber = 0
+            [CallerFilePath] string callerFilePath = "",
+            [CallerMemberName] string callerMemberName = "",
+            [CallerLineNumber] int callerLineNumber = 0
         ) => Log.ErratumAs(
                 message,
                 attributes,
@@ -570,9 +587,9 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             string message,
             object attributes,
             IEnumerable<string> tags = null,
-			[CallerFilePath] string callerFilePath = "",
-			[CallerMemberName] string callerMemberName = "",
-			[CallerLineNumber] int callerLineNumber = 0
+            [CallerFilePath] string callerFilePath = "",
+            [CallerMemberName] string callerMemberName = "",
+            [CallerLineNumber] int callerLineNumber = 0
         ) => Log.ErratumAs(
                 message,
                 attributes?.FieldsToDictionary(),
@@ -590,10 +607,12 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             IReadOnlyDictionary<string, object> attributes = null,
             object code = null,
             IEnumerable<string> tags = null,
-			[CallerFilePath] string callerFilePath = "",
-			[CallerMemberName] string callerMemberName = "",
-			[CallerLineNumber] int callerLineNumber = 0
-        ) => Log.ErrorAs(
+            bool throwException = true,
+            [CallerFilePath] string callerFilePath = "",
+            [CallerMemberName] string callerMemberName = "",
+            [CallerLineNumber] int callerLineNumber = 0
+        ) {
+            Log.ErrorAs(
                 message,
                 attributes,
                 code,
@@ -602,6 +621,10 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
                 callerMemberName,
                 callerLineNumber
             );
+            if (throwException) {
+                throw new Exception(message ?? "Error occurred");
+            }
+        }
 
         /// <summary>
         /// Log an error (a plausible error, as opposed to unexpected behaviour)
@@ -611,18 +634,24 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             object attributes,
             object code = null,
             IEnumerable<string> tags = null,
-			[CallerFilePath] string callerFilePath = "",
-			[CallerMemberName] string callerMemberName = "",
-			[CallerLineNumber] int callerLineNumber = 0
-        ) => Log.ErrorAs(
-                message,
-                attributes?.FieldsToDictionary(),
-                code,
-                tags,
-                callerFilePath,
-                callerMemberName,
-                callerLineNumber
-            );
+            bool throwException = true,
+            [CallerFilePath] string callerFilePath = "",
+            [CallerMemberName] string callerMemberName = "",
+            [CallerLineNumber] int callerLineNumber = 0
+        ) {
+            Log.ErrorAs(
+               message,
+               attributes?.FieldsToDictionary(),
+               code,
+               tags,
+               callerFilePath,
+               callerMemberName,
+               callerLineNumber
+           );
+            if (throwException) {
+                throw new Exception(message ?? "Error occurred");
+            }
+        }
 
         /// <summary>
         /// Log a warning 
@@ -632,9 +661,9 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             IReadOnlyDictionary<string, object> attributes = null,
             object code = null,
             IEnumerable<string> tags = null,
-			[CallerFilePath] string callerFilePath = "",
-			[CallerMemberName] string callerMemberName = "",
-			[CallerLineNumber] int callerLineNumber = 0
+            [CallerFilePath] string callerFilePath = "",
+            [CallerMemberName] string callerMemberName = "",
+            [CallerLineNumber] int callerLineNumber = 0
         ) => Log.WarningAs(
             message,
             attributes,
@@ -653,9 +682,9 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             object attributes,
             object code = null,
             IEnumerable<string> tags = null,
-			[CallerFilePath] string callerFilePath = "",
-			[CallerMemberName] string callerMemberName = "",
-			[CallerLineNumber] int callerLineNumber = 0
+            [CallerFilePath] string callerFilePath = "",
+            [CallerMemberName] string callerMemberName = "",
+            [CallerLineNumber] int callerLineNumber = 0
         ) => Log.WarningAs(
             message,
             attributes?.FieldsToDictionary(),
@@ -680,7 +709,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             code,
             tags
         );
-        
+
         /// <summary>
         /// Log a status update 
         /// </summary>
@@ -704,9 +733,9 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             IReadOnlyDictionary<string, object> attributes,
             object code = null,
             IEnumerable<string> tags = null,
-			[CallerFilePath] string callerFilePath = "",
-			[CallerMemberName] string callerMemberName = "",
-			[CallerLineNumber] int callerLineNumber = 0
+            [CallerFilePath] string callerFilePath = "",
+            [CallerMemberName] string callerMemberName = "",
+            [CallerLineNumber] int callerLineNumber = 0
         ) => Log.TraceAs(
             message,
             attributes,
@@ -716,7 +745,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             callerMemberName,
             callerLineNumber
         );
-                
+
         /// <summary>
         /// Log a trace message (for debugging and analysis) 
         /// </summary>
@@ -725,9 +754,9 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             object attributes,
             object code,
             IEnumerable<string> tags = null,
-			[CallerFilePath] string callerFilePath = "",
-			[CallerMemberName] string callerMemberName = "",
-			[CallerLineNumber] int callerLineNumber = 0
+            [CallerFilePath] string callerFilePath = "",
+            [CallerMemberName] string callerMemberName = "",
+            [CallerLineNumber] int callerLineNumber = 0
         ) => Log.TraceAs(
             message,
             attributes?.FieldsToDictionary(),
@@ -745,9 +774,9 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             string message,
             object attributes,
             IEnumerable<string> tags = null,
-			[CallerFilePath] string callerFilePath = "",
-			[CallerMemberName] string callerMemberName = "",
-			[CallerLineNumber] int callerLineNumber = 0
+            [CallerFilePath] string callerFilePath = "",
+            [CallerMemberName] string callerMemberName = "",
+            [CallerLineNumber] int callerLineNumber = 0
         ) => Log.TraceAs(
             message,
             attributes?.FieldsToDictionary(),
@@ -764,9 +793,9 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         protected void Trace(
             object attributes,
             IEnumerable<string> tags = null,
-			[CallerFilePath] string callerFilePath = "",
-			[CallerMemberName] string callerMemberName = "",
-			[CallerLineNumber] int callerLineNumber = 0
+            [CallerFilePath] string callerFilePath = "",
+            [CallerMemberName] string callerMemberName = "",
+            [CallerLineNumber] int callerLineNumber = 0
         ) => Log.TraceAs(
             "",
             attributes?.FieldsToDictionary(),
@@ -783,9 +812,9 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         protected void Trace(
             string message,
             IEnumerable<string> tags = null,
-			[CallerFilePath] string callerFilePath = "",
-			[CallerMemberName] string callerMemberName = "",
-			[CallerLineNumber] int callerLineNumber = 0
+            [CallerFilePath] string callerFilePath = "",
+            [CallerMemberName] string callerMemberName = "",
+            [CallerLineNumber] int callerLineNumber = 0
         ) => Log.TraceAs(
             message,
             (Dictionary<string, object>)null,
@@ -801,9 +830,9 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         /// </summary>
         protected void Trace(
             IEnumerable<string> tags = null,
-			[CallerFilePath] string callerFilePath = "",
-			[CallerMemberName] string callerMemberName = "",
-			[CallerLineNumber] int callerLineNumber = 0
+            [CallerFilePath] string callerFilePath = "",
+            [CallerMemberName] string callerMemberName = "",
+            [CallerLineNumber] int callerLineNumber = 0
         ) => Log.TraceAs(
             "",
             (Dictionary<string, object>)null,
@@ -818,30 +847,30 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
         /// Log information that is part of an audit trail
         /// </summary>
         protected void Audit(
-            string message, 
-            object attributes = null, 
-            object code = null, 
+            string message,
+            object attributes = null,
+            object code = null,
             IEnumerable<string> tags = null
         ) => Log.Audit(
             message,
-            attributes == null ? (IReadOnlyDictionary<string, object>) null : attributes.FieldsToDictionary(),
+            attributes == null ? (IReadOnlyDictionary<string, object>)null : attributes.FieldsToDictionary(),
             code,
-            tags            
+            tags
         );
 
         /// <summary>
         /// Log information that is part of an audit trail
         /// </summary>
         protected void Audit(
-            string message, 
-            IReadOnlyDictionary<string, object> attributes = null, 
-            object code = null, 
+            string message,
+            IReadOnlyDictionary<string, object> attributes = null,
+            object code = null,
             IEnumerable<string> tags = null
         ) => Log.Audit(
             message,
             attributes,
             code,
-            tags            
+            tags
         );
 
         /// <summary>
@@ -851,7 +880,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             string message = null,
             IReadOnlyDictionary<string, object> attributes = null,
             object data = null,
-            object code = null, 
+            object code = null,
             IEnumerable<string> tags = null
         ) => Log.Info(
             message,
@@ -860,7 +889,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             code,
             tags
         );
-        
+
         /// <summary>
         /// Log info (generally for debugging and analysis.  If otherwise, consider Status instead) 
         /// </summary>
@@ -868,7 +897,7 @@ namespace XKit.Lib.Host.DefaultBaseClasses {
             string message,
             object attributes,
             object data = null,
-            object code = null, 
+            object code = null,
             IEnumerable<string> tags = null
         ) => Log.Info(
             message,
