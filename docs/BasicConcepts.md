@@ -16,7 +16,7 @@ _Hosts_ are intelligent, and their functionality can be extended by way of _Meta
 
 Note that a _Host_ is agnostic about the details of any service it runs.  That is, any _Host_ can run any _Service_ and any _Service_ can run in any host.  A service is likewise agnostic about it's _Host_.  These two conceptual concepts interact with each only through general interfaces and so are loosely coupled.  
 
-For more information about _Hosts_ work and what you can do with them, take a look at [the deep dive on the subject of hosts](Hosts.md).
+For more information about _Hosts_ work and what you can do with them, take a look at [the deep dive on the subject of hosts](DeepDive-Hosts.md).
 
 ## Managed Services
 
@@ -36,7 +36,7 @@ One trait of _Platform Services_ is that they are application agnostic.  The sam
 
 ## Other service categories and how services identify themselves
 
-_Platform services_ are the only category of service that the XerviceKit framework is specifically aware of.  Depending on the architecture of the application, there might be other categories of services however.  A _Service _Category_ is a lightweight concept that just serves to organize _Services_.  For example, if you have _Services_ that allow the application to manage it's own infrastructure, those might be categorized as "Infrastructure Services".  _Services_ that manage access to external resources might be "Resource Services".  Etc.  
+_Platform services_ are the only category of service that the XerviceKit framework is specifically aware of.  Depending on the architecture of the application, there might be other categories of services however. A Service _Category_ is a lightweight concept that just serves to organize _Services_.  For example, if you have _Services_ that allow the application to manage it's own infrastructure, those might be categorized as "Infrastructure Services".  _Services_ that manage access to external resources might be "Resource Services".  Etc.  
 
 The only point here that perhaps stands out is that categories might be roughly aligned with service _Collections_.  A _Service_ identifies itself with three pieces of information:  Collection, Name, and Version.  
 
@@ -46,9 +46,9 @@ The only point here that perhaps stands out is that categories might be roughly 
 
 ## Service calls through the service api
 
-One of the most common types of functionality that a service provides is an API through which _Service calls_ can be made.  Think of a _Service call_ as you would would a typical method call, except for the fact that the execution is actually happening "remotely" within the context of the service.  "Remotely" in this case simply means "somewhere else"; where exactly that happens to be is irrelevant.  It might actually be happening in the same process (on the same _Host_), or in a container somewhere on the machine, or on a different server.  XerviceKit takes care of figuring out where the service is actually located and how to convey the call and return with the results.  A service defines what calls are available by defining a simple c# interface and the framework does the rest. 
+One of the most common types of functionality that a service provides is an API through which _Service calls_ can be made.  Think of a _Service call_ as you would a typical method call, except for the fact that the execution is actually happening "remotely" within the context of the service.  "Remotely" in this case simply means "somewhere else"; where exactly that happens to be is irrelevant.  It might actually be happening in the same process (on the same _Host_), or in a container somewhere on the machine, or on a different server.  XerviceKit takes care of figuring out where the service is actually located and how to convey the call and return with the results.  A service defines what calls are available by defining a simple c# interface and the framework does the rest. 
 
-For more information about how _Service calls_ work, including a step by step of the workflow, take a look at [the deep dive on the subject of service calls](ServiceCalls.md).
+For more information about how _Service calls_ work, including a step by step of the workflow, take a look at [the deep dive on the subject of service calls](DeepDive-ServiceCalls.md).
 
 ## Dependencies
 
@@ -56,7 +56,7 @@ Of course, a service might have a _dependency_ on another service in order to do
 
 It is important to understand that when a _Service_ has a _dependency_, it not aware of details of how that _dependency_ does it's job.  It simply has access to an interface that describes the functionality and it knows the Collection, Name, and Version (together called the "Descriptor") of the _dependency_.  Why is this important?  Because it means that _dependencies_ can easily be swapped.  It also means that services can more easily be tested, because a mock service simply has to implement the same interface and have the same Descriptor.
 
-For more information about how _Service calls_ work, including a step by step of the workflow, take a look at [the deep dive on the subject of service calls](ServiceCalls.md).
+For more information about how _Service calls_ work, including a step by step of the workflow, take a look at [the deep dive on the subject of service calls](DeepDive-ServiceCalls.md).
 
 ## Operations
 
@@ -72,7 +72,7 @@ Services can provide _Events_ which allow other services to "subscribe" to recei
 
 _Commands_ are similar to _Events_ but in reverse.  A _Command_ allows some actor in the application to say "Do a thing!" without actually knowing which service or services will do the thing.  In this case, services indicate what _Commands_ they are interested in handling, and then when the command is issued they are informed.  When receiving notification of the command, they can do some work in response. 
 
-For more information about _Events_ and _Commands_, take a look at [the deep dive on the subject](EventsAndCommands.md).
+For more information about _Events_ and _Commands_, take a look at [the deep dive on the subject](DeepDive-EventsAndCommands.md).
 
 ## Daemons
 
@@ -86,5 +86,5 @@ Let's say for example that an application wants to process and convert video fil
 
 As a slightly different scenario, we could imagine that the service where the daemon itself is running is responsible for placing these video files in the folder to be processed.  In that case, the daemon itself would not have to monitor the folder and the timer part would be unnecessary.  When the service places the files in the folder, it itself would simply add a message to the daemon's message queue as part of the operation.  The daemon would then schedule the processing in the background. 
 
-For more information about _Daemons_, take a look at [the deep dive on the subject of hosts](Daemons.md).
+For more information about _Daemons_, take a look at [the deep dive on the subject of hosts](DeepDive-Daemons.md).
 
