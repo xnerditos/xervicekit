@@ -15,7 +15,7 @@ We recommend you set up your project with the following sub-projects. This is no
 
 Note that most of the code in these projects is "boilerplate" and you could make a template to quickly set up a service. 
 
-In fact, a [TBD: vanilla sample service]() is available that you can use as a starting point. 
+In fact, a [sample service](../samples/SampleService/) is available that you can use as a starting point. 
 
 ## Set up the individual projects
 
@@ -51,7 +51,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using XKit.Lib.Common.Registration;
 using XKit.Lib.Host;
-using Tutorial.User;
+
 
 namespace Host1;
 
@@ -183,7 +183,7 @@ Define the methods of the service API.  For each request or result object add a 
 
 ### Client
 
-TODO: 
+TODO:  This needs to be filled in!  (https://github.com/xnerditos/xervicekit/issues/56)
 
 ### Service
 

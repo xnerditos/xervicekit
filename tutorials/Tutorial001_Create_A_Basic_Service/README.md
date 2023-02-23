@@ -81,7 +81,6 @@ Now we just have to do a bit of wiring to get the host operational.
 
 Make the `Program.cs` look like this:
 ```
-using Tutorial.User;
 using XKit.Lib.Common.Host;
 using XKit.Lib.Common.Registration;
 using XKit.Lib.Host;
@@ -162,7 +161,7 @@ The service api interface must derive from `IServiceApi` so that XerviceKit know
 
 An interface without any class that uses it doesn't help us at all.  Let's fix that now.  We will add the "operation" class that does the actual work. 
 
-Add a file to your project called `ApiOperation.cs`.  Make the class derive from `ServiceOperation` and make it inherit the interface we just created `IUserApi`.
+Add a file to your project called `ApiOperation.cs`.  Make the class derive from `ServiceApiOperation` and make it inherit the interface we just created `IUserApi`.
 
 ```
 using System.Threading.Tasks;
@@ -170,7 +169,7 @@ using XKit.Lib.Common.Fabric;
 using XKit.Lib.Common.Host;
 using XKit.Lib.Host.DefaultBaseClasses;
 
-namespace Tutorial.User
+namespace Tutorial.User;
 
 public class ApiOperation : ServiceApiOperation, IUserApi
 {
@@ -222,7 +221,7 @@ Replace the body of the `UpsertUser` method:
 ```
 public Task<ServiceCallResult> UpsertUser(User request)
 {
-    return RunApiOperation(
+    return RunServiceCall(
         request,
         operationAction: DoUpsertUser
     );
@@ -231,7 +230,7 @@ public Task<ServiceCallResult> UpsertUser(User request)
 
 _What just happened?_  
 
-We are calling the base method `RunOperation` to invoke our method.  `RunOperation` will perform all kinds of magic for us.  It will take care of creating a log session, of figuring out threading concerns, of composing our `ServiceCallResult`, etc.  The point is, it will all just work and `DoUpsertUser` will get executed just like it should.  
+We are calling the base method `RunServiceCall` to invoke our method.  `RunServiceCall` will perform all kinds of magic for us.  It will take care of creating a log session, of figuring out threading concerns, of composing our `ServiceCallResult`, etc.  The point is, it will all just work and `DoUpsertUser` will get executed just like it should.  
 
 ## Step 5:  Create the service and add it to the host
 
@@ -240,6 +239,8 @@ Ok, we're almost ready to run this sucker.  One more thing we have to do.  Remem
 It's super easy to create the service.  In `Program.cs`, add the following line where the `TODO` is currently located: 
 
 ```
+using XKit.Lib.Common.Registration;
+
 host.AddCreateManagedService(
     serviceDescriptor: new Descriptor {
         Collection = "Tutorial",
