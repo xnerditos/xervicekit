@@ -183,7 +183,7 @@ Define the methods of the service API.  For each request or result object add a 
 
 ### Client
 
-no Data
+TODO:  This needs to be filled in!  (https://github.com/xnerditos/xervicekit/issues/56)
 
 ### Service
 
