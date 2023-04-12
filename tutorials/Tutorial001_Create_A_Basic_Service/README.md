@@ -108,14 +108,14 @@ hostHelper.StopAndDestroyHost();
 
 _What just happened?_  
 
-* The line `var host = hostHelper.CreateInitHost(hostAddress: "localhost");` creates a host object and init's it.  
+* The line `var host = hostHelper.CreateInitHost(hostAddress: "localhost");` creates a host object and inits it.  
 * The line `hostHelper.StartHost();` starts the host running.  We will be coming back to this later, because we will need to add our service in a minute.
 * The line `builder.Services.AddMvcCore().AddXKitHostMvc();` adds in framework pieces that are needed for requests to get routed.  XerviceKit uses MVC to route HTTP based requests, so we need to hook in to the pipeline.
 * The line `services.AddScoped(...` injects the Xervicekit host environment as a dependency so that it can be found when requests come in.
 
 ## Step 3:  Create the service api interface and service api operation class
 
-Pretty much everything up until now as been boring "boilerplate" code to hook XerviceKit in to the process and set up the environment.  The basics of all of that won't really change much.  But now, we are getting to the interesting parts. 
+Pretty much everything up until now has been boring "boilerplate" code to hook XerviceKit in to the process and set up the environment.  The basics of all of that won't really change much.  But now, we are getting to the interesting parts. 
 
 ### The Service Api interface
 
@@ -171,9 +171,9 @@ using XKit.Lib.Host.DefaultBaseClasses;
 
 namespace Tutorial.User;
 
-public class ApiOperation : ServiceApiOperation, IUserApi
+public class ApiOperation : ServiceOperation, IUserApi
 {
-    public ApiOperation(ServiceApiOperationContext context) 
+    public ApiOperation(ServiceOperationContext context) 
         : base(context)
     {
     }
@@ -234,7 +234,7 @@ We are calling the base method `RunServiceCall` to invoke our method.  `RunServi
 
 ## Step 5:  Create the service and add it to the host
 
-Ok, we're almost ready to run this sucker.  One more thing we have to do.  Remember when we created the host and started it?  Well, we need an actual _service_ object that will create an operation when a request comes in and will hand the operation the execution.  Remember, _operations_ are stateless.  But they are associated with a _service_ which is managed by the _host_.
+Ok, we're almost ready to run this sucker.  One more thing we have to do.  Remember when we created the host and started it?  Well, we need an actual _service_ object that will create an operation when a request comes in and will hand the operation execution.  Remember, _operations_ are stateless.  But they are associated with a _service_ which is managed by the _host_.
 
 It's super easy to create the service.  In `Program.cs`, add the following line where the `TODO` is currently located: 
 
