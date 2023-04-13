@@ -1,7 +1,5 @@
 # Tutorial 1:  Create a basic service
 
-[TOC]
-
 ## Description and objectives
 
 This tutorial will:
