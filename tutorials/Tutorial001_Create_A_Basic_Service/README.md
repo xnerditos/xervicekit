@@ -121,7 +121,7 @@ A "service api" is the set of methods that other services or consumers can call.
 
 First, we need a "User" entity (POCO) to pass around.  
 
-Create a new file in your project called `User.cs`.  The User poco just has some basic user information. 
+Create a new file in your project called `User.cs`.  The User POCO just has some basic user information. 
 
 ```
 namespace Tutorial.User; 
@@ -153,7 +153,7 @@ _Ok, what just happened?_
 
 The service api interface must derive from `IServiceApi` so that XerviceKit knows what it is.  The `UpsertUser` method has an interesting signature.  It is `async`, and returns a `ServiceCallResult`.  `ServiceCallResult` is a general result object that a service api method uses to communicate what happened when it ran.  In this case, the result does not include any specific response object, it's kind of like a `void` method.  It only returns a general object to indicate operational results.  
 
-`UpsertUser` takes a `User` object as it's request.  Service Api methods optionally can have a request object as a parameter.  Our request for `UpsertUser` will tell the method the information about the user being created.
+`UpsertUser` takes a `User` object as its request.  Service Api methods optionally can have a request object as a parameter.  Our request for `UpsertUser` will tell the method the information about the user being created.
 
 ### The Operation class
 
@@ -237,7 +237,9 @@ Ok, we're almost ready to run this sucker.  One more thing we have to do.  Remem
 It's super easy to create the service.  In `Program.cs`, add the following line where the `TODO` is currently located: 
 
 ```
-using XKit.Lib.Common.Registration;
+using Tutorial.User;
+
+...
 
 host.AddCreateManagedService(
     serviceDescriptor: new Descriptor {
@@ -268,7 +270,7 @@ $> curl -d '{"operationName":"UpsertUser","payloadObj":{"username":"kermit","ema
 ```
 ... OR ...
 
-Use Postman or some such tool to do the same thing.
+Use Postman or some such tool to do the same thing:
 `POST` to the url `http://localhost:5000/managed/Tutorial/User/1` (be careful about using the right port!) using this post body: 
 
 ```
@@ -285,9 +287,9 @@ Use Postman or some such tool to do the same thing.
 
 (Note that the bash script `test-create-user.sh` has been placed in the associated `Tutorial.User` folder here in this repo for your enjoyment.  It contains the `curl` command indicated.)
 
-In either case, if you are running in the debugger and you have a breakpoint at `DoUpsertUser`, your debugger should stop at the breakpoint.  
+In either case, if you are running it in the debugger and you have a breakpoint at `DoUpsertUser`, your debugger should stop at the breakpoint.  
 
-If you let it run, you should get back a response something like this: 
+If you let it run, you should get back a response with something like this: 
 ```
 {
    "serviceCallStatus":"Completed",
@@ -337,6 +339,6 @@ The project in this folder contains the final version.
 
 Although most of this was boilerplate code, you should hopefully have in your mind certain concepts starting to take form.  The most interesting part of this exercise was the operation logic, that is, the `DoUpsertUser` part. 
 
-Why do we say that?  Because all the boring parts XerviceKit is doing.  It is handling the communications protocols for example.  In a few more tutorials we will see how it handles automatic discovery of services.  And a bunch more goodness we can't wait to show you.  
+Why do we say that?  Because all the boring parts XerviceKit is doing it is handling the communications protocols, for example.  In a few more tutorials we will see how it handles automatic discovery of services, and a bunch more goodness we can't wait to show you.  
 
 [Go to the next tutorial:  Organize and add a client and tests](../Tutorial002_Organize_And_Add_Client_And_Tests/)
