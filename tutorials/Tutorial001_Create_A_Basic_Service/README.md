@@ -292,37 +292,33 @@ In either case, if you are running in the debugger and you have a breakpoint at 
 If you let it run, you should get back a response something like this: 
 ```
 {
-    "responseBody": null,
-    "serviceCallStatus": 1,
-    "operationStatus": 1,
-    "serviceStatus": {
-        "instanceId": "835511b8c88a46f2ad6b453933670a07",
-        "availability": 5,
-        "health": 4,
-        "runState": 3
-    },
-    "message": null,
-    "responderInstanceId": "835511b8c88a46f2ad6b453933670a07",
-    "responderFabricId": "361e06ed43fe4ac6b33e5cff614b8243",
-    "operationId": "fe267c70-fcd6-47ee-b2f7-fd709538987c",
-    "operationName": "UpsertUser",
-    "service": {
-        "isMetaService": false,
-        "collection": "Tutorial",
-        "name": "User",
-        "version": 1,
-        "updateLevel": 0,
-        "patchLevel": 0
-    },
-    "correlationId": "0394b857f4214788988bf38bb871d31b",
-    "requestorInstanceId": null,
-    "requestorFabricId": null,
-    "correlationTags": null,
-    "passThru": null,
-    "code": null,
-    "hasError": false,
-    "immediateSuccess": true,
-    "completed": true
+   "serviceCallStatus":"Completed",
+   "operationStatus":"Success",
+   "serviceStatus":{
+      "instanceId":"b4b53886444942b1b053924913b9958c",
+      "availability":"Serving5",
+      "health":"Unknown",
+      "runState":"Active"
+   },
+   "message":null,
+   "responderInstanceId":"b4b53886444942b1b053924913b9958c",
+   "responderFabricId":"c052b792250642c3af666aa153dd7613",
+   "operationId":"07e8c4c6-0f2c-4876-a8ea-3983a1903eb2",
+   "operationName":"UpsertUser",
+   "service":{
+      "isMetaService":false,
+      "collection":"Tutorial",
+      "name":"User",
+      "version":1,
+      "updateLevel":0,
+      "patchLevel":0
+   },
+   "correlationId":"2a7fa7cede744c47ada64b40845dd651",
+   "requestorInstanceId":null,
+   "requestorFabricId":null,
+   "code":null,
+   "timestamp":"2023-04-13T13:57:52.85929Z",
+   "payloadObj":null
 }
 ```
 
